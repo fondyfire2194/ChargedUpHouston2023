@@ -1,0 +1,60 @@
+{
+  "NTProvider": {
+    "types": {
+      "/FMSInfo": "FMSInfo",
+      "/Shuffleboard/Arms/IntakeLayout/StopIntake": "Command",
+      "/Shuffleboard/Arms/TrajLayout/TrajectoryChooser": "String Chooser",
+      "/Shuffleboard/Competition/AutoChooser": "String Chooser",
+      "/Shuffleboard/Competition/AutoChooser1": "String Chooser",
+      "/Shuffleboard/Competition/DelayChooser": "String Chooser",
+      "/Shuffleboard/Competition/StartPosition": "String Chooser",
+      "/SmartDashboard/Field2d": "Field2d",
+      "/SmartDashboard/Scheduler": "Scheduler"
+    },
+    "windows": {
+      "/Shuffleboard/Competition/AutoChooser": {
+        "window": {
+          "visible": true
+        }
+      },
+      "/Shuffleboard/Competition/AutoChooser1": {
+        "window": {
+          "visible": true
+        }
+      },
+      "/Shuffleboard/Competition/StartPosition": {
+        "window": {
+          "visible": true
+        }
+      },
+      "/SmartDashboard/Field2d": {
+        "Swerve Modules": {
+          "length": 0.20000000298023224,
+          "width": 0.20000000298023224
+        },
+        "image": "C:\\Users\\boyle\\Documents\\FRCC2023\\ChargedUp-2194\\src\\main\\images\\Field2d_2023.png",
+        "window": {
+          "visible": true
+        }
+      }
+    }
+  },
+  "NetworkTables": {
+    "transitory": {
+      "Shuffleboard": {
+        "Arms": {
+          "LiftLayout": {
+            "open": true
+          },
+          "open": true
+        }
+      },
+      "SmartDashboard": {
+        "Scheduler": {
+          "open": true
+        },
+        "open": true
+      }
+    }
+  }
+}
