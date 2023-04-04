@@ -38,16 +38,16 @@ public class RetractWristExtendLiftTravel extends SequentialCommandGroup {
 
                                 new WaitCommand(.2),
 
-                                new WaitWristAtTarget(wrist, .2, 1).asProxy(),
+                                new WaitWristAtTarget(wrist, .2, 1,2).asProxy(),
 
-                                new WaitExtendAtTarget(ext, .2, 3).asProxy(),
+                                new WaitExtendAtTarget(ext, .2, 3, 3).asProxy(),
 
                                 new SetLiftGoal(lift,
                                                 presetLiftAngles.TRAVEL.getInches()).asProxy(),
 
                                 new WaitCommand(.2),
 
-                                new WaitLiftAtTarget(lift, .2, 5).asProxy()
+                                new WaitLiftAtTarget(lift, .2, 5, 1).asProxy()
 
                 );
 

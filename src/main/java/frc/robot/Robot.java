@@ -16,7 +16,6 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.Constants.ExtendArmConstants;
 import frc.robot.Constants.LiftArmConstants;
 import frc.robot.Constants.WristConstants;
-import frc.robot.commands.PickupRoutines.IntakePiece;
 import frc.robot.subsystems.ExtendArmSubsystem.presetExtArmDistances;
 import frc.robot.subsystems.LiftArmSubsystem.presetLiftAngles;
 import frc.robot.subsystems.WristSubsystem.presetWristAngles;
@@ -50,6 +49,7 @@ public class Robot extends TimedRobot {
   private double m_startDelay;
   private double startTime;
   Command autonomousCommand;
+
   /**
    * This function is run when the robot is first started up and should be used
    * for any
@@ -149,15 +149,13 @@ public class Robot extends TimedRobot {
     m_robotContainer.m_wrist.setController(WristConstants.wristFastConstraints,
         presetWristAngles.HOME.getAngleRads(), false);
 
+    m_robotContainer.m_intake.mIntakeMotor.setVoltage(1);
+
     m_startDelay = m_robotContainer.m_autoFactory.m_startDelayChooser.getSelected();
 
     startTime = Timer.getFPGATimestamp();
 
-    new IntakePiece(m_robotContainer.m_intake).withTimeout(3).schedule();
-
-   // m_robotContainer.m_autoFactory.createCommands();
-
-     autonomousCommand = m_robotContainer.m_autoFactory.getAutonomousCommand();
+    autonomousCommand = m_robotContainer.m_autoFactory.getAutonomousCommand();
 
   }
 
@@ -172,7 +170,6 @@ public class Robot extends TimedRobot {
       autonomousCommand.schedule();
       autoHasRun = true;
     }
-
   }
 
   @Override
@@ -184,11 +181,11 @@ public class Robot extends TimedRobot {
 
     if (autoHasRun)
       m_robotContainer.m_drive.fieldOrientOffset = 180;
-      
+
     autoHasRun = false;
 
     m_robotContainer.m_drive.resetGyro();
-    
+
     m_robotContainer.m_extendArm.setController(ExtendArmConstants.extendArmFastConstraints,
         presetExtArmDistances.RETRACT.getDistance(), false);
 
@@ -205,8 +202,7 @@ public class Robot extends TimedRobot {
     m_robotContainer.m_wrist.setController(WristConstants.wristFastConstraints,
         presetWristAngles.HOME.getAngleRads(), false);
 
-        
-        m_robotContainer.m_drive.m_fieldOriented = true;
+    m_robotContainer.m_drive.m_fieldOriented = true;
   }
 
   /** This function is called periodically during operator control. */

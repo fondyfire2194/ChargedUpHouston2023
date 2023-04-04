@@ -43,6 +43,8 @@ public class IntakeSubsystem extends SubsystemBase {
   private final int m_freeLimit = 10;
   private final int m_stallLimit = 30;
 
+  public double voltage;
+
   public IntakeSubsystem() {
 
     mIntakeMotor = new CANSparkMax(CanConstants.INTAKE_MOTOR, CANSparkMaxLowLevel.MotorType.kBrushless);
@@ -59,7 +61,7 @@ public class IntakeSubsystem extends SubsystemBase {
 
     mIntakeMotor.setInverted(true);
 
-    mIntakeMotor.setOpenLoopRampRate(1.);
+    mIntakeMotor.setOpenLoopRampRate(.5);
 
     mIntakeMotor.setClosedLoopRampRate(.5);
 
@@ -149,6 +151,11 @@ public class IntakeSubsystem extends SubsystemBase {
 
     mIntakeMotor.set(0);
 
+  }
+
+  public void setMotorVolts(double volts) {
+    voltage = volts;
+    mIntakeMotor.setVoltage(volts);
   }
 
   public double getAppliedOutput() {

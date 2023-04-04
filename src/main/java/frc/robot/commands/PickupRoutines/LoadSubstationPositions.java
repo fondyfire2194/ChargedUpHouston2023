@@ -34,23 +34,24 @@ public class LoadSubstationPositions extends SequentialCommandGroup {
                 addCommands(
 
                                 new SetLiftGoal(lift, presetLiftAngles.PICKUP_SIDE_LOAD_STATION
-                                                                .getInches()) .asProxy(),
-                                                                                              
+                                                .getInches()).asProxy(),
+
                                 new SetWristGoal(wrist,
                                                 presetWristAngles.PICKUP_SIDE_LOAD_STATION
-                                                                .getAngleRads()) .asProxy(),                                            
+                                                                .getAngleRads())
+                                                .asProxy(),
 
-                                new WaitLiftAtTarget(lift, 1, .5).asProxy(),
+                                new WaitLiftAtTarget(lift, 1, .5, 1).asProxy(),
 
-                                new WaitWristAtTarget(wrist, 1, .2).asProxy(),
+                                new WaitWristAtTarget(wrist, 1, .2, 2).asProxy(),
 
                                 new SetExtArmGoal(extend,
                                                 ExtendArmConstants.extendArmFastConstraints,
                                                 presetExtArmDistances.PICKUP_SIDE_LOAD_STATION
-                                                                .getDistance()) .asProxy(),
-                                               
+                                                                .getDistance())
+                                                .asProxy(),
 
-                                new WaitExtendAtTarget(extend, 1, 4).asProxy());
+                                new WaitExtendAtTarget(extend, 1, 4, 3).asProxy());
 
         }
 }

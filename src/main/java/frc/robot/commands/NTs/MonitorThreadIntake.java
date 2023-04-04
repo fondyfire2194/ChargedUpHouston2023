@@ -20,6 +20,7 @@ public class MonitorThreadIntake {
 
     public DoublePublisher rpm;
     public DoublePublisher amps;
+    public DoublePublisher volts;
 
     public MonitorThreadIntake(IntakeSubsystem intake) {
 
@@ -28,6 +29,10 @@ public class MonitorThreadIntake {
         rpm = intprof.getDoubleTopic("RPM").publish();
 
         amps = intprof.getDoubleTopic("CURRENT").publish();
+ 
+        volts = intprof.getDoubleTopic("VOLTS").publish();
+
+
 
     }
 
@@ -50,6 +55,8 @@ public class MonitorThreadIntake {
                         rpm.set(m_intake.getRPM());
 
                         amps.set(m_intake.getAmps());
+
+                        volts.set(m_intake.voltage);
 
                     }
                     Thread.sleep(100);

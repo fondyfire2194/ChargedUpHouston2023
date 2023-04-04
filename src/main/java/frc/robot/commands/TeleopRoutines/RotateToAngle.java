@@ -30,6 +30,7 @@ public class RotateToAngle extends PIDCommand {
     m_drive = drive;
   
     super.m_controller.setTolerance(2);
+    
     super.m_controller.enableContinuousInput(-180, 180);
 
     // this number could be changed

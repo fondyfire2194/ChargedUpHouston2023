@@ -96,9 +96,9 @@ public class GetDeliverAngleSettings extends CommandBase {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    
-      new DeliverPiecePositionsTeleop(m_lift, m_ext, m_wrist, m_intake).schedule();
-    
+
+    new DeliverPiecePositionsTeleop(m_lift, m_ext, m_wrist, m_intake).withTimeout(4).schedule();
+
   }
 
   // Returns true when the command should end.

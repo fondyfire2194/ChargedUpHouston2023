@@ -38,7 +38,9 @@ public class WristSubsystem extends SubsystemBase {
 
         PICKUP_CUBE_GROUND(54),
 
-        PICKUP_UPRIGHT_CONE_GROUND(40), // 40
+        PICKUP_CONE_GROUND(54),
+
+        PICKUP_UPRIGHT_CONE_GROUND(55), // 40
 
         PICKUP_SIDE_LOAD_STATION(9),
 

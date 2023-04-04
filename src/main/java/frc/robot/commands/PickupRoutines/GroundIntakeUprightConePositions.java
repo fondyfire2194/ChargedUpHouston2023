@@ -41,12 +41,11 @@ public class GroundIntakeUprightConePositions extends SequentialCommandGroup {
                                                                 .getAngleRads())
                                                 .asProxy(),
 
-
                                 new WaitCommand(.2),
 
-                                new WaitLiftAtTarget(lift, 1, 1.5).asProxy(),
+                                new WaitLiftAtTarget(lift, 1, 1.5, 1).asProxy(),
 
-                                new WaitWristAtTarget(wrist, 1, .2).asProxy(),
+                                new WaitWristAtTarget(wrist, 1, .2,3).asProxy(),
 
                                 new SetExtArmGoal(extend,
                                                 presetExtArmDistances.PICKUP_UPRIGHT_CONE_GROUND
@@ -55,7 +54,7 @@ public class GroundIntakeUprightConePositions extends SequentialCommandGroup {
 
                                 new WaitCommand(2),
 
-                                new WaitLiftAtTarget(lift, 1, .5).asProxy());
+                                new WaitLiftAtTarget(lift, 1, .5, 1).asProxy());
 
         }
 }

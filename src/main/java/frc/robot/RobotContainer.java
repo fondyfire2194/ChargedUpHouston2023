@@ -18,7 +18,6 @@ import frc.robot.Constants.ExtendArmConstants;
 import frc.robot.Constants.LiftArmConstants;
 import frc.robot.Constants.OIConstants;
 import frc.robot.Constants.WristConstants;
-import frc.robot.commands.DeliverRoutines.DeliverPiecePositions;
 import frc.robot.commands.DeliverRoutines.EjectPieceFromIntake;
 import frc.robot.commands.DeliverRoutines.GetDeliverAngleSettings;
 import frc.robot.commands.ExtendArm.JogExtendArm;
@@ -54,7 +53,6 @@ import frc.robot.subsystems.LightStrip.ledColors;
 import frc.robot.subsystems.LimelightVision;
 import frc.robot.subsystems.WristSubsystem;
 import frc.robot.utils.AutoFactory;
-import frc.robot.utils.LEDControllerI2C;
 import frc.robot.utils.TrajectoryFactory;
 
 public class RobotContainer {
@@ -79,8 +77,6 @@ public class RobotContainer {
         public AutoFactory m_autoFactory;
 
         public TrajectoryFactory m_tf;
-
-        public LEDControllerI2C lcI2;
 
         public FieldSim m_fieldSim = null;
 
@@ -197,9 +193,9 @@ public class RobotContainer {
                 // DO NOT USE LeftBumper m_driverController.leftBumper().onTrue(new
                 // ToggleFieldOriented(m_drive));
 
-                m_driverController.rightTrigger().whileTrue(new IntakePiece(m_intake));
+                m_driverController.rightTrigger().whileTrue(new IntakePiece(m_intake, 11));
 
-                m_driverController.rightBumper().whileTrue(new EjectPieceFromIntake(m_intake));
+                m_driverController.rightBumper().whileTrue(new EjectPieceFromIntake(m_intake, 10));
 
                 // m_driverController.a().
 
@@ -214,7 +210,8 @@ public class RobotContainer {
                 m_driverController.y()
                                 .onTrue(new LoadStationPositions(m_liftArm, m_wrist, m_extendArm, m_intake)
                                                 .withTimeout(10))
-                                .onTrue(new IntakePiece(m_intake));
+                                .onTrue(new IntakePiece(m_intake, 11));
+
                 m_driverController.a()
                                 .onTrue(new ToggleFieldOriented(m_drive));
 
@@ -260,7 +257,7 @@ public class RobotContainer {
                 m_coDriverController.rightBumper()
                                 .onTrue(new LoadSubstationPositions(m_liftArm, m_wrist, m_extendArm, m_intake)
                                                 .withTimeout(8))
-                                .onTrue(new IntakePiece(m_intake));
+                                .onTrue(new IntakePiece(m_intake, 11));
 
                 m_coDriverController.rightTrigger()
                                 .onTrue(new ConditionalCommand(
@@ -276,7 +273,7 @@ public class RobotContainer {
                                                 .withTimeout(10),
                                 () -> m_coDriverController.getHID().getLeftBumper()));
 
-                // m_coDriverController.x().
+                m_coDriverController.x().onTrue(deliverPositionsCommand(1).withTimeout(8));
 
                 // m_coDriverController.y()
 
@@ -327,7 +324,8 @@ public class RobotContainer {
                                 () -> m_wrist.setController(WristConstants.wristFastConstraints, 2, false)));
 
                 m_armsController.b().onTrue(Commands.runOnce(
-                                () -> m_liftArm.setController(LiftArmConstants.liftArmFastConstraints, 6, false)));
+                                () -> m_liftArm.setController(LiftArmConstants.liftArmFastConstraints, 6, false)))
+                                .onFalse(new EjectPieceFromIntake(m_intake, 12).withTimeout(3));
 
                 m_armsController.x().onTrue(Commands.runOnce(
                                 () -> m_liftArm.setController(LiftArmConstants.liftArmFastConstraints, 0, false)));

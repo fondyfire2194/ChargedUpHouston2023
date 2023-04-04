@@ -14,12 +14,15 @@ public class WaitExtendAtTarget extends CommandBase {
   private double m_startInRangeTime;
   private double m_range;
   private double m_inRangeTime;
+  private double m_maxTime;
+  private double maxStartTime;
 
-  public WaitExtendAtTarget(ExtendArmSubsystem extend, double inRangeTime, double range) {
+  public WaitExtendAtTarget(ExtendArmSubsystem extend, double inRangeTime, double range, double maxTime) {
     // Use addRequirements() here to declare subsystem dependencies.
     m_extend = extend;
     m_inRangeTime = inRangeTime;
     m_range = range;
+    m_maxTime = maxTime;
 
   }
 
@@ -27,6 +30,7 @@ public class WaitExtendAtTarget extends CommandBase {
   @Override
   public void initialize() {
     m_startInRangeTime = 0;
+    maxStartTime = Timer.getFPGATimestamp();
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -49,7 +53,7 @@ public class WaitExtendAtTarget extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return m_extend.atTargetPosition()
+    return m_extend.atTargetPosition() || Timer.getFPGATimestamp() > maxStartTime + m_maxTime
         || m_startInRangeTime != 0 && Timer.getFPGATimestamp() > m_startInRangeTime + m_inRangeTime;
 
   }

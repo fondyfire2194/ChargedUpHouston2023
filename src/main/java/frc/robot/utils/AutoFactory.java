@@ -60,7 +60,7 @@ public class AutoFactory {
 
     private Command command1 = new DoNothing();
 
-    private Command command1A = new DoNothing();
+    private Command command0 = new DoNothing();
 
     private boolean traj1Reqd;
 
@@ -107,6 +107,7 @@ public class AutoFactory {
         m_startLocationChooser.addOption("LeftShelf", 3);
 
         m_startLocationChooser.addOption("RightShelf", 4);
+      
 
         m_autoChooser.setDefaultOption("Do Nothing", 0);
 
@@ -116,6 +117,7 @@ public class AutoFactory {
 
         m_autoChooser.addOption("DeliverTop", 3);
 
+
         m_autoChooser1.setDefaultOption("Do Nothing", 0);
 
         m_autoChooser1.addOption("BalanceCharge", 1);
@@ -123,6 +125,7 @@ public class AutoFactory {
         m_autoChooser1.addOption("DriveThroughCharge", 2);
 
         m_autoChooser1.addOption("DriveOutZone", 3);
+        
 
     }
 
@@ -173,7 +176,7 @@ public class AutoFactory {
 
         if (autoselect == 2) {
 
-            command1A = new GetDeliverAngleSettingsAuto(m_lift, m_extend, m_wrist, m_intake, 1);
+            command0 = new GetDeliverAngleSettingsAuto(m_lift, m_extend, m_wrist, m_intake, 1);
 
             tempCommand = getDeliverMid();// places whichever piece is at intake
 
@@ -181,7 +184,7 @@ public class AutoFactory {
 
         if (autoselect == 3) {
 
-            command1A = new GetDeliverAngleSettingsAuto(m_lift, m_extend, m_wrist, m_intake, 2);
+            command0 = new GetDeliverAngleSettingsAuto(m_lift, m_extend, m_wrist, m_intake, 2);
 
             tempCommand = getDeliverTop();// places whichever piece is at intake
 
@@ -292,8 +295,8 @@ public class AutoFactory {
 
     public void createCommands() {
 
+        command0 = new DoNothing();
         command1 = new DoNothing();
-        command1A = new DoNothing();
         command2 = new DoNothing();
         command3 = new DoNothing();
 
@@ -308,7 +311,7 @@ public class AutoFactory {
 
         createCommands();
 
-        autonomousCommand = new SequentialCommandGroup(command1A, command1, command2, command3);
+        autonomousCommand = new SequentialCommandGroup(command0, command1, command2, command3);
 
         return autonomousCommand;
 
@@ -317,8 +320,6 @@ public class AutoFactory {
     private Command getDeliverMid() {
 
         return new SequentialCommandGroup(
-
-               // new GetDeliverAngleSettingsAuto(m_lift, m_extend, m_wrist, m_intake, 1),
 
                 new DeliverPiecePositions(m_lift, m_extend, m_wrist, m_intake),
 

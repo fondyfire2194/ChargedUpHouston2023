@@ -36,14 +36,14 @@ public class DeliverPiecePositionsTeleop extends SequentialCommandGroup {
                                 new SetWristGoal(wrist, WristConstants.wristFastConstraints,
                                                 wrist.deliverAngleRads).asProxy(),
 
-                                new WaitLiftAtTarget(lift, .5, 3).asProxy(),
+                                new WaitLiftAtTarget(lift, .5, 3, 1).asProxy(),
 
-                                new WaitWristAtTarget(wrist, .5, .2).asProxy(),
+                                new WaitWristAtTarget(wrist, .5, .2, 2).asProxy(),
 
                                 new SetExtArmGoal(extend, ExtendArmConstants.extendArmFastConstraints,
                                                 extend.deliverDistance).asProxy(),
 
-                                new WaitExtendAtTarget(extend, .5, 5).asProxy());
+                                new WaitExtendAtTarget(extend, .5, 5, 3).asProxy());
 
         }
 }

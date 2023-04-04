@@ -41,9 +41,9 @@ public class LoadStationPositions extends SequentialCommandGroup {
                                                                 .getAngleRads())
                                                 .asProxy(),
 
-                                new WaitLiftAtTarget(lift, 1, .5).asProxy(),
+                                new WaitLiftAtTarget(lift, 1, .5, 1).asProxy(),
 
-                                new WaitWristAtTarget(wrist, 1, .2).asProxy(),
+                                new WaitWristAtTarget(wrist, 1, .2, 3).asProxy(),
 
                                 new SetExtArmGoal(extend,
                                                 ExtendArmConstants.extendArmFastConstraints,
@@ -51,7 +51,7 @@ public class LoadStationPositions extends SequentialCommandGroup {
                                                                 .getDistance())
                                                 .asProxy(),
 
-                                new WaitExtendAtTarget(extend, 1, 4).asProxy());
+                                new WaitExtendAtTarget(extend, 1, 4, 3).asProxy());
 
         }
 }

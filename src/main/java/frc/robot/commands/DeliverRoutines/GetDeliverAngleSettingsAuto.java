@@ -92,8 +92,6 @@ public class GetDeliverAngleSettingsAuto extends CommandBase {
     m_ext.deliverDistance = m_extDistance;
     m_wrist.deliverAngleRads = m_wristAngleRads;
 
-    SmartDashboard.putNumber("EXRDELI", m_ext.deliverDistance);
-
   }
 
   // Called once the command ends or is interrupted.

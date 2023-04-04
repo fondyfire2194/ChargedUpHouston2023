@@ -10,9 +10,11 @@ import frc.robot.subsystems.IntakeSubsystem;
 public class IntakePiece extends CommandBase {
   /** Creates a new GetPieceAtIntake. */
   private IntakeSubsystem m_intake;
+  private double m_volts;
 
-  public IntakePiece(IntakeSubsystem intake) {
+  public IntakePiece(IntakeSubsystem intake, double volts) {
     m_intake = intake;
+    m_volts = volts;
     addRequirements(m_intake);
   }
 
@@ -26,14 +28,14 @@ public class IntakePiece extends CommandBase {
   @Override
   public void execute() {
 
-    m_intake.mIntakeMotor.setVoltage(11);
+    m_intake.setMotorVolts(m_volts);
 
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    m_intake.mIntakeMotor.setVoltage(.5);
+    m_intake.setMotorVolts(.5);
   }
 
   // Returns true when the command should end.

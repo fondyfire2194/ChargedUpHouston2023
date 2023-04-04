@@ -33,25 +33,23 @@ public class DeliverPiecePositions extends SequentialCommandGroup {
                 // addCommands(new FooCommand(), new BarCommand());
                 addCommands(
 
-                
-
                                 new SetLiftGoal(lift, LiftArmConstants.liftArmFastConstraints, lift.deliverInches)
                                                 .asProxy(),
 
                                 new SetWristGoal(wrist, WristConstants.wristFastConstraints, wrist.deliverAngleRads)
                                                 .asProxy(),
 
-                                new WaitLiftAtTarget(lift, .5, 3).asProxy(),
+                                new WaitLiftAtTarget(lift, .5, 3, 1).asProxy(),
 
-                                new WaitWristAtTarget(wrist, .5, .2).asProxy().withTimeout(4),
+                                new WaitWristAtTarget(wrist, .5, .2, 3).asProxy(),
 
                                 new SetExtArmGoal(extend, ExtendArmConstants.extendArmFastConstraints,
                                                 extend.deliverDistance)
                                                 .asProxy(),
 
-                                new WaitExtendAtTarget(extend, .5, 5).asProxy(),
+                                new WaitExtendAtTarget(extend, .5, 5, 3).asProxy(),
 
-                                new EjectPieceFromIntake(intake).withTimeout(1),
+                                new EjectPieceFromIntake(intake, 10).withTimeout(1),
 
                                 new SetExtArmGoal(extend, ExtendArmConstants.extendArmFastConstraints,
                                                 presetExtArmDistances.TRAVEL.getDistance()).asProxy(),
@@ -59,11 +57,11 @@ public class DeliverPiecePositions extends SequentialCommandGroup {
                                 new SetWristGoal(wrist, WristConstants.wristFastConstraints,
                                                 presetWristAngles.TRAVEL.getAngleRads()).asProxy(),
 
-                                new WaitWristAtTarget(wrist, 1, .4).asProxy(),
+                                new WaitWristAtTarget(wrist, 1, .4, 2).asProxy(),
 
                                 new SetLiftGoal(lift, presetLiftAngles.TRAVEL.getInches()).asProxy(),
 
-                                new WaitLiftAtTarget(lift, 1, 1).asProxy());
+                                new WaitLiftAtTarget(lift, 1, 1, 1).asProxy());
 
         }
 }
