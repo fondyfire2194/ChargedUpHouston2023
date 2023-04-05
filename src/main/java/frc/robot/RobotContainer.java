@@ -36,6 +36,7 @@ import frc.robot.commands.PickupRoutines.LoadSubstationPositions;
 import frc.robot.commands.TeleopRoutines.RetractWristExtendLiftHome;
 import frc.robot.commands.TeleopRoutines.RetractWristExtendLiftTravel;
 import frc.robot.commands.TeleopRoutines.RotateToAngle;
+import frc.robot.commands.TeleopRoutines.TurnToAngle;
 import frc.robot.commands.Wrist.JogWrist;
 import frc.robot.commands.Wrist.PositionProfileWrist;
 import frc.robot.commands.swerve.SetSwerveDrive;
@@ -332,16 +333,16 @@ public class RobotContainer {
                 // wrist
 
                 m_armsController.start().onTrue(Commands.runOnce(
-                                () -> m_wrist.setController(WristConstants.wristFastConstraints, .15, false)));
+                                () -> m_wrist.setController(WristConstants.wristFastConstraints, .15,
+                                                false)));
 
-                m_armsController.povUp().onTrue(new RotateToAngle(m_drive, 178));
-                // ext arm
+                m_armsController.povUp().onTrue(new TurnToAngle(m_drive, 0, false));
 
-                m_armsController.povDown().onTrue(new RotateToAngle(m_drive, 0));
+                m_armsController.povDown().onTrue(new TurnToAngle(m_drive, 30, false));
 
-                m_armsController.povLeft().onTrue(new RotateToAngle(m_drive, -45));
+                m_armsController.povLeft().onTrue(new TurnToAngle(m_drive, 60, false));
 
-                m_armsController.povRight().onTrue(new RotateToAngle(m_drive, 45));
+                m_armsController.povRight().onTrue(new TurnToAngle(m_drive, 90, false));
 
                 m_armsController.rightTrigger()
                                 .onTrue(Commands.runOnce(() -> m_extendArm.setController(
@@ -408,6 +409,11 @@ public class RobotContainer {
 
                 return new LoadSubstationPositions(m_liftArm, m_wrist, m_extendArm, m_intake);
 
+        }
+
+        public Command getRotateCommand(double angle) {
+
+                return new RotateToAngle(m_drive, angle);
         }
 
         public void simulationPeriodic() {

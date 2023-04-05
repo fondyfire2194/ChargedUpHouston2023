@@ -13,6 +13,7 @@ import edu.wpi.first.hal.simulation.SimDeviceDataJNI;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
+import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -127,8 +128,10 @@ public class DriveSubsystem extends SubsystemBase {
 
   public Pose2d activeTagPose = new Pose2d();
 
-  public ProfiledPIDController rotatePID = new ProfiledPIDController(PPConstants.kPRotateController,
-      PPConstants.kIRotateController, PPConstants.kDRotateController, DriveConstants.turnConstraints);
+  public SimpleMotorFeedforward rotsff = new SimpleMotorFeedforward(.06, .2);
+
+  public PIDController rotatePID = new PIDController(DriveConstants.kTurnP,
+      DriveConstants.kTurnI, DriveConstants.kTurnD);
 
   public PIDController xPID = new PIDController(
       PPConstants.kPXController, PPConstants.kIXController, PPConstants.kIXController); // X
@@ -275,6 +278,17 @@ public class DriveSubsystem extends SubsystemBase {
     m_backRight.setDesiredState(swerveModuleStates[3]);
     // SmartDashboard.putNumber("DRSROT",
     // swerveModuleStates[0].speedMetersPerSecond);
+  }
+
+   /**
+     * Sets swerve module states using Chassis Speeds.
+     *
+     * @param chassisSpeeds The desired Chassis Speeds
+     */
+    public void setModuleStates(ChassisSpeeds chassisSpeeds) {
+      SwerveModuleState[] swerveModuleStates =
+          DriveConstants.m_kinematics.toSwerveModuleStates(chassisSpeeds);
+      setModuleStates(swerveModuleStates);
   }
 
   public void arcadeDrive(double xSpeed, double rotAngle) {
@@ -644,7 +658,7 @@ public class DriveSubsystem extends SubsystemBase {
     return i.turnInPosition(targetAngle);
   }
 
-  public ProfiledPIDController getRotatePID(){
+  public PIDController getRotatePID() {
     return rotatePID;
   }
 

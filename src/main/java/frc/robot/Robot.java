@@ -202,7 +202,7 @@ public class Robot extends TimedRobot {
     m_robotContainer.m_wrist.setController(WristConstants.wristFastConstraints,
         presetWristAngles.HOME.getAngleRads(), false);
 
-    m_robotContainer.m_drive.m_fieldOriented = true;
+  //  m_robotContainer.m_drive.m_fieldOriented = true;
   }
 
   /** This function is called periodically during operator control. */

@@ -34,13 +34,14 @@ public class DeliverCubeFast extends SequentialCommandGroup {
 
         new ConditionalCommand(
 
-            Commands.runOnce(() -> lift.setController(LiftArmConstants.liftArmFastConstraints, 6.5, false)),
+            Commands.runOnce(() -> lift.setController(LiftArmConstants.liftArmFastConstraints, 10, false)),
 
-            Commands.runOnce(() -> lift.setController(LiftArmConstants.liftArmFastConstraints, 4.25, false)),
+            Commands.runOnce(() -> lift.setController(LiftArmConstants.liftArmFastConstraints, 6.5, false)),
 
             () -> toplevel),
 
         new WaitCommand(1),
+
 
         new WaitLiftAtTarget(lift, 2, .5, 5),
 
@@ -48,9 +49,9 @@ public class DeliverCubeFast extends SequentialCommandGroup {
 
         new ConditionalCommand(
 
-            new EjectPieceFromIntake(intake, 8).withTimeout(1),
+            new EjectPieceFromIntake(intake, 12).withTimeout(1),
 
-            new EjectPieceFromIntake(intake, 7).withTimeout(1),
+            new EjectPieceFromIntake(intake, 8).withTimeout(1),
 
             () -> toplevel));
 

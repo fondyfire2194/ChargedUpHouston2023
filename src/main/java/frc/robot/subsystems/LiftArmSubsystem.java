@@ -36,7 +36,7 @@ public class LiftArmSubsystem extends SubsystemBase {
 
         CLEAR_ARMS(38, .85),
 
-        PICKUP_CUBE_GROUND(42, 2.02),
+        PICKUP_CUBE_GROUND(42, 2.5),
 
         PICKUP_UPRIGHT_CONE_GROUND(43, 2.5), // 42 2.02
 

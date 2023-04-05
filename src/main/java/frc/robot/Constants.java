@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
@@ -134,15 +135,33 @@ public final class Constants {
 
     public static final TrapezoidProfile.Constraints turnConstraints
 
-        = new Constraints(1, 2);
+        = new Constraints(90, 90);
 
-    public static double kTurnP = .05;
+   
+
+    public static double kTurnP = .016;
 
     public static double kTurnI = 0;
 
     public static double kTurnD = 0;
 
   }
+
+  public static class SwerveTransformPID {
+    public static final double PID_XKP = 2;
+    public static final double PID_XKI = 0.0;
+    public static final double PID_XKD = 0.0;
+    public static final double PID_YKP = 2;
+    public static final double PID_YKI = 0.0;
+    public static final double PID_YKD = 0.0;
+    public static final double PID_TKP = 9.0;
+    public static final double PID_TKI = 0.0;
+    public static final double PID_TKD = 0.0;
+
+    public static final double MAX_ANGULAR_VELOCITY = 1.0;
+    public static final double MAX_ANGULAR_ACCELERATION = 1;
+    public static final double STD_DEV_MOD = 2.0;
+}
 
   public static final class DriverConstants {
 
@@ -347,9 +366,11 @@ public final class Constants {
   }
 
   public static final class PPConstants {
-    // public static final double kMaxSpeedMetersPerSecond = DriveConstants.kPhysicalMaxSpeedMetersPerSecond / 4;
-    // public static final double kMaxAngularSpeedRadiansPerSecond = DriveConstants.kPhysicalMaxAngularSpeedRadiansPerSecond
-    //     / 10;
+    // public static final double kMaxSpeedMetersPerSecond =
+    // DriveConstants.kPhysicalMaxSpeedMetersPerSecond / 4;
+    // public static final double kMaxAngularSpeedRadiansPerSecond =
+    // DriveConstants.kPhysicalMaxAngularSpeedRadiansPerSecond
+    // / 10;
     // public static final double kMaxAccelerationMetersPerSecondSquared = 3;
 
     public static final double kPXController = 2;

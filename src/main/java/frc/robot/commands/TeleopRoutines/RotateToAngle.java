@@ -4,13 +4,13 @@
 
 package frc.robot.commands.TeleopRoutines;
 
-import edu.wpi.first.wpilibj2.command.ProfiledPIDCommand;
+import edu.wpi.first.wpilibj2.command.PIDCommand;
 import frc.robot.subsystems.DriveSubsystem;
 
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
-public class RotateToAngle extends ProfiledPIDCommand {
+public class RotateToAngle extends PIDCommand {
   /** Creates a new RotateToAngle. */
   private DriveSubsystem m_drive;
 
@@ -20,16 +20,20 @@ public class RotateToAngle extends ProfiledPIDCommand {
         // The controller that the command will use
         drive.getRotatePID(),
         // This should return the measurement
-        drive::getHeadingDegrees,
-        // return setpoint
-        angle,
-        // use the output
-        (output, setpoint) -> drive.drive(0, 0, output), drive);
+        () -> drive.getHeadingDegrees(),
+        // This should return the setpoint (can also be a constant)
+        () -> angle,
+        // This uses the output
+        output -> {
+          drive.drive(0, 0, output * 3);
+        }, drive);
+    m_drive = drive;
 
-    super.m_controller.setTolerance(1);
+    super.m_controller.setTolerance(2);
 
     super.m_controller.enableContinuousInput(-180, 180);
 
+    // this number could be changed
 
     addRequirements(drive);
     // Use addRequirements() here to declare subsystem dependencies.
