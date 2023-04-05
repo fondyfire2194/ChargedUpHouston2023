@@ -271,7 +271,7 @@ public class SwerveModuleSM extends SubsystemBase {
 
     if (m_isOpenLoop && !isRotating) {
 
-      driveMotorMoveOpenLoop(state.speedMetersPerSecond / DriveConstants.kPhysicalMaxSpeedMetersPerSecond);
+      driveMotorMoveOpenLoop(state.speedMetersPerSecond / DriveConstants.kMaxSpeedMetersPerSecond);
 
     } else {
 

@@ -61,7 +61,7 @@ public class IntakeSubsystem extends SubsystemBase {
 
     mIntakeMotor.setInverted(true);
 
-    mIntakeMotor.setOpenLoopRampRate(.5);
+    mIntakeMotor.setOpenLoopRampRate(0);
 
     mIntakeMotor.setClosedLoopRampRate(.5);
 

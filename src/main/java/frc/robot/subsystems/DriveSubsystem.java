@@ -12,6 +12,7 @@ import edu.wpi.first.hal.SimDouble;
 import edu.wpi.first.hal.simulation.SimDeviceDataJNI;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -126,8 +127,8 @@ public class DriveSubsystem extends SubsystemBase {
 
   public Pose2d activeTagPose = new Pose2d();
 
-  public PIDController rotatePID = new PIDController(PPConstants.kPRotateController,
-      PPConstants.kIRotateController, PPConstants.kDRotateController);
+  public ProfiledPIDController rotatePID = new ProfiledPIDController(PPConstants.kPRotateController,
+      PPConstants.kIRotateController, PPConstants.kDRotateController, DriveConstants.turnConstraints);
 
   public PIDController xPID = new PIDController(
       PPConstants.kPXController, PPConstants.kIXController, PPConstants.kIXController); // X
@@ -641,6 +642,10 @@ public class DriveSubsystem extends SubsystemBase {
 
   public boolean getTurnInPosition(SwerveModuleSM i, double targetAngle) {
     return i.turnInPosition(targetAngle);
+  }
+
+  public ProfiledPIDController getRotatePID(){
+    return rotatePID;
   }
 
   public PIDController getXPID() {

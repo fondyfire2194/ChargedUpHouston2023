@@ -42,19 +42,20 @@ public class AutoBalanceBackwards extends CommandBase {
       m_drive.drive(DriveConstants.kMaxSpeedMetersPerSecond * -0.8, 0, 0);
     } else {
       double currentPitch = currentGyro - gyroStartPosition;
-      double currentPitchRadians = (currentPitch / 180) * Math.PI;
+      double currentPitchRadians = ((currentPitch * Math.PI) / 180);
       double motorMultiplier = Math.sin(currentPitchRadians);
 
       double motorSpeed = motorMultiplier * DriveConstants.kMaxSpeedMetersPerSecond * 1.7;
 
       SmartDashboard.putNumber("motorNum", motorMultiplier);
       // if (Math.abs(motorSpeed) > DriveConstants.kMaxSpeedMetersPerSecond) {
-      //   motorSpeed = Math.signum(motorSpeed) * DriveConstants.kMaxSpeedMetersPerSecond;
+      // motorSpeed = Math.signum(motorSpeed) *
+      // DriveConstants.kMaxSpeedMetersPerSecond;
       // }
       m_drive.drive(motorSpeed, 0, 0);
       // if (motorMultiplier < 0.05 || motorMultiplier > -0.05) {
-      //   endCommand = true;
-      //   m_drive.stopModules();
+      // endCommand = true;
+      // m_drive.stopModules();
       // }
     }
   }

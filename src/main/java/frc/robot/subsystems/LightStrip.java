@@ -88,6 +88,10 @@ public class LightStrip {
 
   }
 
+  public boolean getConeActive() {
+    return currentColor == ledColors.YELLOW;
+  }
+
   Thread monitorThread = new Thread(new Runnable() {
     @Override
     public void run() {

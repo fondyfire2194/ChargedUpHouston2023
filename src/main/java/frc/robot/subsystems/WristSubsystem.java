@@ -88,7 +88,7 @@ public class WristSubsystem extends SubsystemBase {
 
     private double positionChangeper20ms;
 
-    public ProfiledPIDController m_wristController = new ProfiledPIDController(0.005, 0, 0,
+    public ProfiledPIDController m_wristController = new ProfiledPIDController(0.1, 0, 0,
             WristConstants.wristFastConstraints, .02);
 
     public double deliverAngleRads = presetWristAngles.PLACE_TOP.getAngleRads();
@@ -227,7 +227,7 @@ public class WristSubsystem extends SubsystemBase {
             if (initial)
                 m_wristController.reset(new TrapezoidProfile.State(presetWristAngles.HOME.getAngleRads(), 0));
             else
-                m_wristController.reset(new TrapezoidProfile.State(getAngleRadians(), 0));
+                m_wristController.reset(new TrapezoidProfile.State(getAngleRadians(), getRadsPerSec()));
 
         }
 

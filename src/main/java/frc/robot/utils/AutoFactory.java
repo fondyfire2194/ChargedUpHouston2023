@@ -16,6 +16,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.commands.Auto.DoNothing;
+import frc.robot.commands.DeliverRoutines.DeliverCubeFast;
 import frc.robot.commands.DeliverRoutines.DeliverPiecePositions;
 import frc.robot.commands.DeliverRoutines.GetDeliverAngleSettingsAuto;
 import frc.robot.subsystems.DriveSubsystem;
@@ -107,7 +108,6 @@ public class AutoFactory {
         m_startLocationChooser.addOption("LeftShelf", 3);
 
         m_startLocationChooser.addOption("RightShelf", 4);
-      
 
         m_autoChooser.setDefaultOption("Do Nothing", 0);
 
@@ -117,7 +117,6 @@ public class AutoFactory {
 
         m_autoChooser.addOption("DeliverTop", 3);
 
-
         m_autoChooser1.setDefaultOption("Do Nothing", 0);
 
         m_autoChooser1.addOption("BalanceCharge", 1);
@@ -125,7 +124,6 @@ public class AutoFactory {
         m_autoChooser1.addOption("DriveThroughCharge", 2);
 
         m_autoChooser1.addOption("DriveOutZone", 3);
-        
 
     }
 
@@ -176,17 +174,21 @@ public class AutoFactory {
 
         if (autoselect == 2) {
 
-            command0 = new GetDeliverAngleSettingsAuto(m_lift, m_extend, m_wrist, m_intake, 1);
+            // command0 = new GetDeliverAngleSettingsAuto(m_lift, m_extend, m_wrist,
+            // m_intake, 1);
+            // tempCommand = getDeliverMid();// places whichever piece is at intake
 
-            tempCommand = getDeliverMid();// places whichever piece is at intake
+            tempCommand = new DeliverCubeFast(m_lift, m_wrist, m_intake, m_extend, false);
 
         }
 
         if (autoselect == 3) {
 
-            command0 = new GetDeliverAngleSettingsAuto(m_lift, m_extend, m_wrist, m_intake, 2);
+            // command0 = new GetDeliverAngleSettingsAuto(m_lift, m_extend, m_wrist,
+            // m_intake, 2);
+            // tempCommand = getDeliverTop();// places whichever piece is at intake
 
-            tempCommand = getDeliverTop();// places whichever piece is at intake
+            tempCommand = new DeliverCubeFast(m_lift, m_wrist, m_intake, m_extend, true);
 
         }
 

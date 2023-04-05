@@ -71,7 +71,7 @@ public class ExtendArmSubsystem extends SubsystemBase {
 
     public SparkMaxPIDController m_posnController;
 
-    public ProfiledPIDController m_extController = new ProfiledPIDController(0.005, 0, 0,
+    public ProfiledPIDController m_extController = new ProfiledPIDController(0.1, 0, 0,
             ExtendArmConstants.extendArmFastConstraints);
 
     private double inPositionBandwidth = .25;
@@ -243,7 +243,7 @@ public class ExtendArmSubsystem extends SubsystemBase {
             if (initial)
                 m_extController.reset(new TrapezoidProfile.State(presetExtArmDistances.HOME.getDistance(), 0));
             else
-                m_extController.reset(new TrapezoidProfile.State(getPositionInches(), 0));
+                m_extController.reset(new TrapezoidProfile.State(getPositionInches(), getInchesPerSec()));
 
         }
         m_feedforward = new SimpleMotorFeedforward(Pref.getPref("extKs"), Pref.getPref("extKv"));

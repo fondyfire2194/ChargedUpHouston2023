@@ -116,15 +116,31 @@ public final class Constants {
 
     public static final boolean kGyroReversed = true;
 
+    public static final double moduleRadius = .5;
+
+    public static final double moduleCircumference = Math.PI * moduleRadius * 2; // 3.1 approx
+
     public static final double kMaxSpeedMetersPerSecond = 3.25;
 
-    public static final double kMaxRotationRadiansPerSecond = Math.PI; /// 2;
+    public static final double timePerRevMaxSpeed = moduleCircumference / kMaxSpeedMetersPerSecond;// .9
 
-    public static final double kMaxRotationRadiansPerSecondSquared = Math.PI;
+    public static final double kMaxRotationRadiansPerSecond = 2 * Math.PI * timePerRevMaxSpeed;
+
+    public static final double kMaxRotationRadiansPerSecondSquared = kMaxRotationRadiansPerSecond;
 
     public static double kPhysicalMaxSpeedMetersPerSecond = 3.25;
 
     public static int kPhysicalMaxAngularSpeedRadiansPerSecond = 3;
+
+    public static final TrapezoidProfile.Constraints turnConstraints
+
+        = new Constraints(1, 2);
+
+    public static double kTurnP = .05;
+
+    public static double kTurnI = 0;
+
+    public static double kTurnD = 0;
 
   }
 
@@ -157,23 +173,7 @@ public final class Constants {
 
         360 / mk4iL1TurnGearRatio;
 
-    // public static final double kTurningRadiansPerEncoderRev =
-    // Units.degreesToRadians(kTurningDegreesPerEncRev);
-
-    // max turn speed = (5400/ 21.43) revs per min 240 revs per min 4250 deg per
-    // min
-
     public static double kVoltCompensation = 12.6;
-
-    public static double kSMmaxAccel = 90;// deg per sec per sec
-
-    public static double maxVel = 90; // deg per sec
-
-    public static double allowedErr = .05;// deg
-
-    public static double kMaxModuleAngularSpeedDegPerSec = 90;
-
-    public static final double kMaxModuleAngularAccelerationDegreesPerSecondSquared = 90;
 
   }
 
@@ -214,11 +214,11 @@ public final class Constants {
     // arm feedforward
     public static final double ksVolts = .6;//
 
-    public static final double kgVolts = .52;
+    public static final double kgVolts = .34;
 
     public static final TrapezoidProfile.Constraints liftArmFastConstraints
 
-        = new Constraints(15, 15);
+        = new Constraints(15, 25);
 
     public static final double JOG_SLEW_RATE = 10;
 
@@ -234,7 +234,7 @@ public final class Constants {
   public static final class ExtendArmConstants {
 
     public static double GEAR_RATIO = 21;
-    public static double PULLEY_TEETH = 30;//24;// 30
+    public static double PULLEY_TEETH = 30;// 24;// 30
     public static double TOOTH_BELT_PITCH = Units.metersToInches(.005);// .2
 
     public static final double MIN_POSITION = -1;
@@ -243,19 +243,15 @@ public final class Constants {
 
     public static final double INCHES_PER_ENCODER_REV = TOOTH_BELT_PITCH * PULLEY_TEETH / GEAR_RATIO;// .28
 
-    public static final double MAX_RATE_INCHES_PER_SEC = (INCHES_PER_ENCODER_REV * 11000) / 60;//51
+    public static final double MAX_RATE_INCHES_PER_SEC = (INCHES_PER_ENCODER_REV * 11000) / 60;// 51
 
     public static double ksExtArmVolts = .05;
 
-    public static double kvExtArmVoltSecondsPerInch = .75;// 10/12 = .8 max
+    public static double kvExtArmVoltSecondsPerInch = .26;// 10/12 = .8 max
 
     public static double kaExtArmVoltSecondsSquaredPerInch = 0;
 
     public static double kControllerDeadband = 0.05;
-
-    // public static final TrapezoidProfile.Constraints extendArmConstraints
-
-    // = new Constraints(15, 30);
 
     public static final TrapezoidProfile.Constraints extendArmFastConstraints
 
@@ -263,7 +259,7 @@ public final class Constants {
 
     public static final double JOG_SLEW_RATE = 10;
 
-    public static final double kgVolts = 0.2;
+    public static final double kgVolts = 0.02;
 
   }
 
@@ -303,9 +299,9 @@ public final class Constants {
 
     public static double ksVolts = .06;
 
-    public static double kgVolts = .25;
+    public static double kgVolts = .17;
 
-    public static double kvWristVoltSecondsPerRadian = 1.2;//
+    public static double kvWristVoltSecondsPerRadian = 1.65;//
 
     public static double kaWristVoltSecondsSquaredPerRadian;
 
@@ -351,10 +347,10 @@ public final class Constants {
   }
 
   public static final class PPConstants {
-    public static final double kMaxSpeedMetersPerSecond = DriveConstants.kPhysicalMaxSpeedMetersPerSecond / 4;
-    public static final double kMaxAngularSpeedRadiansPerSecond = DriveConstants.kPhysicalMaxAngularSpeedRadiansPerSecond
-        / 10;
-    public static final double kMaxAccelerationMetersPerSecondSquared = 3;
+    // public static final double kMaxSpeedMetersPerSecond = DriveConstants.kPhysicalMaxSpeedMetersPerSecond / 4;
+    // public static final double kMaxAngularSpeedRadiansPerSecond = DriveConstants.kPhysicalMaxAngularSpeedRadiansPerSecond
+    //     / 10;
+    // public static final double kMaxAccelerationMetersPerSecondSquared = 3;
 
     public static final double kPXController = 2;
     public static final double kDXController = 0;
