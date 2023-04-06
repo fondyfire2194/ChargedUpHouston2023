@@ -18,7 +18,9 @@ import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.commands.Auto.DoNothing;
 import frc.robot.commands.DeliverRoutines.DeliverCubeFast;
 import frc.robot.commands.DeliverRoutines.DeliverPiecePositions;
-import frc.robot.commands.DeliverRoutines.GetDeliverAngleSettingsAuto;
+import frc.robot.commands.TeleopRoutines.DriveAndPickup;
+import frc.robot.commands.TeleopRoutines.TurnToAngle;
+import frc.robot.commands.TeleopRoutines.TurnToGamepiece;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.ExtendArmSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
@@ -30,6 +32,22 @@ public class AutoFactory {
 
     // SwerveAutoBuilder autoBuilder = new SwerveAutoBuilder(null, null, null, null,
     // null, null, null);
+
+    int sl_coopShelf_0 = 0;
+    int sl_coopLeftPipe_1 = 1;
+    int sl_coopRightPipe_2 = 2;
+    int sl_leftShelf_3 = 3;
+    int sl_rightShelf_4 = 4;
+    
+    int as_doNothing_0 = 0;
+    int as_pushCube_1 = 1;
+    int as_deliverMid_2 = 2;
+    int as_deliverTop_3 = 3;
+
+    int as1__balanceCharge_1 = 1;
+    int as1_driveThruCharge_2 = 2;
+    int as1_driveOutZone_3 = 3;
+    int as1_secondCube_4 = 4;
 
     List<PathPlannerTrajectory> pathGroup;
 
@@ -77,6 +95,10 @@ public class AutoFactory {
 
     private double startTime;
 
+    private boolean secondPieceRight;
+
+    private boolean secondPieceLeft;
+
     public AutoFactory(DriveSubsystem drive, LiftArmSubsystem lift, ExtendArmSubsystem extend,
             WristSubsystem wrist, IntakeSubsystem intake, TrajectoryFactory tf) {
 
@@ -109,6 +131,7 @@ public class AutoFactory {
 
         m_startLocationChooser.addOption("RightShelf", 4);
 
+
         m_autoChooser.setDefaultOption("Do Nothing", 0);
 
         m_autoChooser.addOption("PushCube", 1);
@@ -125,6 +148,8 @@ public class AutoFactory {
 
         m_autoChooser1.addOption("DriveOutZone", 3);
 
+        m_autoChooser1.addOption("PickupScore2ndCube", 4);
+
     }
 
     public Command getCommand1() {
@@ -137,63 +162,47 @@ public class AutoFactory {
 
         int autoselect = m_autoChooser.getSelected();
 
-        if (startLocation == 0 && autoselect == 1) {
+        if (startLocation == sl_coopShelf_0 && autoselect == as_pushCube_1) {
             traj1name = "PushCubeCenter";
             traj1Reqd = true;
         }
 
-        if (startLocation == 3 && autoselect == 1
+        if (startLocation == sl_leftShelf_3 && autoselect == as_pushCube_1
                 && DriverStation.getAlliance() == Alliance.Blue) {
             traj1name = "PushCubeLeftShelf";
             traj1Reqd = true;
         }
-        if (startLocation == 3 && autoselect == 1
+        if (startLocation == sl_leftShelf_3 && autoselect == as_pushCube_1
                 && DriverStation.getAlliance() == Alliance.Red) {
             traj1name = "PushCubeRightShelf";
             traj1Reqd = true;
         }
 
-        if (startLocation == 4 && autoselect == 1
+        if (startLocation == sl_rightShelf_4 && autoselect == as_pushCube_1
                 && DriverStation.getAlliance() == Alliance.Blue) {
             traj1name = "PushCubeRightShelf";
             traj1Reqd = true;
         }
 
-        if (startLocation == 4 && autoselect == 1
+        if (startLocation == sl_rightShelf_4 && autoselect == as_pushCube_1
                 && DriverStation.getAlliance() == Alliance.Red) {
             traj1name = "PushCubeLeftShelf";
             traj1Reqd = true;
         }
 
         if (traj1Reqd) {
-
             traj1 = m_tf.getPathPlannerTrajectory(traj1name, 2, 1, false);
-
             tempCommand = m_tf.followTrajectoryCommand(traj1, traj1Reqd).withTimeout(8);
         }
 
-        if (autoselect == 2) {
-
-            // command0 = new GetDeliverAngleSettingsAuto(m_lift, m_extend, m_wrist,
-            // m_intake, 1);
-            // tempCommand = getDeliverMid();// places whichever piece is at intake
-
+        if (autoselect == as_deliverMid_2) {
             tempCommand = new DeliverCubeFast(m_lift, m_wrist, m_intake, m_extend, false);
-
         }
 
-        if (autoselect == 3) {
-
-            // command0 = new GetDeliverAngleSettingsAuto(m_lift, m_extend, m_wrist,
-            // m_intake, 2);
-            // tempCommand = getDeliverTop();// places whichever piece is at intake
-
+        if (autoselect == as_deliverTop_3) {
             tempCommand = new DeliverCubeFast(m_lift, m_wrist, m_intake, m_extend, true);
-
         }
-
         return tempCommand;
-
     }
 
     public Command getCommand2() {
@@ -206,92 +215,115 @@ public class AutoFactory {
 
         int autoselect1 = m_autoChooser1.getSelected();
 
-        if (startLocation <= 2) {// any of the coop starts
-
-            if (autoselect1 == 1) {
-
+        if (startLocation <= sl_coopRightPipe_2) {// any of the coop starts
+            if (autoselect1 == as1__balanceCharge_1) {
                 tempCommand = m_drive.autoBalance();
             }
 
-            if (startLocation == 0 && autoselect1 == 2) {
-
+            if (startLocation == sl_coopShelf_0 && autoselect1 == as1_driveThruCharge_2) {
                 traj2name = "BackUpCenter";
-
                 traj2Reqd = true;
-
             }
 
-            if (startLocation == 1 && autoselect1 == 2 && DriverStation.getAlliance() == Alliance.Blue) {
-
+            if (startLocation == sl_coopLeftPipe_1 && autoselect1 == as1_driveThruCharge_2
+                    && DriverStation.getAlliance() == Alliance.Blue) {
                 traj2name = "BackUpLeftCenter";
-
                 traj2Reqd = true;
             }
 
-            if (startLocation == 1 && autoselect1 == 2 && DriverStation.getAlliance() == Alliance.Red) {
-
+            if (startLocation == sl_coopLeftPipe_1 && autoselect1 == as1_driveThruCharge_2
+                    && DriverStation.getAlliance() == Alliance.Red) {
                 traj2name = "BackUpRightCenter";
-
                 traj2Reqd = true;
             }
 
-            if (startLocation == 2 && autoselect1 == 2 && DriverStation.getAlliance() == Alliance.Blue) {
-
+            if (startLocation == sl_coopRightPipe_2 && autoselect1 == as1_driveThruCharge_2
+                    && DriverStation.getAlliance() == Alliance.Blue) {
                 traj2name = "BackUpRightCenter";
-
                 traj2Reqd = true;
-
             }
 
-            if (startLocation == 2 && autoselect1 == 2 && DriverStation.getAlliance() == Alliance.Red) {
-
+            if (startLocation == sl_coopRightPipe_2 && autoselect1 == as1_driveThruCharge_2
+                    && DriverStation.getAlliance() == Alliance.Red) {
                 traj2name = "BackUpLeftCenter";
-
                 traj2Reqd = true;
             }
         }
 
-        if (startLocation == 3 && autoselect1 == 3 && DriverStation.getAlliance() == Alliance.Blue) {
-
+        if (startLocation == sl_leftShelf_3 && (autoselect1 == as1_driveOutZone_3 || autoselect1 == as1_secondCube_4)
+                && DriverStation.getAlliance() == Alliance.Blue) {
             traj2name = "BackUpLeftShelf";
-
             traj2Reqd = true;
-
+            secondPieceLeft = (autoselect1 == as1_secondCube_4);
+            secondPieceRight = false;
         }
 
-        if (startLocation == 3 && autoselect1 == 3 && DriverStation.getAlliance() == Alliance.Red) {
-
+        if (startLocation == sl_leftShelf_3 && (autoselect1 == as1_driveOutZone_3 || autoselect1 == as1_secondCube_4)
+                && DriverStation.getAlliance() == Alliance.Red) {
             traj2name = "BackUpRightShelf";
-
             traj2Reqd = true;
-
+            secondPieceRight = (autoselect1 == as1_secondCube_4);
+            secondPieceLeft = false;
         }
 
-        if (startLocation == 4 && autoselect1 == 3 && DriverStation.getAlliance() == Alliance.Blue) {
-
+        if (startLocation == sl_rightShelf_4 && (autoselect1 == as1_driveOutZone_3 || autoselect1 == as1_secondCube_4)
+                && DriverStation.getAlliance() == Alliance.Blue) {
             traj2name = "BackUpRightShelf";
-
             traj2Reqd = true;
-
+            secondPieceRight = (autoselect1 == as1_secondCube_4);
+            secondPieceLeft = false;
         }
 
-        if (startLocation == 4 && autoselect1 == 3 && DriverStation.getAlliance() == Alliance.Red) {
-
+        if (startLocation == sl_rightShelf_4 && (autoselect1 == as1_driveOutZone_3 || autoselect1 == as1_secondCube_4)
+                && DriverStation.getAlliance() == Alliance.Red) {
             traj2name = "BackUpLeftShelf";
-
             traj2Reqd = true;
-
+            secondPieceLeft = (autoselect1 == as1_secondCube_4);
+            secondPieceRight = false;
         }
 
         if (traj2Reqd) {
-
             traj2 = m_tf.getPathPlannerTrajectory(traj2name, 2, 1, false);
-
             tempCommand = m_tf.followTrajectoryCommand(traj2, !traj1Reqd);
-
         }
 
         return tempCommand;
+    }
+
+    public Command getCommand3Left() {
+
+        PathPlannerTrajectory traj = m_tf.getPathPlannerTrajectory("LeftCubetoLeftShelf", 2, 1, false);
+
+        return new SequentialCommandGroup(
+
+                new TurnToGamepiece(m_drive, -1, -30, true),
+
+                new DriveAndPickup(m_drive),
+
+                new TurnToAngle(m_drive, 180,false),
+
+                m_tf.followTrajectoryCommand(traj, false),
+
+                new DeliverCubeFast(m_lift, m_wrist, m_intake, m_extend, false));
+
+    }
+
+    public Command getCommand3Right() {
+
+        PathPlannerTrajectory traj = m_tf.getPathPlannerTrajectory("RightCubetoRightShelf", 2, 1, false);
+
+        return new SequentialCommandGroup(
+
+                new TurnToGamepiece(m_drive, 1, 30, true),
+
+                new DriveAndPickup(m_drive),
+
+                new TurnToAngle(m_drive, 180, false),
+
+                m_tf.followTrajectoryCommand(traj, false),
+
+                new DeliverCubeFast(m_lift, m_wrist, m_intake, m_extend, false));
+
 
     }
 
@@ -304,6 +336,10 @@ public class AutoFactory {
 
         command1 = getCommand1();
         command2 = getCommand2();
+        if (secondPieceLeft)
+            command3 = getCommand3Left();
+        if (secondPieceRight)
+            command3 = getCommand3Right();
 
     }
 
@@ -323,7 +359,7 @@ public class AutoFactory {
 
         return new SequentialCommandGroup(
 
-                new DeliverPiecePositions(m_lift, m_extend, m_wrist, m_intake),
+                new DeliverCubeFast(m_lift, m_wrist, m_intake, m_extend, false),
 
                 new WaitCommand(.5)
 
@@ -335,7 +371,7 @@ public class AutoFactory {
 
         return new SequentialCommandGroup(
 
-                new DeliverPiecePositions(m_lift, m_extend, m_wrist, m_intake),
+                new DeliverCubeFast(m_lift, m_wrist, m_intake, m_extend, false),
 
                 new WaitCommand(.5)
 

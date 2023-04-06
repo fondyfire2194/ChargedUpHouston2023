@@ -12,7 +12,6 @@ import edu.wpi.first.hal.SimDouble;
 import edu.wpi.first.hal.simulation.SimDeviceDataJNI;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -159,7 +158,7 @@ public class DriveSubsystem extends SubsystemBase {
 
   public int numberTags;
   public boolean hasTag;
-  public int fiducialID;;
+  public int fiducialID;
 
   public int tagid1;
   public int tagid2;
@@ -280,15 +279,14 @@ public class DriveSubsystem extends SubsystemBase {
     // swerveModuleStates[0].speedMetersPerSecond);
   }
 
-   /**
-     * Sets swerve module states using Chassis Speeds.
-     *
-     * @param chassisSpeeds The desired Chassis Speeds
-     */
-    public void setModuleStates(ChassisSpeeds chassisSpeeds) {
-      SwerveModuleState[] swerveModuleStates =
-          DriveConstants.m_kinematics.toSwerveModuleStates(chassisSpeeds);
-      setModuleStates(swerveModuleStates);
+  /**
+   * Sets swerve module states using Chassis Speeds.
+   *
+   * @param chassisSpeeds The desired Chassis Speeds
+   */
+  public void setModuleStates(ChassisSpeeds chassisSpeeds) {
+    SwerveModuleState[] swerveModuleStates = DriveConstants.m_kinematics.toSwerveModuleStates(chassisSpeeds);
+    setModuleStates(swerveModuleStates);
   }
 
   public void arcadeDrive(double xSpeed, double rotAngle) {
@@ -478,12 +476,13 @@ public class DriveSubsystem extends SubsystemBase {
   }
 
   public boolean checkCANOK() {
-    return RobotBase.isSimulation() ||
-        m_frontLeft.checkCAN()
+
+    return RobotBase.isSimulation()
+
+        || m_frontLeft.checkCAN()
             && m_frontRight.checkCAN()
             && m_backLeft.checkCAN()
             && m_backLeft.checkCAN();
-
   }
 
   public void resetModuleEncoders() {

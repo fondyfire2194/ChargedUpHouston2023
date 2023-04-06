@@ -58,10 +58,10 @@ public class TurnToAngle extends CommandBase {
         } else {
             targetPose2d = new Pose2d(startPos.getTranslation(), Rotation2d.fromDegrees(goal));
         }
-        if (DriverStation.getAlliance() == Alliance.Red) {
-            targetPose2d = new Pose2d(targetPose2d.getTranslation(),
-                    targetPose2d.getRotation().rotateBy(Rotation2d.fromDegrees(180)));
-        }
+        // if (DriverStation.getAlliance() == Alliance.Red) {
+        //     targetPose2d = new Pose2d(targetPose2d.getTranslation(),
+        //             targetPose2d.getRotation().rotateBy(Rotation2d.fromDegrees(180)));
+        // }
     }
 
     @Override

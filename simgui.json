@@ -12,6 +12,21 @@
       "/SmartDashboard/Scheduler": "Scheduler"
     },
     "windows": {
+      "/Shuffleboard/Competition/AutoChooser": {
+        "window": {
+          "visible": true
+        }
+      },
+      "/Shuffleboard/Competition/AutoChooser1": {
+        "window": {
+          "visible": true
+        }
+      },
+      "/Shuffleboard/Competition/StartPosition": {
+        "window": {
+          "visible": true
+        }
+      },
       "/SmartDashboard/Field2d": {
         "AprilTags": {
           "image": "C:\\Users\\boyle\\Documents\\FRCC2023\\ChargedUp-2194\\src\\main\\images\\robot.png"

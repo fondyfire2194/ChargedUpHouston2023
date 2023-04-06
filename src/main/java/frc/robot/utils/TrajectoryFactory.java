@@ -26,7 +26,6 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.simulation.FieldSim;
 import frc.robot.subsystems.DriveSubsystem;
 
-
 /** Add your docs here. */
 public class TrajectoryFactory {
 
@@ -68,7 +67,6 @@ public class TrajectoryFactory {
 
         m_drive = drive;
         m_fs = fs;
-     
 
         ppTrajChooser.setDefaultOption("BackUpCenterPath", "BackUpCenter");
         ppTrajChooser.addOption("BackUpLeftCenterPath", "BackUpLeftCenter");
@@ -204,35 +202,7 @@ public class TrajectoryFactory {
         followTrajectoryCommand(traj, true).schedule();
     }
 
-    
-      
-
-    public PathPlannerTrajectory getTrajToLoadTag(Pose2d tagPose, double maxvel, double maxAccel) {
-
-        Translation2d tagTranslation = new Translation2d(tagPose.getX(), tagPose.getY());
-
-        Rotation2d tagRotation = tagPose.getRotation();
-
-        Translation2d modifiedTranslation = tagTranslation.minus(activeTranslation);
-
-        Rotation2d modifiedRotation = tagRotation.plus(endRotation);
-
-        endPose = new Pose2d(modifiedTranslation, modifiedRotation);
-
-        PathPlannerTrajectory trajt = PathPlanner.generatePath(
-
-                new PathConstraints(maxvel, maxAccel),
-
-                new PathPoint(startLoadPose.getTranslation(), startLoadPose.getRotation()), // position, heading
-
-                new PathPoint(endPose.getTranslation(), endPose.getRotation()) // position,
-                                                                               // heading
-
-        );
-
-        return trajt;
-    }
-
+   
     public void doSelectedTrajectory() {
         runSelectedTrajectory().schedule();
     }
@@ -258,7 +228,8 @@ public class TrajectoryFactory {
         // Simple path with holonomic rotation. Stationary start/end. Max velocity of 4
         // m/s and max accel of 3 m/s^2
         PathPlannerTrajectory traj2 = PathPlanner.generatePath(
-                new PathConstraints(4, 3),
+
+                new PathConstraints(3, 3),
 
                 new PathPoint(new Translation2d(1.0, 1.0), Rotation2d.fromDegrees(0), Rotation2d.fromDegrees(0)), // position,
 
@@ -288,10 +259,14 @@ public class TrajectoryFactory {
         return traj3;
     }
 
- 
-
     public boolean getAllianceBlue() {
         return (DriverStation.getAlliance() == Alliance.Blue);
+    }
+
+    public Pose2d getTrajectoryStartPose(String name, boolean reversed) {
+        PathPlannerTrajectory ppTrajectory = PathPlanner.loadPath(name, 2, 1, reversed);
+        return ppTrajectory.getInitialPose();
+
     }
 
 }

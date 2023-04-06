@@ -7,7 +7,6 @@ package frc.robot.subsystems;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.LimelightHelpers;
@@ -66,7 +65,7 @@ public class LLDriveLinkerSubsystem extends SubsystemBase {
       llresults = LimelightHelpers.getLatestResults("limelight");
 
       if (m_llv.getCurrentPipelineType() == pipelinetype.fiducialmarkers) {
-        
+
         m_drive.botPose = getBotPose();
         m_drive.numberTags = llresults.targetingResults.targets_Fiducials.length;
         m_drive.hasTag = m_drive.numberTags > 0;
@@ -100,16 +99,19 @@ public class LLDriveLinkerSubsystem extends SubsystemBase {
 
         neuralClassID = LimelightHelpers.getNeuralClassID("limelight");
 
-        m_drive.coneFound = neuralClassID == coneID;
+        boolean temp = false;
+
+        if (neuralClassID == coneID)
+          temp = true;
+
+        m_drive.coneFound = temp;
 
         // String temp = LimelightHelpers.getNeuralClassName("limelight");
         // SmartDashboard.putString("NCN1", temp);
         m_drive.tx = LimelightHelpers.getTX("limelight");
         m_drive.ty = LimelightHelpers.getTY("limelight");
         m_drive.targetArea = LimelightHelpers.getTA("limelight");
-      }
-
-      else {
+      } else {
         m_drive.coneFound = false;
       }
 
@@ -117,7 +119,12 @@ public class LLDriveLinkerSubsystem extends SubsystemBase {
 
         neuralClassID = LimelightHelpers.getNeuralClassID("limelight");
 
-        m_drive.cubeFound = neuralClassID == cubeID;
+        boolean temp = false;
+
+        if (neuralClassID == cubeID)
+          temp = true;
+
+        m_drive.cubeFound = temp;
 
         m_drive.tx = LimelightHelpers.getTX("limelight");
         m_drive.ty = LimelightHelpers.getTY("limelight");
