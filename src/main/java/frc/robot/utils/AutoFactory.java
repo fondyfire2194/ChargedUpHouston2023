@@ -38,7 +38,7 @@ public class AutoFactory {
     int sl_coopRightPipe_2 = 2;
     int sl_leftShelf_3 = 3;
     int sl_rightShelf_4 = 4;
-    
+
     int as_doNothing_0 = 0;
     int as_pushCube_1 = 1;
     int as_deliverMid_2 = 2;
@@ -46,8 +46,7 @@ public class AutoFactory {
 
     int as1__balanceCharge_1 = 1;
     int as1_driveThruCharge_2 = 2;
-    int as1_driveOutZone_3 = 3;
-    int as1_secondCube_4 = 4;
+    int as1_secondCube_3 = 3;
 
     List<PathPlannerTrajectory> pathGroup;
 
@@ -131,7 +130,6 @@ public class AutoFactory {
 
         m_startLocationChooser.addOption("RightShelf", 4);
 
-
         m_autoChooser.setDefaultOption("Do Nothing", 0);
 
         m_autoChooser.addOption("PushCube", 1);
@@ -146,9 +144,7 @@ public class AutoFactory {
 
         m_autoChooser1.addOption("DriveThroughCharge", 2);
 
-        m_autoChooser1.addOption("DriveOutZone", 3);
-
-        m_autoChooser1.addOption("PickupScore2ndCube", 4);
+        m_autoChooser1.addOption("PickupScore2ndCube", 3);
 
     }
 
@@ -250,35 +246,35 @@ public class AutoFactory {
             }
         }
 
-        if (startLocation == sl_leftShelf_3 && (autoselect1 == as1_driveOutZone_3 || autoselect1 == as1_secondCube_4)
+        if (startLocation == sl_leftShelf_3 && autoselect1 == as1_secondCube_3
                 && DriverStation.getAlliance() == Alliance.Blue) {
             traj2name = "BackUpLeftShelf";
             traj2Reqd = true;
-            secondPieceLeft = (autoselect1 == as1_secondCube_4);
+            secondPieceLeft = true;
             secondPieceRight = false;
         }
 
-        if (startLocation == sl_leftShelf_3 && (autoselect1 == as1_driveOutZone_3 || autoselect1 == as1_secondCube_4)
+        if (startLocation == sl_leftShelf_3 && autoselect1 == as1_secondCube_3
                 && DriverStation.getAlliance() == Alliance.Red) {
             traj2name = "BackUpRightShelf";
             traj2Reqd = true;
-            secondPieceRight = (autoselect1 == as1_secondCube_4);
+            secondPieceRight = true;
             secondPieceLeft = false;
         }
 
-        if (startLocation == sl_rightShelf_4 && (autoselect1 == as1_driveOutZone_3 || autoselect1 == as1_secondCube_4)
+        if (startLocation == sl_rightShelf_4 && autoselect1 == as1_secondCube_3
                 && DriverStation.getAlliance() == Alliance.Blue) {
             traj2name = "BackUpRightShelf";
             traj2Reqd = true;
-            secondPieceRight = (autoselect1 == as1_secondCube_4);
+            secondPieceRight = true;
             secondPieceLeft = false;
         }
 
-        if (startLocation == sl_rightShelf_4 && (autoselect1 == as1_driveOutZone_3 || autoselect1 == as1_secondCube_4)
+        if (startLocation == sl_rightShelf_4 && autoselect1 == as1_secondCube_3
                 && DriverStation.getAlliance() == Alliance.Red) {
             traj2name = "BackUpLeftShelf";
             traj2Reqd = true;
-            secondPieceLeft = (autoselect1 == as1_secondCube_4);
+            secondPieceLeft = true;
             secondPieceRight = false;
         }
 
@@ -300,7 +296,7 @@ public class AutoFactory {
 
                 new DriveAndPickup(m_drive),
 
-                new TurnToAngle(m_drive, 180,false),
+                new TurnToAngle(m_drive, 180, false),
 
                 m_tf.followTrajectoryCommand(traj, false),
 
@@ -323,7 +319,6 @@ public class AutoFactory {
                 m_tf.followTrajectoryCommand(traj, false),
 
                 new DeliverCubeFast(m_lift, m_wrist, m_intake, m_extend, false));
-
 
     }
 
