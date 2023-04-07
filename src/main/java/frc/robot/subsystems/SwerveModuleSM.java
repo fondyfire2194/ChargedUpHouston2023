@@ -21,7 +21,6 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.RobotController;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.CurrentLimitConstants;
 import frc.robot.Constants.DriveConstants;
@@ -83,11 +82,10 @@ public class SwerveModuleSM extends SubsystemBase {
   public boolean driveMotorConnected;
   public boolean turnMotorConnected;
   public boolean turnCoderConnected;
-  private boolean showOnShuffleboard;
 
   public SendableBuilder m_builder;
 
-  private boolean m_isOpenLoop;
+  public boolean m_isOpenLoop;
 
   public boolean driveBrakeMode;
 
@@ -119,12 +117,9 @@ public class SwerveModuleSM extends SubsystemBase {
       boolean turningMotorReversed,
       int pdpCDrivehannel,
       int pdpTurnChannel,
-      boolean isOpenLoop,
       double turningEncoderOffset) {
 
     m_locationIndex = locationIndex;
-
-    m_isOpenLoop = isOpenLoop;
 
     m_driveMotor = new CANSparkMax(driveMotorCanChannel, MotorType.kBrushless);
 
@@ -267,9 +262,7 @@ public class SwerveModuleSM extends SubsystemBase {
 
     m_lastAngle = angle;
 
-    // SmartDashboard.putNumber("TESTSP", state.speedMetersPerSecond);
-
-    if (m_isOpenLoop && !isRotating) {
+    if (m_isOpenLoop) {
 
       driveMotorMoveOpenLoop(state.speedMetersPerSecond / DriveConstants.kMaxSpeedMetersPerSecond);
 
@@ -291,17 +284,14 @@ public class SwerveModuleSM extends SubsystemBase {
 
   public void driveMotorMoveOpenLoop(double speed) {
 
-    m_driveMotor
-
-        .setVoltage(RobotController.getBatteryVoltage() * speed);
-
-    // SmartDashboard.putNumber("DrFF Volts", feedforward.calculate(speed));
+    m_driveMotor.setVoltage(RobotController.getBatteryVoltage() * speed);
 
   }
 
-  public void driveMotorMoveVelocity(double speed) {
+  public void driveMotorMoveVelocity(double speedMPS) {
 
-    m_driveMotor.setVoltage(m_driveVelController.calculate(getDriveVelocity(), speed));
+    m_driveMotor
+        .setVoltage(feedforward.calculate(speedMPS) + m_driveVelController.calculate(getDriveVelocity(), speedMPS));
 
   }
 

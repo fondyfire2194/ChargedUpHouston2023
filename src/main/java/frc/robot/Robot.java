@@ -151,6 +151,8 @@ public class Robot extends TimedRobot {
 
     m_robotContainer.m_intake.mIntakeMotor.setVoltage(1);
 
+    m_robotContainer.m_drive.setClosedLoop(true);
+
     m_startDelay = m_robotContainer.m_autoFactory.m_startDelayChooser.getSelected();
 
     startTime = Timer.getFPGATimestamp();
@@ -180,7 +182,10 @@ public class Robot extends TimedRobot {
     // this line or comment it out.
 
     if (autoHasRun)
+    
       m_robotContainer.m_drive.fieldOrientOffset = 180;
+
+    m_robotContainer.m_drive.setClosedLoop(false);
 
     autoHasRun = false;
 
@@ -202,7 +207,7 @@ public class Robot extends TimedRobot {
     m_robotContainer.m_wrist.setController(WristConstants.wristFastConstraints,
         presetWristAngles.HOME.getAngleRads(), false);
 
-  //  m_robotContainer.m_drive.m_fieldOriented = true;
+    // m_robotContainer.m_drive.m_fieldOriented = true;
   }
 
   /** This function is called periodically during operator control. */

@@ -4,7 +4,6 @@
 
 package frc.robot;
 
-import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
@@ -137,8 +136,6 @@ public final class Constants {
 
         = new Constraints(90, 90);
 
-   
-
     public static double kTurnP = .016;
 
     public static double kTurnI = 0;
@@ -161,7 +158,7 @@ public final class Constants {
     public static final double MAX_ANGULAR_VELOCITY = 1.0;
     public static final double MAX_ANGULAR_ACCELERATION = 1;
     public static final double STD_DEV_MOD = 2.0;
-}
+  }
 
   public static final class DriverConstants {
 
@@ -336,7 +333,7 @@ public final class Constants {
 
   public final static class ModuleTuneConstants {
 
-    public static final double kPModuleDriveController = .002;
+    public static final double kPModuleDriveController = 1.3e-6;
     public static final double kIModuleDriveController = 0;
     public static final double kDModuleDriveController = 0;
 
@@ -348,9 +345,9 @@ public final class Constants {
 
   public static final class SYSIDConstants {
     // from Beta test
-    public static final double ksDriveVoltSecondsPerMeter = .0927;
-    public static final double kvDriveVoltSecondsSquaredPerMeter = 3.13;
-    public static final double kaDriveVoltSecondsSquaredPerMeter = 0.82;
+    public static final double ksDriveVoltSecondsPerMeter = .172;
+    public static final double kvDriveVoltSecondsSquaredPerMeter = 3.16;
+    public static final double kaDriveVoltSecondsSquaredPerMeter = 0.37;
     // sysid on module?
     public static final double kvTurnVoltSecondsPerRadian = 1.47; // originally 1.5
     public static final double kaTurnVoltSecondsSquaredPerRadian = 0.348; // originally 0.3

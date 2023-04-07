@@ -38,9 +38,7 @@ public class AutoBalanceBackwards extends CommandBase {
     double currentTime = Timer.getFPGATimestamp();
     double currentGyro = m_drive.getGyroPitch();
 
-    if ((currentTime - startTime) < 1.5) { // run full force backwards for 3 seconds??
-      m_drive.drive(DriveConstants.kMaxSpeedMetersPerSecond * -0.8, 0, 0);
-    } else {
+    
       double currentPitch = currentGyro - gyroStartPosition;
       double currentPitchRadians = ((currentPitch * Math.PI) / 180);
       double motorMultiplier = Math.sin(currentPitchRadians);
@@ -56,8 +54,9 @@ public class AutoBalanceBackwards extends CommandBase {
       // if (motorMultiplier < 0.05 || motorMultiplier > -0.05) {
       // endCommand = true;
       // m_drive.stopModules();
+      // m_drive.setX();
       // }
-    }
+    
   }
 
   // Called once the command ends or is interrupted.

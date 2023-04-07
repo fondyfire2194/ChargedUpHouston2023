@@ -54,7 +54,6 @@ public class DriveSubsystem extends SubsystemBase {
       DriveConstants.kFrontLeftTurningMotorReversed,
       PDPConstants.FRONT_LEFT_DRIVE_CHANNEL,
       PDPConstants.FRONT_LEFT_TURN_CHANNEL,
-      isOpenLoop,
       CanConstants.FRONT_LEFT_MODULE_STEER_OFFSET);
 
   public final SwerveModuleSM m_frontRight = new SwerveModuleSM(
@@ -66,7 +65,6 @@ public class DriveSubsystem extends SubsystemBase {
       DriveConstants.kFrontRightTurningMotorReversed,
       PDPConstants.FRONT_RIGHT_DRIVE_CHANNEL,
       PDPConstants.FRONT_RIGHT_TURN_CHANNEL,
-      isOpenLoop,
       CanConstants.FRONT_RIGHT_MODULE_STEER_OFFSET);
 
   public final SwerveModuleSM m_backLeft = new SwerveModuleSM(
@@ -78,7 +76,6 @@ public class DriveSubsystem extends SubsystemBase {
       DriveConstants.kBackLeftTurningMotorReversed,
       PDPConstants.BACK_LEFT_DRIVE_CHANNEL,
       PDPConstants.BACK_LEFT_TURN_CHANNEL,
-      isOpenLoop,
       CanConstants.BACK_LEFT_MODULE_STEER_OFFSET);
 
   public final SwerveModuleSM m_backRight = new SwerveModuleSM(
@@ -90,7 +87,6 @@ public class DriveSubsystem extends SubsystemBase {
       DriveConstants.kBackRightTurningMotorReversed,
       PDPConstants.BACK_LEFT_DRIVE_CHANNEL,
       PDPConstants.BACK_LEFT_TURN_CHANNEL,
-      isOpenLoop,
       CanConstants.BACK_RIGHT_MODULE_STEER_OFFSET);
 
   // The gyro sensor
@@ -308,6 +304,14 @@ public class DriveSubsystem extends SubsystemBase {
     m_frontRight.setDesiredState(desiredStates[1]);
     m_backLeft.setDesiredState(desiredStates[2]);
     m_backRight.setDesiredState(desiredStates[3]);
+  }
+
+  public void setClosedLoop(boolean on) {
+    m_frontLeft.m_isOpenLoop = on;
+    m_frontRight.m_isOpenLoop = on;
+    m_backLeft.m_isOpenLoop = on;
+    m_backRight.m_isOpenLoop = on;
+
   }
 
   @Override
