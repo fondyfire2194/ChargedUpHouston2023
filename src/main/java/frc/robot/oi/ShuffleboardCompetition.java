@@ -73,6 +73,9 @@ public class ShuffleboardCompetition {
                 area1.addBoolean("FieldOriented", () -> m_drive.m_fieldOriented)
                                 .withSize(2, 1)
                                 .withPosition(2, 3);
+                area1.addBoolean("ClosedLoop", () -> !m_drive.isOpenLoop)
+                                .withSize(2, 1)
+                                .withPosition(4, 3);
 
         }
 

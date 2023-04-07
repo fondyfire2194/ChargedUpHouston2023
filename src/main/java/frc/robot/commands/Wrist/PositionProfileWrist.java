@@ -7,6 +7,7 @@ package frc.robot.commands.Wrist;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants.WristConstants;
 import frc.robot.subsystems.LiftArmSubsystem;
@@ -107,9 +108,9 @@ public class PositionProfileWrist extends CommandBase {
      * 
      */
 
-    double netWristAngle = m_wrist.getAngleRadians()
+    double netWristAngle = (m_wrist.getAngleRadians() - wristOffsetRads) 
 
-        - (Math.PI / 2) - m_lift.getCanCoderRadians();
+        + (Math.PI / 2) + m_lift.getCanCoderRadians();
 
     /**
      * For netWrist Angle to be 0,
@@ -126,9 +127,13 @@ public class PositionProfileWrist extends CommandBase {
      * 
      */
 
+    SmartDashboard.putNumber("WristAngle", m_wrist.m_wristController.getSetpoint().position - (m_lift.getCanCoderRadians() + m_wrist.getAngleRadians() + 0.524 - Math.PI));
+
+    SmartDashboard.putNumber("KG", m_wrist.m_wristfeedforward.kg);
+
     m_wrist.ff = m_wrist.m_wristfeedforward.calculate(
 
-        m_wrist.m_wristController.getSetpoint().position - netWristAngle,
+        m_wrist.m_wristController.getSetpoint().position + (m_lift.getCanCoderRadians() + m_wrist.getAngleRadians() + 0.524 - Math.PI),
 
         m_wrist.m_wristController.getSetpoint().velocity, m_wrist.acceleration);
 

@@ -291,7 +291,10 @@ public class SwerveModuleSM extends SubsystemBase {
   public void driveMotorMoveVelocity(double speedMPS) {
 
     m_driveMotor
-        .setVoltage(feedforward.calculate(speedMPS) + m_driveVelController.calculate(getDriveVelocity(), speedMPS));
+    
+        .setVoltage(feedforward.calculate(speedMPS) + 
+        
+        m_driveVelController.calculate(getDriveVelocity(), speedMPS));
 
   }
 

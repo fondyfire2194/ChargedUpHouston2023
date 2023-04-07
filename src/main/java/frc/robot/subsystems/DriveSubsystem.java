@@ -307,10 +307,11 @@ public class DriveSubsystem extends SubsystemBase {
   }
 
   public void setClosedLoop(boolean on) {
-    m_frontLeft.m_isOpenLoop = on;
-    m_frontRight.m_isOpenLoop = on;
-    m_backLeft.m_isOpenLoop = on;
-    m_backRight.m_isOpenLoop = on;
+    m_frontLeft.m_isOpenLoop = !on;
+    m_frontRight.m_isOpenLoop = !on;
+    m_backLeft.m_isOpenLoop = !on;
+    m_backRight.m_isOpenLoop = !on;
+    isOpenLoop = !on;
 
   }
 

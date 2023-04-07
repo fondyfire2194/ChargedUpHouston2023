@@ -136,7 +136,9 @@ public class Robot extends TimedRobot {
 
     Shuffleboard.startRecording();
 
-    m_robotContainer.m_drive.fieldOrientOffset = 180;
+   // m_robotContainer.m_drive.fieldOrientOffset = 180;
+
+   m_robotContainer.m_drive.m_fieldOriented = true;
 
     m_robotContainer.m_drive.setIdleMode(true);
 

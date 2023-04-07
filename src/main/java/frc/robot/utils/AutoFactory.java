@@ -248,9 +248,11 @@ public class AutoFactory {
 
         if (startLocation == sl_leftShelf_3 && autoselect1 == as1_secondCube_3
                 && DriverStation.getAlliance() == Alliance.Blue) {
-            traj2name = "BackUpLeftShelf";
+
+                    // traj2name = "BackUpLeftShelf";         
+            traj2name = "LeftShelfToLeftCubeRotate";
             traj2Reqd = true;
-            secondPieceLeft = true;
+            secondPieceLeft = false;
             secondPieceRight = false;
         }
 
@@ -294,7 +296,7 @@ public class AutoFactory {
 
                 new TurnToGamepiece(m_drive, -1, -30, true),
 
-                new DriveAndPickup(m_drive),
+                //new DriveAndPickup(m_drive),
 
                 new TurnToAngle(m_drive, 180, false),
 
