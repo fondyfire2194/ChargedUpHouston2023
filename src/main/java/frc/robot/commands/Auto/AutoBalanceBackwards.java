@@ -17,6 +17,7 @@ public class AutoBalanceBackwards extends CommandBase {
   private double gyroStartPosition;
   private boolean endCommand;
   private double speedMultiplier = 1.5;
+  private double positionHeld = 0;
 
   public AutoBalanceBackwards(DriveSubsystem drive) {
     // Use addRequirements() here to declare subsystem dependencies.
@@ -28,8 +29,9 @@ public class AutoBalanceBackwards extends CommandBase {
   @Override
   public void initialize() {
     startTime = Timer.getFPGATimestamp();
-    gyroStartPosition = m_drive.getGyroPitch();
+    gyroStartPosition = m_drive.autoBalanceGyroStart;
     endCommand = false;
+    positionHeld = 0;
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -38,25 +40,30 @@ public class AutoBalanceBackwards extends CommandBase {
     double currentTime = Timer.getFPGATimestamp();
     double currentGyro = m_drive.getGyroPitch();
 
-    
-      double currentPitch = currentGyro - gyroStartPosition;
-      double currentPitchRadians = ((currentPitch * Math.PI) / 180);
-      double motorMultiplier = Math.sin(currentPitchRadians);
+    double currentPitch = currentGyro - gyroStartPosition;
+    double currentPitchRadians = ((currentPitch * Math.PI) / 180);
+    double motorMultiplier = Math.sin(currentPitchRadians) * -1;
 
-      double motorSpeed = motorMultiplier * DriveConstants.kMaxSpeedMetersPerSecond * 1.7;
+    double motorSpeed = motorMultiplier * DriveConstants.kMaxSpeedMetersPerSecond * 1.8;
 
-      SmartDashboard.putNumber("motorNum", motorMultiplier);
-      // if (Math.abs(motorSpeed) > DriveConstants.kMaxSpeedMetersPerSecond) {
-      // motorSpeed = Math.signum(motorSpeed) *
-      // DriveConstants.kMaxSpeedMetersPerSecond;
-      // }
-      m_drive.drive(motorSpeed, 0, 0);
-      // if (motorMultiplier < 0.05 || motorMultiplier > -0.05) {
-      // endCommand = true;
-      // m_drive.stopModules();
-      // m_drive.setX();
-      // }
+    SmartDashboard.putNumber("motorNum", motorMultiplier);
+    // if (Math.abs(motorSpeed) > DriveConstants.kMaxSpeedMetersPerSecond) {
+    // motorSpeed = Math.signum(motorSpeed) *
+    // DriveConstants.kMaxSpeedMetersPerSecond;
+    // }
     
+    m_drive.drive(motorSpeed, 0, 0);
+    if (motorMultiplier < 0.005 || motorMultiplier > -0.005) {
+      positionHeld++;
+      if (positionHeld > 40) {
+        endCommand = true;
+        m_drive.stopModules();
+        m_drive.setX();
+      }
+    } else {
+      positionHeld = 0;
+    }
+
   }
 
   // Called once the command ends or is interrupted.

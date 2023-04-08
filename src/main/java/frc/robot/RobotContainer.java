@@ -17,6 +17,7 @@ import frc.robot.Constants.ExtendArmConstants;
 import frc.robot.Constants.LiftArmConstants;
 import frc.robot.Constants.OIConstants;
 import frc.robot.Constants.WristConstants;
+import frc.robot.commands.Auto.AutoBalanceBackwards;
 import frc.robot.commands.DeliverRoutines.DeliverCubeFast;
 import frc.robot.commands.DeliverRoutines.EjectPieceFromIntake;
 import frc.robot.commands.DeliverRoutines.GetDeliverAngleSettings;
@@ -336,13 +337,13 @@ public class RobotContainer {
                                 () -> m_wrist.setController(WristConstants.wristFastConstraints, .15,
                                                 false)));
 
-                m_armsController.povUp().onTrue(new TurnToAngle(m_drive, 0, false));
+                m_armsController.povUp().onTrue(Commands.runOnce(() -> m_liftArm.setController(LiftArmConstants.liftArmFastConstraints, 0, false)));
 
-                m_armsController.povDown().onTrue(new TurnToAngle(m_drive, 30, false));
+                m_armsController.povDown().onTrue(Commands.runOnce(() -> m_liftArm.setController(LiftArmConstants.liftArmFastConstraints, 12, false)));
 
-                m_armsController.povLeft().onTrue(new TurnToAngle(m_drive, 60, false));
+                m_armsController.povLeft().onTrue(Commands.runOnce(() -> m_wrist.setController(WristConstants.wristFastConstraints, .2, false)));
 
-                m_armsController.povRight().onTrue(new TurnToAngle(m_drive, 90, false));
+                m_armsController.povRight().onTrue(Commands.runOnce(() -> m_wrist.setController(WristConstants.wristFastConstraints, 1, false)));
 
                 m_armsController.rightTrigger()
                                 .onTrue(Commands.runOnce(() -> m_extendArm.setController(

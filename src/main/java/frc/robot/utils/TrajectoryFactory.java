@@ -5,6 +5,7 @@
 package frc.robot.utils;
 
 import java.io.File;
+import java.util.List;
 
 import com.pathplanner.lib.PathConstraints;
 import com.pathplanner.lib.PathPlanner;
@@ -91,6 +92,12 @@ public class TrajectoryFactory {
         // checkFileExists(pathName);
         PathPlannerTrajectory ppTrajectory = PathPlanner.loadPath(pathName, maxvel, maxaccel, reversed);
         return ppTrajectory;
+    }
+
+    public List<PathPlannerTrajectory> getPathPlannerTrajectoryGroup(String pathName, double maxvel, double maxaccel,
+            boolean reversed) {
+        List<PathPlannerTrajectory> paths = PathPlanner.loadPathGroup(pathName, maxvel, maxaccel, reversed);
+        return paths;
     }
 
     public boolean checkFileExists(String name) {
@@ -202,7 +209,6 @@ public class TrajectoryFactory {
         followTrajectoryCommand(traj, true).schedule();
     }
 
-   
     public void doSelectedTrajectory() {
         runSelectedTrajectory().schedule();
     }

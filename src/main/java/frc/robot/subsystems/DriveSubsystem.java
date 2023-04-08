@@ -210,6 +210,8 @@ public class DriveSubsystem extends SubsystemBase {
 
   public double fieldOrientOffset = 180;
 
+  public double autoBalanceGyroStart = -7;
+
   /** Creates a new DriveSubsystem. */
   public DriveSubsystem() {
 

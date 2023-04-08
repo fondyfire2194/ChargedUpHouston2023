@@ -24,20 +24,20 @@
     },
     {
       "anchorPoint": {
-        "x": 5.903116742039475,
-        "y": 2.755945369237385
+        "x": 3.89447649398896,
+        "y": 2.7754123853571455
       },
       "prevControl": {
-        "x": 5.157616091427879,
-        "y": 2.755945369237385
+        "x": 3.3282315237625646,
+        "y": 2.7703176598245847
       },
       "nextControl": {
-        "x": 6.648617392651071,
-        "y": 2.755945369237385
+        "x": 4.460721464215355,
+        "y": 2.7805071108897064
       },
-      "holonomicAngle": 180.0,
+      "holonomicAngle": -180.0,
       "isReversal": false,
-      "velOverride": null,
+      "velOverride": 0.5,
       "isLocked": false,
       "isStopPoint": false,
       "stopEvent": {
@@ -49,15 +49,40 @@
     },
     {
       "anchorPoint": {
-        "x": 3.867605224511448,
-        "y": 2.7788162851646674
+        "x": 6.799648419440725,
+        "y": 2.7682035220185552
       },
       "prevControl": {
-        "x": 5.235240392653979,
-        "y": 2.7330744533101052
+        "x": 6.054147768829129,
+        "y": 2.7682035220185552
+      },
+      "nextControl": {
+        "x": 7.545149070052322,
+        "y": 2.7682035220185552
+      },
+      "holonomicAngle": 180.0,
+      "isReversal": false,
+      "velOverride": 2.6,
+      "isLocked": false,
+      "isStopPoint": true,
+      "stopEvent": {
+        "names": [],
+        "executionBehavior": "parallel",
+        "waitBehavior": "none",
+        "waitTime": 0
+      }
+    },
+    {
+      "anchorPoint": {
+        "x": 3.880058767311781,
+        "y": 2.7682035220185552
+      },
+      "prevControl": {
+        "x": 5.247693935454322,
+        "y": 2.722461690163993
       },
       "nextControl": null,
-      "holonomicAngle": 0,
+      "holonomicAngle": -180.0,
       "isReversal": false,
       "velOverride": null,
       "isLocked": false,
@@ -70,8 +95,8 @@
       }
     }
   ],
-  "maxVelocity": 3.0,
-  "maxAcceleration": 3.0,
+  "maxVelocity": 2.2,
+  "maxAcceleration": 7.0,
   "isReversed": false,
   "markers": []
 }

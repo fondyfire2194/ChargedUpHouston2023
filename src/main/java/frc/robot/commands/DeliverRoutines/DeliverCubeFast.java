@@ -10,13 +10,19 @@ import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Constants.LiftArmConstants;
+import frc.robot.Constants.WristConstants;
 import frc.robot.commands.Auto.DoNothing;
+import frc.robot.commands.LiftArm.SetLiftGoal;
 import frc.robot.commands.LiftArm.WaitLiftAtTarget;
 import frc.robot.commands.TeleopRoutines.RetractWristExtendLiftHome;
+import frc.robot.commands.Wrist.SetWristGoal;
+import frc.robot.commands.Wrist.WaitWristAtTarget;
 import frc.robot.subsystems.ExtendArmSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.LiftArmSubsystem;
 import frc.robot.subsystems.WristSubsystem;
+import frc.robot.subsystems.LiftArmSubsystem.presetLiftAngles;
+import frc.robot.subsystems.WristSubsystem.presetWristAngles;
 
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
@@ -40,10 +46,17 @@ public class DeliverCubeFast extends SequentialCommandGroup {
 
             () -> toplevel),
 
-        new WaitCommand(1),
+        new ConditionalCommand(
 
+            Commands.runOnce(() -> wrist.setController(WristConstants.wristFastConstraints, .5, false)),
 
-        new WaitLiftAtTarget(lift, 2, .5, 5),
+            new DoNothing(),
+
+            () -> toplevel),
+
+        new WaitCommand(0.5),
+
+        new WaitLiftAtTarget(lift, 2, 1, 2.5),
 
         // new ConditionalCommand(
 
@@ -53,13 +66,17 @@ public class DeliverCubeFast extends SequentialCommandGroup {
 
             new EjectPieceFromIntake(intake, 8).withTimeout(1),
 
-            () -> toplevel));
+            () -> toplevel),
 
-    // new DoNothing(),
+        // new DoNothing(),
+        new SetWristGoal(wrist, WristConstants.wristFastConstraints,
+            presetWristAngles.HOME.getAngleRads()).asProxy(),
 
-    // () -> DriverStation.isAutonomousEnabled()));
+        new WaitWristAtTarget(wrist, 1, .4, 1).asProxy(),
 
-    // new RetractWristExtendLiftHome(lift, extend, wrist));
+        new SetLiftGoal(lift, presetLiftAngles.HOME.getInches()).asProxy(),
+
+        new WaitLiftAtTarget(lift, 1, 1, 1).asProxy());
 
   }
 

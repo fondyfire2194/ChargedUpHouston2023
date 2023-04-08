@@ -4,21 +4,33 @@
 
 package frc.robot.utils;
 
+import java.util.HashMap;
 import java.util.List;
 
+import com.pathplanner.lib.PathPlanner;
 import com.pathplanner.lib.PathPlannerTrajectory;
+import com.pathplanner.lib.commands.FollowPathWithEvents;
 
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
+import frc.robot.Constants.LiftArmConstants;
+import frc.robot.Constants.WristConstants;
+import frc.robot.commands.Auto.AutoBalanceBackwards;
 import frc.robot.commands.Auto.DoNothing;
 import frc.robot.commands.DeliverRoutines.DeliverCubeFast;
 import frc.robot.commands.DeliverRoutines.DeliverPiecePositions;
+import frc.robot.commands.DeliverRoutines.EjectPieceFromIntake;
+import frc.robot.commands.PickupRoutines.GroundIntakeUprightConePositions;
+import frc.robot.commands.PickupRoutines.IntakePiece;
 import frc.robot.commands.TeleopRoutines.DriveAndPickup;
+import frc.robot.commands.TeleopRoutines.RetractWristExtendLiftTravel;
 import frc.robot.commands.TeleopRoutines.TurnToAngle;
 import frc.robot.commands.TeleopRoutines.TurnToGamepiece;
 import frc.robot.subsystems.DriveSubsystem;
@@ -26,6 +38,7 @@ import frc.robot.subsystems.ExtendArmSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.LiftArmSubsystem;
 import frc.robot.subsystems.WristSubsystem;
+import frc.robot.subsystems.LiftArmSubsystem.presetLiftAngles;
 
 /** Add your docs here. */
 public class AutoFactory {
@@ -213,7 +226,15 @@ public class AutoFactory {
 
         if (startLocation <= sl_coopRightPipe_2) {// any of the coop starts
             if (autoselect1 == as1__balanceCharge_1) {
-                tempCommand = m_drive.autoBalance();
+                m_drive.autoBalanceGyroStart = m_drive.getGyroPitch();
+                List<PathPlannerTrajectory> balanceCommandList = m_tf.getPathPlannerTrajectoryGroup("BackUpCenter", 2.2,
+                        7, false);
+                tempCommand = new SequentialCommandGroup(
+
+                        m_tf.followTrajectoryCommand(balanceCommandList.get(0), true),
+                        new WaitCommand(1.5),
+                        m_tf.followTrajectoryCommand(balanceCommandList.get(1), false),
+                        new AutoBalanceBackwards(m_drive));
             }
 
             if (startLocation == sl_coopShelf_0 && autoselect1 == as1_driveThruCharge_2) {
@@ -249,11 +270,22 @@ public class AutoFactory {
         if (startLocation == sl_leftShelf_3 && autoselect1 == as1_secondCube_3
                 && DriverStation.getAlliance() == Alliance.Blue) {
 
-                    // traj2name = "BackUpLeftShelf";         
+            // traj2name = "BackUpLeftShelf";
+
             traj2name = "LeftShelfToLeftCubeRotate";
-            traj2Reqd = true;
+            // traj2Reqd = true;
             secondPieceLeft = false;
             secondPieceRight = false;
+
+            PathPlannerTrajectory eventPath = m_tf.getPathPlannerTrajectory("LeftShelfToLeftCubeRotate", 2, 1, false);
+            HashMap<String, Command> eventMap = new HashMap<>();
+            eventMap.put("DropIntake1", new GroundIntakeUprightConePositions(m_lift, m_wrist, m_extend, m_intake)
+                    .withTimeout(5));
+            eventMap.put("RunIntake1", new IntakePiece(m_intake, 11).withTimeout(4));
+            FollowPathWithEvents eventCommand = new FollowPathWithEvents(m_tf.followTrajectoryCommand(eventPath, true),
+                    eventPath.getMarkers(), eventMap);
+
+            tempCommand = eventCommand;
         }
 
         if (startLocation == sl_leftShelf_3 && autoselect1 == as1_secondCube_3
@@ -267,9 +299,34 @@ public class AutoFactory {
         if (startLocation == sl_rightShelf_4 && autoselect1 == as1_secondCube_3
                 && DriverStation.getAlliance() == Alliance.Blue) {
             traj2name = "BackUpRightShelf";
-            traj2Reqd = true;
-            secondPieceRight = true;
+            // traj2Reqd = true;
+            secondPieceRight = false;
             secondPieceLeft = false;
+
+            List<PathPlannerTrajectory> eventPaths = m_tf.getPathPlannerTrajectoryGroup("RightSideSecondCube", 2, 1,
+                    false);
+            HashMap<String, Command> eventMap1 = new HashMap<>();
+            eventMap1.put("DropIntake1", new GroundIntakeUprightConePositions(m_lift, m_wrist, m_extend, m_intake)
+                    .withTimeout(5));
+            eventMap1.put("RunIntake1", new IntakePiece(m_intake, 11).withTimeout(6));
+
+            HashMap<String, Command> eventMap2 = new HashMap<>();
+            eventMap2.put("HomePosition", new RetractWristExtendLiftTravel(m_lift, m_extend, m_wrist)
+                    .withTimeout(5));
+            eventMap2.put("Eject1", new EjectPieceFromIntake(m_intake, 12).withTimeout(1));
+
+            PathPlannerTrajectory eventPath1 = eventPaths.get(0);
+            PathPlannerTrajectory eventPath2 = eventPaths.get(1);
+
+            FollowPathWithEvents eventCommand1 = new FollowPathWithEvents(
+                    m_tf.followTrajectoryCommand(eventPath1, true),
+                    eventPath1.getMarkers(), eventMap1);
+            FollowPathWithEvents eventCommand2 = new FollowPathWithEvents(
+                    m_tf.followTrajectoryCommand(eventPath2, false),
+                    eventPath2.getMarkers(), eventMap2);
+
+            tempCommand = new SequentialCommandGroup(eventCommand1, new WaitCommand(0.5), eventCommand2, new EjectPieceFromIntake(m_intake, 12).withTimeout(1));
+
         }
 
         if (startLocation == sl_rightShelf_4 && autoselect1 == as1_secondCube_3
@@ -296,7 +353,7 @@ public class AutoFactory {
 
                 new TurnToGamepiece(m_drive, -1, -30, true),
 
-                //new DriveAndPickup(m_drive),
+                // new DriveAndPickup(m_drive),
 
                 new TurnToAngle(m_drive, 180, false),
 

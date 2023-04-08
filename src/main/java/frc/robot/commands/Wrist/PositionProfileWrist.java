@@ -127,19 +127,21 @@ public class PositionProfileWrist extends CommandBase {
      * 
      */
 
-    SmartDashboard.putNumber("WristAngle", m_wrist.m_wristController.getSetpoint().position - (m_lift.getCanCoderRadians() + m_wrist.getAngleRadians() + 0.524 - Math.PI));
+    SmartDashboard.putNumber("WristAngle", m_wrist.m_wristController.getSetpoint().position - (m_lift.getCanCoderRadians() + m_wrist.getAngleRadians() - (Math.PI / 4)));
 
     SmartDashboard.putNumber("KG", m_wrist.m_wristfeedforward.kg);
 
     m_wrist.ff = m_wrist.m_wristfeedforward.calculate(
 
-        m_wrist.m_wristController.getSetpoint().position + (m_lift.getCanCoderRadians() + m_wrist.getAngleRadians() + 0.524 - Math.PI),
+        m_wrist.m_wristController.getSetpoint().position - (m_lift.getCanCoderRadians() + m_wrist.getAngleRadians() - (Math.PI / 4)),
 
         m_wrist.m_wristController.getSetpoint().velocity, m_wrist.acceleration);
 
     m_wrist.volts = m_wrist.pidVal + m_wrist.ff + liftAccVolts;
 
     if (allowDown && m_wrist.volts > 0 || allowUp && m_wrist.volts < 0) {
+
+      SmartDashboard.putNumber("volts", m_wrist.volts);
 
       m_wrist.m_motor.setVoltage(m_wrist.volts);
 
@@ -165,6 +167,7 @@ public class PositionProfileWrist extends CommandBase {
     else {
 
       m_wrist.m_motor.setVoltage(0);
+      SmartDashboard.putNumber("volts", 0);
 
     }
 
