@@ -2,13 +2,13 @@
   "waypoints": [
     {
       "anchorPoint": {
-        "x": 1.9625011192468444,
-        "y": 0.7569306505519492
+        "x": 1.912536238865582,
+        "y": 0.707316708751067
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.4486665035892305,
-        "y": 0.7965793989141946
+        "x": 2.9125362388655835,
+        "y": 0.707316708751067
       },
       "holonomicAngle": 0,
       "isReversal": false,
@@ -24,22 +24,22 @@
     },
     {
       "anchorPoint": {
-        "x": 6.374325482463916,
-        "y": 0.9155256440009285
+        "x": 6.400338804734405,
+        "y": 0.9512190221135023
       },
       "prevControl": {
-        "x": 6.168487239118384,
-        "y": 0.9155256440009285
+        "x": 4.3840796809382665,
+        "y": 0.44715424116446806
       },
       "nextControl": {
-        "x": 6.580163725809448,
-        "y": 0.9155256440009285
+        "x": 4.3840796809382665,
+        "y": 0.44715424116446806
       },
-      "holonomicAngle": 0.0,
-      "isReversal": false,
+      "holonomicAngle": 0,
+      "isReversal": true,
       "velOverride": null,
       "isLocked": false,
-      "isStopPoint": true,
+      "isStopPoint": false,
       "stopEvent": {
         "names": [],
         "executionBehavior": "parallel",
@@ -49,12 +49,12 @@
     },
     {
       "anchorPoint": {
-        "x": 2.0273808892941543,
-        "y": 1.2038801775445285
+        "x": 1.9044061617535009,
+        "y": 1.0650401016826394
       },
       "prevControl": {
-        "x": 3.094292663405473,
-        "y": 0.511829297039889
+        "x": 4.115787136239588,
+        "y": 0.5447151665094426
       },
       "nextControl": null,
       "holonomicAngle": 180.0,
@@ -70,33 +70,5 @@
       }
     }
   ],
-  "maxVelocity": 2.0,
-  "maxAcceleration": 2.0,
-  "isReversed": false,
-  "markers": [
-    {
-      "position": -0.8753246753247163,
-      "names": [
-        "DropIntake1"
-      ]
-    },
-    {
-      "position": -0.30389610389609634,
-      "names": [
-        "RunIntake1"
-      ]
-    },
-    {
-      "position": 1.184415584415588,
-      "names": [
-        "HomePosition"
-      ]
-    },
-    {
-      "position": 2.0,
-      "names": [
-        "Eject1"
-      ]
-    }
-  ]
+  "markers": []
 }
