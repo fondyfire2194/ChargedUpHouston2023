@@ -19,7 +19,6 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Filesystem;
-import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
@@ -29,8 +28,6 @@ import frc.robot.subsystems.DriveSubsystem;
 
 /** Add your docs here. */
 public class TrajectoryFactory {
-
-    public SendableChooser<String> ppTrajChooser = new SendableChooser<String>();
 
     private DriveSubsystem m_drive;
 
@@ -62,30 +59,18 @@ public class TrajectoryFactory {
 
     public Pose2d startLoadPose;
 
-    PathPlannerTrajectory selTraj;
+    
 
     public TrajectoryFactory(DriveSubsystem drive, FieldSim fs) {
 
         m_drive = drive;
         m_fs = fs;
 
-        ppTrajChooser.setDefaultOption("BackUpCenterPath", "BackUpCenter");
-        ppTrajChooser.addOption("BackUpLeftCenterPath", "BackUpLeftCenter");
-        ppTrajChooser.addOption("BackUpLeftShelfPath", "BackUpLeftShelf");
-        ppTrajChooser.addOption("BackUpRightCenterPath", "BackUpRightCenter");
-        ppTrajChooser.addOption("BackUpRightShelfPath", "BackUpRightShelf");
 
-        ppTrajChooser.addOption("PushCubeCenterPath", "PushCubeCenter");
-        ppTrajChooser.addOption("PushCubeLeftShelfPath", "PushCubeLeftShelf");
-        ppTrajChooser.addOption("PushCubeRightShelfPath", "PushCubeRightShelf");
-
-        createSelectedTrajectory(2, 2, true);
 
     }
 
-    public String getSelectedTrajectoryName() {
-        return ppTrajChooser.getSelected();
-    }
+
 
     public PathPlannerTrajectory getPathPlannerTrajectory(String pathName, double maxvel, double maxaccel,
             boolean reversed) {
@@ -109,17 +94,6 @@ public class TrajectoryFactory {
 
         // SmartDashboard.putBoolean("Exists", f.exists());// && !f.isDirectory()));
         return f.exists() && !f.isDirectory();
-    }
-
-    public void createSelectedTrajectory(double maxvel, double maxaccel, boolean isFirstPath) {
-
-        String selectedName = getSelectedTrajectoryName();
-        // SmartDashboard.putString("SELName", selectedName);
-        selTraj = getPathPlannerTrajectory(selectedName, maxvel, maxaccel, isFirstPath);
-    }
-
-    public Command runSelectedTrajectory() {
-        return followTrajectoryCommand(selTraj, true);
     }
 
     /**
@@ -200,17 +174,6 @@ public class TrajectoryFactory {
         if (leftPickup)
 
             activeTranslation = leftTranslation;
-    }
-
-    public void runSelected() {
-        String name = getSelectedTrajectoryName();
-        PathPlannerTrajectory traj = getPathPlannerTrajectory(name, 2,
-                2, false);
-        followTrajectoryCommand(traj, true).schedule();
-    }
-
-    public void doSelectedTrajectory() {
-        runSelectedTrajectory().schedule();
     }
 
     public PathPlannerTrajectory getSimpleTraj() {

@@ -137,14 +137,7 @@ public class ShuffleboardArms {
 
                 deliverLayout.addNumber("Intake Speed", () -> round2dp(intake.deliverSpeed))
                                 .withPosition(7, 3).withSize(1, 1);
-
-                ShuffleboardLayout trajLayout = Shuffleboard.getTab("Arms")
-                                .getLayout("TrajLayout", BuiltInLayouts.kList)
-                                .withPosition(8, 0)
-                                .withSize(2, 1)
-                                .withProperties(Map.of("Label position", "TOP"));
-
-                trajLayout.add("TrajectoryChooser", tf.ppTrajChooser);
+        
 
         }
 
