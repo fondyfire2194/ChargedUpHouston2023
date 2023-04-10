@@ -14,6 +14,8 @@ import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Pref;
 import frc.robot.Constants.CanConstants;
@@ -80,7 +82,7 @@ public class ExtendArmSubsystem extends SubsystemBase {
 
     public boolean extendMotorConnected;
 
-    public int faultSeen;
+    public int extendFaultSeen;
 
     private double m_positionSim;
 
@@ -135,6 +137,8 @@ public class ExtendArmSubsystem extends SubsystemBase {
     public double positionTarget;
 
     public boolean atDepth;
+
+    public int extendStickyFaultSeen;
 
     public ExtendArmSubsystem() {
 
@@ -191,9 +195,11 @@ public class ExtendArmSubsystem extends SubsystemBase {
 
         loopctr++;
 
-        if (faultSeen != 0)
+        if (extendFaultSeen == 0)
+            extendFaultSeen = getFaults();
 
-            faultSeen = getFaults();
+        if (extendStickyFaultSeen != 0)
+            extendStickyFaultSeen = getStickyFaults();
 
         // for Shuffleboard
         if (loopctr >= 7) {
@@ -247,7 +253,6 @@ public class ExtendArmSubsystem extends SubsystemBase {
 
         }
         m_feedforward = new SimpleMotorFeedforward(Pref.getPref("extKs"), Pref.getPref("extKv"));
-
         m_extController.setP(Pref.getPref("extKp"));
     }
 
@@ -261,15 +266,12 @@ public class ExtendArmSubsystem extends SubsystemBase {
     }
 
     public void incGoal(double val) {
-
         double temp = getPositionInches() + val;
-
         setController(ExtendArmConstants.extendArmFastConstraints, temp, false);
 
     }
 
     public void resetPosition(double position) {
-
         mEncoder.setPosition(position);
 
     }
@@ -295,9 +297,7 @@ public class ExtendArmSubsystem extends SubsystemBase {
     }
 
     public double getPositionInches() {
-
         if (RobotBase.isReal())
-
             return mEncoder.getPosition();
         else
             return m_positionSim;
@@ -336,9 +336,7 @@ public class ExtendArmSubsystem extends SubsystemBase {
     }
 
     public void stop() {
-
         m_motor.set(0);
-
     }
 
     public void setSoftwareLimits() {
@@ -362,13 +360,19 @@ public class ExtendArmSubsystem extends SubsystemBase {
                 || m_motor.isSoftLimitEnabled(SoftLimitDirection.kReverse);
     }
 
-    public void clearFaults() {
-        m_motor.clearFaults();
-        faultSeen = 0;
+    public Command clearFaults() {
+        extendFaultSeen = 0;
+        extendStickyFaultSeen = 0;
+        return Commands.runOnce(() -> m_motor.clearFaults());
+
     }
 
     public int getFaults() {
         return m_motor.getFaults();
+    }
+
+    public int getStickyFaults() {
+        return m_motor.getStickyFaults();
     }
 
     public double round2dp(double number) {

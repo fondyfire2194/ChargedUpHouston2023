@@ -97,6 +97,10 @@ public class SwerveModuleSM extends SubsystemBase {
 
   private double simAngle;
 
+  private int moduleFaultSeen;
+
+  private int moduleStickyFaultSeen;
+
   /**
    * Constructs a SwerveModule.
    *
@@ -115,7 +119,7 @@ public class SwerveModuleSM extends SubsystemBase {
       int cancoderCanChannel,
       boolean driveMotorReversed,
       boolean turningMotorReversed,
-      int pdpCDrivehannel,
+      int pdpDriveChannel,
       int pdpTurnChannel,
       double turningEncoderOffset) {
 
@@ -193,6 +197,12 @@ public class SwerveModuleSM extends SubsystemBase {
 
   @Override
   public void periodic() {
+
+    if (moduleFaultSeen == 0)
+      moduleFaultSeen = getFaults();
+
+    if (moduleStickyFaultSeen == 0)
+      moduleStickyFaultSeen = getStickyFaults();
 
     // if (Pref.getPref("SwerveTune") == 1 && tuneOn == 0) {
 
@@ -291,10 +301,10 @@ public class SwerveModuleSM extends SubsystemBase {
   public void driveMotorMoveVelocity(double speedMPS) {
 
     m_driveMotor
-    
-        .setVoltage(feedforward.calculate(speedMPS) + 
-        
-        m_driveVelController.calculate(getDriveVelocity(), speedMPS));
+
+        .setVoltage(feedforward.calculate(speedMPS) +
+
+            m_driveVelController.calculate(getDriveVelocity(), speedMPS));
 
   }
 
@@ -447,18 +457,28 @@ public class SwerveModuleSM extends SubsystemBase {
       return false;
   }
 
-  public boolean hasFault() {
-    return m_driveMotor.getFaults() != 0 || m_turnMotor.getFaults() != 0;// || m_turnCANcoder.getFaulted();
+  public int getFaults() {
+    return m_driveMotor.getFaults() + m_turnMotor.getFaults();// || m_turnCANcoder.getFaulted();
+  }
+
+  public int getStickyFaults() {
+    return m_driveMotor.getStickyFaults() + m_turnMotor.getStickyFaults();
+  }
+
+  public void clearFaults() {
+    m_driveMotor.clearFaults();
+    m_turnMotor.clearFaults();
+    m_turnCANcoder.clearStickyFaults();
+    moduleFaultSeen=0;
+    moduleStickyFaultSeen=0;
+    
   }
 
   public boolean checkCAN() {
-
     driveMotorConnected = m_driveMotor.getFirmwareVersion() != 0;
     turnMotorConnected = m_turnMotor.getFirmwareVersion() != 0;
     turnCoderConnected = m_turnCANcoder.getFirmwareVersion() > 0;
-
     return RobotBase.isSimulation() || (driveMotorConnected && turnMotorConnected && turnCoderConnected);
-
   }
 
   public void stop() {

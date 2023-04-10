@@ -14,6 +14,8 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Pref;
 import frc.robot.Constants.CanConstants;
@@ -78,7 +80,9 @@ public class WristSubsystem extends SubsystemBase {
 
     public boolean wristMotorConnected;
 
-    public int faultSeen;
+    public int wristFaultSeen;
+
+    public int wristStickyFaultSeen;
 
     private double m_positionSim;
 
@@ -104,15 +108,16 @@ public class WristSubsystem extends SubsystemBase {
     private boolean useSoftwareLimit;
 
     public TrapezoidProfile.State profile;
+
     public double ff;
 
     public boolean resetFF;
+
     public double commandRadPerSec;
+
     public double goalAngleRadians;
 
     public int tstCtr;
-
-    public double gravCalc;
 
     public double volts;
 
@@ -125,6 +130,10 @@ public class WristSubsystem extends SubsystemBase {
     public boolean atGoal;
 
     public double acceleration;
+
+    public double gravVal;
+
+    public double netWristAngle;
 
     public WristSubsystem() {
 
@@ -141,6 +150,7 @@ public class WristSubsystem extends SubsystemBase {
         mEncoder.setVelocityConversionFactor(WristConstants.RADIANS_PER_ENCODER_REV / 60);
 
         SmartDashboard.putNumber("WRRDPR", WristConstants.RADIANS_PER_ENCODER_REV);
+
         SmartDashboard.putNumber("WRDGPR", Units.radiansToDegrees(WristConstants.RADIANS_PER_ENCODER_REV));
 
         mEncoder.setPosition(presetWristAngles.HOME.getAngleRads());
@@ -157,7 +167,7 @@ public class WristSubsystem extends SubsystemBase {
 
         enableSoftLimits(useSoftwareLimit);
 
-        m_wristfeedforward = new ArmFeedforward(WristConstants.ksVolts, WristConstants.kgVolts,
+        m_wristfeedforward = new ArmFeedforward(WristConstants.ksVolts, 0,
                 WristConstants.kvWristVoltSecondsPerRadian, WristConstants.kaWristVoltSecondsSquaredPerRadian);
 
     }
@@ -168,8 +178,11 @@ public class WristSubsystem extends SubsystemBase {
 
         loopctr++;
 
-        if (faultSeen != 0)
-            faultSeen = getFaults();
+        if (wristFaultSeen == 0)
+            wristFaultSeen = getFaults();
+
+        if (wristStickyFaultSeen == 0)
+            wristStickyFaultSeen = getStickyFaults();
 
         if (loopctr == 9) {
 
@@ -231,22 +244,7 @@ public class WristSubsystem extends SubsystemBase {
 
         }
 
-        m_wristfeedforward = new ArmFeedforward(Pref.getPref("wristKs"), Pref.getPref("wristKg"),
-                Pref.getPref("wristKv"));
-
-        m_wristController.setP(Pref.getPref("wristKp"));
-
-    }
-
-    public void setControllerMoving(TrapezoidProfile.Constraints constraints, double angleRads) {
-
-        setControllerConstraints(constraints);
-        setControllerGoal(angleRads);
-        goalAngleRadians = angleRads;
-
-        m_wristController.reset(new TrapezoidProfile.State(getAngleRadians(), getRadsPerSec()));
-
-        m_wristfeedforward = new ArmFeedforward(Pref.getPref("wristKs"), Pref.getPref("wristKg"),
+        m_wristfeedforward = new ArmFeedforward(Pref.getPref("wristKs"), 0,
                 Pref.getPref("wristKv"));
 
         m_wristController.setP(Pref.getPref("wristKp"));
@@ -285,27 +283,17 @@ public class WristSubsystem extends SubsystemBase {
     }
 
     public double getAngleDegrees() {
-
         if (RobotBase.isReal())
-
             return Units.radiansToDegrees(mEncoder.getPosition());
-
         else
-
             return m_positionSim;
-
     }
 
     public double getAngleRadians() {
-
         if (RobotBase.isReal())
-
             return mEncoder.getPosition();
-
         else
-
             return Units.degreesToRadians(m_positionSim);
-
     }
 
     public double getAppliedOutput() {
@@ -371,13 +359,19 @@ public class WristSubsystem extends SubsystemBase {
                 || m_motor.isSoftLimitEnabled(SoftLimitDirection.kReverse);
     }
 
-    public void clearFaults() {
-        m_motor.clearFaults();
-        faultSeen = 0;
+    public Command clearFaults() {
+        wristFaultSeen = 0;
+        wristStickyFaultSeen = 0;
+        return Commands.runOnce(() -> m_motor.clearFaults());
+
     }
 
     public int getFaults() {
         return m_motor.getFaults();
+    }
+
+    public int getStickyFaults() {
+        return m_motor.getStickyFaults();
     }
 
     public double round2dp(double number) {

@@ -7,6 +7,7 @@ import frc.robot.subsystems.DriveSubsystem;
 /** Sets the drivetrain to neutral (coast/brake) */
 public class SetSwerveIdleMode extends CommandBase {
   @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
+  
   private final DriveSubsystem m_swerveDrive;
 
   private final boolean m_brake;

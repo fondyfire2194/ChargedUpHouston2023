@@ -81,7 +81,8 @@ public class Robot extends TimedRobot {
 
     loopCtr++;
 
-    if (loopCtr > 100) {
+
+    if (loopCtr >= 100) {
 
       m_robotContainer.m_drive.ALL_CANOK = m_robotContainer.m_drive.checkCANOK()
           && m_robotContainer.m_liftArm.checkCANOK()
@@ -136,9 +137,9 @@ public class Robot extends TimedRobot {
 
     Shuffleboard.startRecording();
 
-   // m_robotContainer.m_drive.fieldOrientOffset = 180;
+    // m_robotContainer.m_drive.fieldOrientOffset = 180;
 
-   m_robotContainer.m_drive.m_fieldOriented = true;
+    m_robotContainer.m_drive.m_fieldOriented = true;
 
     m_robotContainer.m_drive.setIdleMode(true);
 
@@ -184,7 +185,7 @@ public class Robot extends TimedRobot {
     // this line or comment it out.
 
     if (autoHasRun)
-    
+
       m_robotContainer.m_drive.fieldOrientOffset = 180;
 
     m_robotContainer.m_drive.setClosedLoop(false);

@@ -9,6 +9,8 @@ import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkMaxPIDController;
 
 import edu.wpi.first.wpilibj.RobotBase;
+import edu.wpi.first.wpilibj.Servo;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.CanConstants;
@@ -45,6 +47,12 @@ public class IntakeSubsystem extends SubsystemBase {
 
   public double voltage;
 
+  public Servo shootCubeServo = new Servo(1);
+
+  public int intakeFaultSeen;
+
+  public int intakeStickyFaultSeen;
+
   public IntakeSubsystem() {
 
     mIntakeMotor = new CANSparkMax(CanConstants.INTAKE_MOTOR, CANSparkMaxLowLevel.MotorType.kBrushless);
@@ -77,10 +85,20 @@ public class IntakeSubsystem extends SubsystemBase {
 
     setCANTimes();
 
+    shootCubeServo.setAngle(0);
+
+    // shootCubeServo.setAngle(180);
+
   }
 
   @Override
   public void periodic() {
+
+    if (intakeFaultSeen != 0)
+      intakeFaultSeen = getFaults();
+
+    if (intakeStickyFaultSeen != 0)
+      intakeStickyFaultSeen = getStickyFaults();
 
     loopctr++;
 
@@ -166,17 +184,18 @@ public class IntakeSubsystem extends SubsystemBase {
     return true;
   }
 
-  public void clearFaults() {
-    mIntakeMotor.clearFaults();
-
+  public Command clearFaults() {
+    intakeFaultSeen = 0;
+    intakeStickyFaultSeen = 0;
+    return Commands.runOnce(() -> mIntakeMotor.clearFaults());
   }
 
-  public int getIntakeFaults() {
+  public int getFaults() {
     return mIntakeMotor.getFaults();
   }
 
-  public String faultAsBitString() {
-    return Integer.toBinaryString(getIntakeFaults());
+  public int getStickyFaults() {
+    return mIntakeMotor.getStickyFaults();
   }
 
   public void stopIntake() {

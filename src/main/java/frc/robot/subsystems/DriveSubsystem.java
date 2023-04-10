@@ -8,6 +8,8 @@ import com.ctre.phoenix.unmanaged.Unmanaged;
 import com.kauailabs.navx.frc.AHRS;
 import com.revrobotics.CANSparkMax.IdleMode;
 
+import edu.wpi.first.hal.PowerDistributionFaults;
+import edu.wpi.first.hal.PowerDistributionStickyFaults;
 import edu.wpi.first.hal.SimDouble;
 import edu.wpi.first.hal.simulation.SimDeviceDataJNI;
 import edu.wpi.first.math.VecBuilder;
@@ -23,11 +25,13 @@ import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -44,6 +48,8 @@ public class DriveSubsystem extends SubsystemBase {
   public SwerveDriveKinematics m_kinematics = DriveConstants.m_kinematics;
 
   public boolean isOpenLoop = true;// RobotBase.isSimulation() && !DriverStation.isAutonomousEnabled();
+
+  final PowerDistribution m_pdp = new PowerDistribution();
 
   public final SwerveModuleSM m_frontLeft = new SwerveModuleSM(
       IDConstants.FRONT_LEFT_LOCATION,
@@ -212,6 +218,10 @@ public class DriveSubsystem extends SubsystemBase {
 
   public double autoBalanceGyroStart = -7;
 
+  public int moduleFaultSeen;
+
+  public int moduleStickyFaultSeen;
+
   /** Creates a new DriveSubsystem. */
   public DriveSubsystem() {
 
@@ -287,13 +297,6 @@ public class DriveSubsystem extends SubsystemBase {
     setModuleStates(swerveModuleStates);
   }
 
-  public void arcadeDrive(double xSpeed, double rotAngle) {
-    m_frontLeft.setDesiredState(new SwerveModuleState(xSpeed, Rotation2d.fromDegrees(rotAngle)));
-    m_frontRight.setDesiredState(new SwerveModuleState(xSpeed, Rotation2d.fromDegrees(rotAngle)));
-    m_backLeft.setDesiredState(new SwerveModuleState(xSpeed, Rotation2d.fromDegrees(rotAngle)));
-    m_backRight.setDesiredState(new SwerveModuleState(xSpeed, Rotation2d.fromDegrees(rotAngle)));
-  }
-
   /**
    * Sets the swerve ModuleStates.
    *
@@ -323,6 +326,14 @@ public class DriveSubsystem extends SubsystemBase {
 
     updateOdometry();
 
+    if (moduleFaultSeen == 0) {
+      moduleFaultSeen = m_frontLeft.getFaults() + m_frontRight.getFaults() + m_backLeft.getFaults()
+          + m_backRight.getFaults();
+      if (moduleStickyFaultSeen == 0) {
+        moduleStickyFaultSeen = m_frontLeft.getStickyFaults() + m_frontRight.getStickyFaults()
+            + m_backLeft.getStickyFaults() + m_backRight.getStickyFaults();
+      }
+    }
   }
 
   /**
@@ -570,6 +581,16 @@ public class DriveSubsystem extends SubsystemBase {
     m_frontRight.stop();
     m_backLeft.stop();
     m_backRight.stop();
+  }
+
+  public Command clearFaults() {
+    moduleFaultSeen = 0;
+    moduleStickyFaultSeen = 0;
+    m_pdp.clearStickyFaults();
+    return Commands.sequence(Commands.runOnce(() -> m_frontLeft.clearFaults()),
+        Commands.runOnce(() -> m_frontRight.clearFaults()),
+        Commands.runOnce(() -> m_backLeft.clearFaults()),
+        Commands.runOnce(() -> m_backRight.clearFaults()));
   }
 
   public double[] r2dToArray(Pose2d pose) {

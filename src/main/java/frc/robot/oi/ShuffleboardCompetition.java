@@ -76,6 +76,12 @@ public class ShuffleboardCompetition {
                 area1.addBoolean("ClosedLoop", () -> !m_drive.isOpenLoop)
                                 .withSize(2, 1)
                                 .withPosition(4, 3);
+                area1.addNumber("DriveFaults", () -> m_drive.moduleFaultSeen)
+                                .withSize(1, 1)
+                                .withPosition(1, 2);
+                area1.addNumber("DriveStickyFaults", () -> m_drive.moduleStickyFaultSeen)
+                                .withSize(1, 1)
+                                .withPosition(1, 3);
 
         }
 

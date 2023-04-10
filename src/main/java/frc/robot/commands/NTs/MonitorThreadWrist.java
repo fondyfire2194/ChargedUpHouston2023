@@ -29,9 +29,10 @@ public class MonitorThreadWrist {
     public DoublePublisher volts;
     public DoublePublisher profvel;
     public BooleanPublisher inizone;
-    public BooleanPublisher atGoal;   
+    public BooleanPublisher atGoal;
     public DoublePublisher velerr;
     public DoublePublisher amps;
+    public DoublePublisher gravval;
 
     public MonitorThreadWrist(WristSubsystem wrist) {
 
@@ -49,6 +50,7 @@ public class MonitorThreadWrist {
         atGoal = wristprof.getBooleanTopic("ATGOAL").publish();
         velerr = wristprof.getDoubleTopic("VELERR").publish();
         amps = wristprof.getDoubleTopic("CURRENT").publish();
+        gravval = wristprof.getDoubleTopic("GRAVVALL").publish();
 
     }
 
@@ -83,6 +85,7 @@ public class MonitorThreadWrist {
                         inizone.set(m_wrist.inIZone);
                         atGoal.set(m_wrist.m_wristController.atGoal());
                         amps.set(m_wrist.getAmps());
+                        gravval.set(m_wrist.gravVal);
                     }
                     Thread.sleep(100);
                 }

@@ -9,6 +9,7 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.robot.Pref;
 import frc.robot.Constants.WristConstants;
 import frc.robot.subsystems.LiftArmSubsystem;
 import frc.robot.subsystems.WristSubsystem;
@@ -92,52 +93,36 @@ public class PositionProfileWrist extends CommandBase {
 
         lastSpeed) / (Timer.getFPGATimestamp() - lastTime);
 
-    double kla = .05;
+    double kla = .0;
 
     double liftAccVolts = m_lift.acceleration * kla;
 
     /**
      * The lift angle affects the wist angle to the floor and so the "offset"
-     * that the feedforward calculation below calls for to make the composite wrist
-     * angle 0 at horizontal
+     * that the feedforward calculation below calls for is to make the composite
+     * wrist angle 0 at horizontal
      * Make the wrist angle the angle 0 when the lift arm and the wrist are parallel
-     * to ground.
-     * If the lift drops l degrees then the wrist must drop w degrees to be
+     * to ground. Set kg from there as this will be the maximum
+     * If the lift drops l degrees then the wrist must rise l degrees to be
      * horizontal
-     * Ratio of wrist degrees to lift degrees = w/l
-     * 
+     * A falling lift increase the value of getRadiansFromHorizontal
+     * A rising wrist is more negative so add the 2 values
+     * Netwristangle is 0 for max gravity so use cosine
      */
 
-    double netWristAngle = (m_wrist.getAngleRadians() - wristOffsetRads) 
+    m_wrist.netWristAngle = (m_wrist.getAngleRadians() - wristOffsetRads) + m_lift.getRadiansFromHorizontal();
 
-        + (Math.PI / 2) + m_lift.getCanCoderRadians();
+    SmartDashboard.putNumber("WristAngle", m_wrist.netWristAngle);
 
-    /**
-     * For netWrist Angle to be 0,
-     * 
-     * m_wrist.getAngleRadians() = Math.PI/2 + m_lift.getCanCoderRadians();
-     * 
-     *
-     * 1 wrist radian is set by gearing and will be differnt from a lift radian
-     *
-     * ratio is w/l so for every lift radian wrist must move w/l radians
-     * if one wrist radian = .8 lift radians wrist must move .8 for every lift
-     * radian
-     * 
-     * 
-     */
+    m_wrist.gravVal = Pref.getPref("wristKg") * Math.cos(m_wrist.netWristAngle);
 
-    SmartDashboard.putNumber("WristAngle", m_wrist.m_wristController.getSetpoint().position - (m_lift.getCanCoderRadians() + m_wrist.getAngleRadians() - (Math.PI / 4)));
-
-    SmartDashboard.putNumber("KG", m_wrist.m_wristfeedforward.kg);
+    SmartDashboard.putNumber("wristGravVal", m_wrist.gravVal);
 
     m_wrist.ff = m_wrist.m_wristfeedforward.calculate(
-
-        m_wrist.m_wristController.getSetpoint().position - (m_lift.getCanCoderRadians() + m_wrist.getAngleRadians() - (Math.PI / 4)),
-
+        m_wrist.m_wristController.getSetpoint().position - (m_wrist.netWristAngle),
         m_wrist.m_wristController.getSetpoint().velocity, m_wrist.acceleration);
 
-    m_wrist.volts = m_wrist.pidVal + m_wrist.ff + liftAccVolts;
+    m_wrist.volts = m_wrist.pidVal + m_wrist.ff + m_wrist.gravVal + liftAccVolts;
 
     if (allowDown && m_wrist.volts > 0 || allowUp && m_wrist.volts < 0) {
 

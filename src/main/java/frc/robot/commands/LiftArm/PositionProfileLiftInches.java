@@ -87,9 +87,7 @@ public class PositionProfileLiftInches extends CommandBase {
 
     loopctr++;
 
-    m_lift.gravVal = Pref.getPref("liftKg") * Math.sin(m_lift.getCanCoderRadians());
-
-   
+    m_lift.gravVal = Pref.getPref("liftKg") * Math.cos(m_lift.getRadiansFromHorizontal());
 
     m_lift.pidVal = m_lift.m_liftController.calculate(m_lift.getPositionInches(),
         m_lift.goalInches);
@@ -98,7 +96,7 @@ public class PositionProfileLiftInches extends CommandBase {
 
     // m_ext.pidVal = MathUtil.clamp(temp, -1, 1);
 
-     m_lift.acceleration = (m_lift.m_liftController.getSetpoint().velocity -
+    m_lift.acceleration = (m_lift.m_liftController.getSetpoint().velocity -
         lastSpeed) / (Timer.getFPGATimestamp() - lastTime);
 
     m_lift.ff = m_lift.m_sff.calculate(m_lift.m_liftController.getSetpoint().velocity,

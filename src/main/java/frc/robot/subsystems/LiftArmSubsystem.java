@@ -13,7 +13,10 @@ import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.RobotBase;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.CanConstants;
 import frc.robot.Constants.LiftArmConstants;
@@ -88,7 +91,7 @@ public class LiftArmSubsystem extends SubsystemBase {
 
     public boolean liftArmMotorConnected;
 
-    public int faultSeen;
+    public int liftFaultSeen;
 
     public double positionError;
 
@@ -146,6 +149,8 @@ public class LiftArmSubsystem extends SubsystemBase {
 
     public double acceleration;
 
+    public int liftStickyFaultSeen;
+
     public LiftArmSubsystem() {
         useSoftwareLimit = true;
         m_motor = new CANSparkMax(CanConstants.LIFT_ARM_MOTOR, CANSparkMaxLowLevel.MotorType.kBrushless);
@@ -194,8 +199,11 @@ public class LiftArmSubsystem extends SubsystemBase {
 
         loopctr++;
 
-        if (faultSeen != 0)
-            faultSeen = getFaults();
+        if (liftFaultSeen == 0)
+            liftFaultSeen = getFaults();
+
+        if (liftStickyFaultSeen != 0)
+            liftStickyFaultSeen = getStickyFaults();
 
         if (loopctr == 5) {
             amps = getAmps();
@@ -246,6 +254,10 @@ public class LiftArmSubsystem extends SubsystemBase {
         return Units.degreesToRadians(m_liftCANcoder.getAbsolutePosition())
                 + Units.degreesToRadians(LiftArmConstants.LIFT_CANCODER_OFFSET);
 
+    }
+
+    public double getRadiansFromHorizontal() {
+        return Math.PI / 2 - getCanCoderRadians();
     }
 
     public double getCanCoderRate() {
@@ -324,13 +336,19 @@ public class LiftArmSubsystem extends SubsystemBase {
                 || m_motor.isSoftLimitEnabled(SoftLimitDirection.kReverse);
     }
 
-    public void clearFaults() {
-        m_motor.clearFaults();
-        faultSeen = 0;
+    public Command clearFaults() {
+        liftFaultSeen = 0;
+        liftStickyFaultSeen = 0;
+        m_liftCANcoder.clearStickyFaults();
+        return startEnd(() -> m_motor.clearFaults(), (() -> m_motor.clearFaults()));
     }
 
     public int getFaults() {
         return m_motor.getFaults();
+    }
+
+    public int getStickyFaults() {
+        return m_motor.getStickyFaults();
     }
 
     public void setControllerGoal(double goalInches) {

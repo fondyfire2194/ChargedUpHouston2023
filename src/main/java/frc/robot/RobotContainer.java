@@ -5,6 +5,7 @@
 
 package frc.robot;
 
+import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -93,8 +94,6 @@ public class RobotContainer {
 
         public CommandXboxController m_armsController = new CommandXboxController(
                         OIConstants.kArmControllerPort);
-
-        // final PowerDistribution m_pdp = new PowerDistribution();
 
         public LimelightVision m_llvis = new LimelightVision();
 
@@ -346,10 +345,12 @@ public class RobotContainer {
                 m_armsController.povRight().onTrue(Commands.runOnce(() -> m_wrist.setController(WristConstants.wristFastConstraints, 1, false)));
 
                 m_armsController.rightTrigger()
-                                .onTrue(Commands.runOnce(() -> m_extendArm.setController(
-                                                ExtendArmConstants.extendArmFastConstraints, 0,
-                                                false)));
-
+                                .onTrue(Commands.runOnce(() -> m_extendArm.clearFaults()))
+                                .onTrue(Commands.runOnce(() -> m_liftArm.clearFaults()))
+                                .onTrue(Commands.runOnce(() -> m_wrist.clearFaults()))
+                                .onTrue(Commands.runOnce(() -> m_intake.clearFaults()))
+                                .onTrue(Commands.runOnce(() -> m_drive.clearFaults()));
+                                               
                 // m_armsController.back() DO NOT ASSIGN ALREADY USED IN JOG COMMANDS TO
                 // OVERRIDE SOFTWARE LIMITS
 
