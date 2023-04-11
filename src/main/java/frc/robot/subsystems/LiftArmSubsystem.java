@@ -13,6 +13,7 @@ import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.RobotBase;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -33,25 +34,25 @@ public class LiftArmSubsystem extends SubsystemBase {
 
     public enum presetLiftAngles {
 
-        HOME(34.1, 0),
+        HOME(34.1, 0), // 0
 
-        TRAVEL(37.7, 1.32),
+        TRAVEL(37.7, 1.06), // 1.32
 
-        CLEAR_ARMS(38, .85),
+        CLEAR_ARMS(38, .68), // .85
 
-        PICKUP_CUBE_GROUND(42, 2.5),
+        PICKUP_CUBE_GROUND(42, 2), // 2.5
 
-        PICKUP_UPRIGHT_CONE_GROUND(43, 2.5), // 42 2.02
+        PICKUP_UPRIGHT_CONE_GROUND(43, 2), // 2.5
 
-        PICKUP_SIDE_LOAD_STATION(55, 4.6),
+        PICKUP_SIDE_LOAD_STATION(55, 3.68), // 4.6
 
-        PICKUP_LOAD_STATION(102.5, 14.5),
+        PICKUP_LOAD_STATION(102.5, 11.6), // 14.5
 
-        PLACE_GROUND(72, 8.8),
+        PLACE_GROUND(72, 7.04), // 8.8
 
-        PLACE_MID(89, 11.11),
+        PLACE_MID(89, 8.89), // 11/11
 
-        PLACE_TOP(99.6, 13.5);
+        PLACE_TOP(99.6, 10.8);// 13.5
 
         private double angle;
         private double inches;
@@ -151,6 +152,8 @@ public class LiftArmSubsystem extends SubsystemBase {
 
     public int liftStickyFaultSeen;
 
+    public double extendGravityVal;
+
     public LiftArmSubsystem() {
         useSoftwareLimit = true;
         m_motor = new CANSparkMax(CanConstants.LIFT_ARM_MOTOR, CANSparkMaxLowLevel.MotorType.kBrushless);
@@ -166,8 +169,9 @@ public class LiftArmSubsystem extends SubsystemBase {
         m_liftCANcoder.configAllSettings(AngleUtils.generateCanCoderConfig());
 
         mEncoder.setPositionConversionFactor(LiftArmConstants.INCHES_PER_ENCODER_REV);
-        // SmartDashboard.putNumber("LDPER", LiftArmConstants.DEGREES_PER_ENCODER_REV);
+      //  SmartDashboard.putNumber("LDPER", LiftArmConstants.INCHES_PER_ENCODER_REV);
         mEncoder.setVelocityConversionFactor(LiftArmConstants.INCHES_PER_ENCODER_REV / 60);
+      //  SmartDashboard.putNumber("LVIPS", LiftArmConstants.MAX_RATE_INCHES_PER_SEC);
 
         mEncoder.setPosition(0);
 
@@ -178,9 +182,7 @@ public class LiftArmSubsystem extends SubsystemBase {
         m_motor.setIdleMode(IdleMode.kBrake);
 
         if (RobotBase.isSimulation()) {
-
             m_positionSim = LiftArmConstants.MIN_INCHES;
-
         }
         setCANTimes();
 

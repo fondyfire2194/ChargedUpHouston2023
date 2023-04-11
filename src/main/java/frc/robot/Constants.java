@@ -197,7 +197,7 @@ public final class Constants {
 
     public static double GEAR_RATIO = 21;
 
-    public static double PULLEY_TEETH = 24;
+    public static double PULLEY_TEETH = 30;// 24;24/30 = .8
 
     public static double TOOTH_BELT_PITCH = Units.metersToInches(.005);// .197"
 
@@ -217,9 +217,9 @@ public final class Constants {
 
     private static final double INCH_RANGE = MAX_INCHES - MIN_INCHES;// 15
 
-    public static final double INCHES_PER_ENCODER_REV = (TOOTH_BELT_PITCH * PULLEY_TEETH) / GEAR_RATIO;// .225
+    public static final double INCHES_PER_ENCODER_REV = (TOOTH_BELT_PITCH * PULLEY_TEETH) / GEAR_RATIO;// .281
 
-    public static final double MAX_RATE_INCHES_PER_SEC = (INCHES_PER_ENCODER_REV * 5700) / 60;// 21.4
+    public static final double MAX_RATE_INCHES_PER_SEC = (INCHES_PER_ENCODER_REV * 5700) / 60;// 26.7
 
     public static final double LIFT_CANCODER_OFFSET = -204;
 
@@ -234,7 +234,7 @@ public final class Constants {
 
     public static final TrapezoidProfile.Constraints liftArmFastConstraints
 
-        = new Constraints(15, 25);
+        = new Constraints(20, 25);
 
     public static final double JOG_SLEW_RATE = 10;
 

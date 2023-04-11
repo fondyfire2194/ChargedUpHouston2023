@@ -6,9 +6,12 @@ package frc.robot.commands.LiftArm;
 
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Pref;
+import frc.robot.Constants.ExtendArmConstants;
 import frc.robot.Constants.LiftArmConstants;
+import frc.robot.subsystems.ExtendArmSubsystem;
 import frc.robot.subsystems.LiftArmSubsystem;
 
 public class PositionProfileLiftInches extends CommandBase {
@@ -16,6 +19,8 @@ public class PositionProfileLiftInches extends CommandBase {
   private LiftArmSubsystem m_lift;
 
   private TrapezoidProfile.Constraints m_constraints;
+
+  private ExtendArmSubsystem m_ext;
 
   private TrapezoidProfile.State m_goal;
 
@@ -33,10 +38,12 @@ public class PositionProfileLiftInches extends CommandBase {
 
   private double lastTime;
 
-  public PositionProfileLiftInches(LiftArmSubsystem lift, TrapezoidProfile.Constraints constraints,
+  public PositionProfileLiftInches(LiftArmSubsystem lift, ExtendArmSubsystem ext,
+      TrapezoidProfile.Constraints constraints,
       double goalInches) {
     // Use addRequirements() here to declare subsystem dependencies.
     m_lift = lift;
+    m_ext = ext;
     m_constraints = constraints;
 
     m_goalInches = goalInches;
@@ -44,8 +51,9 @@ public class PositionProfileLiftInches extends CommandBase {
     addRequirements(m_lift);
   }
 
-  public PositionProfileLiftInches(LiftArmSubsystem lift) {
+  public PositionProfileLiftInches(LiftArmSubsystem lift, ExtendArmSubsystem ext) {
     m_lift = lift;
+    m_ext = ext;
     addRequirements(m_lift);
   }
 
@@ -87,14 +95,17 @@ public class PositionProfileLiftInches extends CommandBase {
 
     loopctr++;
 
-    m_lift.gravVal = Pref.getPref("liftKg") * Math.cos(m_lift.getRadiansFromHorizontal());
+    double extAdderVolts = .1;
+
+    m_lift.extendGravityVal = extAdderVolts
+        * (m_ext.getPositionInches() * Math.sin(m_lift.getCanCoderRadians() / ExtendArmConstants.MAX_POSITION));
+
+    SmartDashboard.putNumber("LiftExtAdder", m_lift.extendGravityVal);
+
+    m_lift.gravVal = Pref.getPref("liftKg") * Math.sin(m_lift.getCanCoderRadians());
 
     m_lift.pidVal = m_lift.m_liftController.calculate(m_lift.getPositionInches(),
         m_lift.goalInches);
-
-    // double temp = m_ext.pidVal * RobotController.getBatteryVoltage();
-
-    // m_ext.pidVal = MathUtil.clamp(temp, -1, 1);
 
     m_lift.acceleration = (m_lift.m_liftController.getSetpoint().velocity -
         lastSpeed) / (Timer.getFPGATimestamp() - lastTime);
@@ -102,7 +113,7 @@ public class PositionProfileLiftInches extends CommandBase {
     m_lift.ff = m_lift.m_sff.calculate(m_lift.m_liftController.getSetpoint().velocity,
         m_lift.acceleration);
 
-    m_lift.volts = m_lift.ff + m_lift.pidVal + m_lift.gravVal;
+    m_lift.volts = m_lift.ff + m_lift.pidVal + m_lift.gravVal + m_lift.extendGravityVal;
 
     if (allowUp && m_lift.volts > 0 || allowDown && m_lift.volts < 0) {
 

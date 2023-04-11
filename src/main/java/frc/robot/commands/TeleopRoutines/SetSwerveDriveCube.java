@@ -1,15 +1,18 @@
 package frc.robot.commands.TeleopRoutines;
 
+import java.security.interfaces.XECKey;
 import java.util.function.DoubleSupplier;
+
+import javax.security.auth.x500.X500Principal;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.filter.SlewRateLimiter;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.DriverConstants;
 import frc.robot.subsystems.DriveSubsystem;
-import frc.robot.subsystems.GameHandlerSubsystem;
 import frc.robot.subsystems.LimelightVision;
 
 public class SetSwerveDriveCube extends CommandBase {
@@ -36,7 +39,6 @@ public class SetSwerveDriveCube extends CommandBase {
   public SetSwerveDriveCube(
       DriveSubsystem drive,
       LimelightVision llv,
-      GameHandlerSubsystem ghs,
       DoubleSupplier throttleInput) {
     m_drive = drive;
 
@@ -58,8 +60,6 @@ public class SetSwerveDriveCube extends CommandBase {
         DriverConstants.kControllerDeadband)
         * Math.signum(m_throttleInput.getAsDouble());
 
-    // square values after deadband while keeping original sign
-
     throttle *= -DriveConstants.kMaxSpeedMetersPerSecond / 3;
 
     double throttle_sl = m_slewX.calculate(throttle);
@@ -70,9 +70,11 @@ public class SetSwerveDriveCube extends CommandBase {
 
     else {
 
-      double xError = m_controller.calculate(m_drive.tx, 0);
+      double xError = m_controller.calculate(m_drive.tx, -1.25);
 
-      m_drive.drive(throttle_sl, 0, 0);
+      SmartDashboard.putNumber("XCUBERR", xError);
+
+      m_drive.drive(throttle_sl, 0, xError);
 
     }
 
@@ -86,6 +88,6 @@ public class SetSwerveDriveCube extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return !m_drive.hasTarget;
+    return false;
   }
 }

@@ -10,6 +10,7 @@ import com.revrobotics.SparkMaxPIDController;
 
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.Servo;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -47,7 +48,7 @@ public class IntakeSubsystem extends SubsystemBase {
 
   public double voltage;
 
-  public Servo shootCubeServo = new Servo(1);
+  public Servo shootCubeServo = new Servo(0);
 
   public int intakeFaultSeen;
 
@@ -85,10 +86,7 @@ public class IntakeSubsystem extends SubsystemBase {
 
     setCANTimes();
 
-    shootCubeServo.setAngle(0);
-
-    // shootCubeServo.setAngle(180);
-
+    shootCubeServo.setAngle(180);
   }
 
   @Override
@@ -208,6 +206,11 @@ public class IntakeSubsystem extends SubsystemBase {
     mIntakeMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus1, 20);
     mIntakeMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus2, 50);
 
+  }
+
+  public void setCubeServoAngle(double angle) {
+    shootCubeServo.setAngle(angle);
+    SmartDashboard.putNumber("SER", angle);
   }
 
 }
