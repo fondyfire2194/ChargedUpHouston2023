@@ -33,17 +33,16 @@ import frc.robot.subsystems.WristSubsystem;
 public class AutoFactory {
 
     int sl_coop_0 = 0;
-    int sl_leftShelf_1 = 1;
-    int sl_rightShelf_2 = 2;
+    int sl_noBumpShelf_1 = 1;
+    int sl_bumpShelf_2 = 2;
 
     int as_doNothing_0 = 0;
     int as_pushCube_1 = 1;
     int as_deliverMid_2 = 2;
     int as_deliverTop_3 = 3;
 
-    int as1__balanceCharge_1 = 1;
-    int as1_driveThruCharge_2 = 2;
-    int as1_secondCube_3 = 3;
+    int as1_driveThruChargeAndBalance_1 = 1;
+    int as1_secondCube_2 = 2;
 
     List<PathPlannerTrajectory> pathGroup;
 
@@ -113,9 +112,9 @@ public class AutoFactory {
 
         m_startLocationChooser.setDefaultOption("Coop", 0);
 
-        m_startLocationChooser.addOption("LeftShelf", 1);
+        m_startLocationChooser.addOption("NoBumpShelf", 1);
 
-        m_startLocationChooser.addOption("RightShelf", 2);
+        m_startLocationChooser.addOption("BumpShelf", 2);
 
         m_autoChooser.setDefaultOption("Do Nothing", 0);
 
@@ -127,11 +126,9 @@ public class AutoFactory {
 
         m_autoChooser1.setDefaultOption("Do Nothing", 0);
 
-        m_autoChooser1.addOption("BalanceCharge", 1);
+        m_autoChooser1.addOption("ThroughCharge+Balance", 1);
 
-        m_autoChooser1.addOption("DriveThroughCharge", 2);
-
-        m_autoChooser1.addOption("PickupScore2ndCube", 3);
+        m_autoChooser1.addOption("PickupScore2ndCube", 2);
 
     }
 
@@ -150,26 +147,13 @@ public class AutoFactory {
             traj1Reqd = true;
         }
 
-        if (startLocation == sl_leftShelf_1 && autoselect == as_pushCube_1
-                && DriverStation.getAlliance() == Alliance.Blue) {
+        if (startLocation == sl_noBumpShelf_1 && autoselect == as_pushCube_1) {
             traj1name = "PushCubeLeftShelf";
             traj1Reqd = true;
         }
-        if (startLocation == sl_leftShelf_1 && autoselect == as_pushCube_1
-                && DriverStation.getAlliance() == Alliance.Red) {
-            traj1name = "PushCubeRightShelf";
-            traj1Reqd = true;
-        }
 
-        if (startLocation == sl_rightShelf_2 && autoselect == as_pushCube_1
-                && DriverStation.getAlliance() == Alliance.Blue) {
+        if (startLocation == sl_bumpShelf_2 && autoselect == as_pushCube_1) {
             traj1name = "PushCubeRightShelf";
-            traj1Reqd = true;
-        }
-
-        if (startLocation == sl_rightShelf_2 && autoselect == as_pushCube_1
-                && DriverStation.getAlliance() == Alliance.Red) {
-            traj1name = "PushCubeLeftShelf";
             traj1Reqd = true;
         }
 
@@ -199,7 +183,7 @@ public class AutoFactory {
         int autoselect1 = m_autoChooser1.getSelected();
 
         if (startLocation == sl_coop_0) {// any of the coop starts
-            if (autoselect1 == as1__balanceCharge_1) {
+            if (autoselect1 == as1_driveThruChargeAndBalance_1) {
                 m_drive.autoBalanceGyroStart = m_drive.getGyroPitch();
                 List<PathPlannerTrajectory> balanceCommandList = m_tf.getPathPlannerTrajectoryGroup("BackUpCenter", 2.2,
                         7, false);
@@ -211,21 +195,11 @@ public class AutoFactory {
                         new AutoBalanceBackwards(m_drive));
             }
 
-            if (startLocation == sl_coop_0 && autoselect1 == as1_driveThruCharge_2) {
-                traj2name = "BackUpCenter";
-                traj2Reqd = true;
-            }
-
-          
         }
 
-        if (startLocation == sl_leftShelf_1 && autoselect1 == as1_secondCube_3
-                && DriverStation.getAlliance() == Alliance.Blue) {
-
-            // traj2name = "BackUpLeftShelf";
+        if (startLocation == sl_noBumpShelf_1 && autoselect1 == as1_secondCube_2) {
 
             traj2name = "LeftShelfToLeftCubeRotate";
-            // traj2Reqd = true;
 
             PathPlannerTrajectory eventPath = m_tf.getPathPlannerTrajectory("LeftShelfToLeftCubeRotate", 2, 1, false);
             HashMap<String, Command> eventMap = new HashMap<>();
@@ -238,18 +212,7 @@ public class AutoFactory {
             tempCommand = eventCommand;
         }
 
-        if (startLocation == sl_leftShelf_1 && autoselect1 == as1_secondCube_3
-                && DriverStation.getAlliance() == Alliance.Red) {
-            traj2name = "BackUpRightShelf";
-            traj2Reqd = true;
-           
-        }
-
-        if (startLocation == sl_rightShelf_2 && autoselect1 == as1_secondCube_3
-                && DriverStation.getAlliance() == Alliance.Blue) {
-            traj2name = "BackUpRightShelf";
-            // traj2Reqd = true;
-          
+        if (startLocation == sl_bumpShelf_2 && autoselect1 == as1_secondCube_2) {
 
             List<PathPlannerTrajectory> eventPaths = m_tf.getPathPlannerTrajectoryGroup("RightSideSecondCube", 2, 1,
                     false);
@@ -276,11 +239,6 @@ public class AutoFactory {
             tempCommand = new SequentialCommandGroup(eventCommand1, new WaitCommand(0.5), eventCommand2,
                     new EjectPieceFromIntake(m_intake, 12).withTimeout(1));
 
-        }
-
-        if (traj2Reqd) {
-            traj2 = m_tf.getPathPlannerTrajectory(traj2name, 2, 1, false);
-            tempCommand = m_tf.followTrajectoryCommand(traj2, !traj1Reqd);
         }
 
         return tempCommand;

@@ -213,10 +213,6 @@ public final class Constants {
 
     public static final double MIN_CANCODER = 29;
 
-    private static final double ANGLE_RANGE = MAX_ANGLE - MIN_ANGLE;// 56
-
-    private static final double INCH_RANGE = MAX_INCHES - MIN_INCHES;// 15
-
     public static final double INCHES_PER_ENCODER_REV = (TOOTH_BELT_PITCH * PULLEY_TEETH) / GEAR_RATIO;// .281
 
     public static final double MAX_RATE_INCHES_PER_SEC = (INCHES_PER_ENCODER_REV * 5700) / 60;// 26.7
