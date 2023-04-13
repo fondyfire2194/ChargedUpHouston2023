@@ -81,7 +81,7 @@ public class LiftArmSubsystem extends SubsystemBase {
 
     public final CANCoder m_liftCANcoder;
 
-    public ProfiledPIDController m_liftController = new ProfiledPIDController(0.4, 0, 0,
+    public ProfiledPIDController m_liftController = new ProfiledPIDController(0.2, 0, 0,
             LiftArmConstants.liftArmFastConstraints, .02);
 
     private boolean useSoftwareLimit;

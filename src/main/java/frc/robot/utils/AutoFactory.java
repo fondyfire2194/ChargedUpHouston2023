@@ -10,10 +10,11 @@ import java.util.List;
 import com.pathplanner.lib.PathPlannerTrajectory;
 import com.pathplanner.lib.commands.FollowPathWithEvents;
 
-import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.commands.Auto.AutoBalanceBackwards;
@@ -22,6 +23,8 @@ import frc.robot.commands.DeliverRoutines.DeliverCubeFast;
 import frc.robot.commands.DeliverRoutines.EjectPieceFromIntake;
 import frc.robot.commands.PickupRoutines.GroundIntakeUprightConePositions;
 import frc.robot.commands.PickupRoutines.IntakePiece;
+import frc.robot.commands.PickupRoutines.IntakePieceStopMotor;
+import frc.robot.commands.TeleopRoutines.DriveToPickup;
 import frc.robot.commands.TeleopRoutines.RetractWristExtendLiftTravel;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.ExtendArmSubsystem;
@@ -70,23 +73,15 @@ public class AutoFactory {
 
     private PathPlannerTrajectory traj1;
 
-    private PathPlannerTrajectory traj2;
+    private Command command0 = new DoNothing();
 
     private Command command1 = new DoNothing();
 
-    private Command command0 = new DoNothing();
-
-    private boolean traj1Reqd;
-
     private Command command2 = new DoNothing();
-
-    private boolean traj2Reqd;
-
-    private Command command3 = new DoNothing();
 
     public String traj1name = "PushCubeCenter";
 
-    public String traj2name = "BackUpCenter";
+    private boolean traj1Reqd;
 
     public AutoFactory(DriveSubsystem drive, LiftArmSubsystem lift, ExtendArmSubsystem extend,
             WristSubsystem wrist, IntakeSubsystem intake, TrajectoryFactory tf) {
@@ -176,15 +171,13 @@ public class AutoFactory {
 
         Command tempCommand = new DoNothing();
 
-        traj2Reqd = false;
-
         int startLocation = m_startLocationChooser.getSelected();
 
         int autoselect1 = m_autoChooser1.getSelected();
 
         if (startLocation == sl_coop_0) {// any of the coop starts
             if (autoselect1 == as1_driveThruChargeAndBalance_1) {
-                m_drive.autoBalanceGyroStart = m_drive.getGyroPitch();
+              //  gy = m_drive.getGyroPitch();
                 List<PathPlannerTrajectory> balanceCommandList = m_tf.getPathPlannerTrajectoryGroup("BackUpCenter", 2.2,
                         7, false);
                 tempCommand = new SequentialCommandGroup(
@@ -199,13 +192,11 @@ public class AutoFactory {
 
         if (startLocation == sl_noBumpShelf_1 && autoselect1 == as1_secondCube_2) {
 
-            traj2name = "LeftShelfToLeftCubeRotate";
-
             PathPlannerTrajectory eventPath = m_tf.getPathPlannerTrajectory("LeftShelfToLeftCubeRotate", 2, 1, false);
             HashMap<String, Command> eventMap = new HashMap<>();
             eventMap.put("DropIntake1", new GroundIntakeUprightConePositions(m_lift, m_wrist, m_extend, m_intake)
                     .withTimeout(5));
-            eventMap.put("RunIntake1", new IntakePiece(m_intake, 11).withTimeout(4));
+            eventMap.put("RunIntake1", new IntakePieceStopMotor(m_intake, 11).withTimeout(4));
             FollowPathWithEvents eventCommand = new FollowPathWithEvents(m_tf.followTrajectoryCommand(eventPath, true),
                     eventPath.getMarkers(), eventMap);
 
@@ -249,7 +240,6 @@ public class AutoFactory {
         command0 = new DoNothing();
         command1 = new DoNothing();
         command2 = new DoNothing();
-        command3 = new DoNothing();
 
         command1 = getCommand1();
         command2 = getCommand2();
@@ -263,6 +253,30 @@ public class AutoFactory {
         autonomousCommand = new SequentialCommandGroup(command0, command1, command2);
 
         return autonomousCommand;
+
+    }
+
+    public Command bumpShelfAlt(DriveSubsystem drive, IntakeSubsystem intake, LiftArmSubsystem lift,
+            ExtendArmSubsystem extend, WristSubsystem wrist) {
+
+        Command temp = new DoNothing();
+
+        Command one = new SequentialCommandGroup(
+                new ParallelCommandGroup(
+                        new DriveToPickup(drive, 4.5, 3),
+                        new SequentialCommandGroup(
+                                new WaitCommand(2),
+                                new ParallelCommandGroup(
+                                        new GroundIntakeUprightConePositions(lift, wrist, extend, intake),
+                                        new IntakePieceStopMotor(intake, 11)))),
+                new RetractWristExtendLiftTravel(lift, extend, wrist));
+
+        Command two = new SequentialCommandGroup(
+                Commands.runOnce(() -> drive.resetOdometry(new Pose2d())),
+                new DriveToPickup(drive, 4.5, 3),
+                new DeliverCubeFast(lift, wrist, intake, extend, true));
+
+        return new SequentialCommandGroup(one, two);
 
     }
 

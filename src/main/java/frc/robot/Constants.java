@@ -224,19 +224,19 @@ public final class Constants {
     // compare to 80 degrees per sec gives an additional 20:1 ratio
 
     // arm feedforward
-    public static final double ksVolts = .6;//
+    public static final double ksVolts = .25;//
 
     public static final double kgVolts = .34;
 
     public static final TrapezoidProfile.Constraints liftArmFastConstraints
 
-        = new Constraints(20, 25);
+        = new Constraints(20, 45); //35
 
     public static final double JOG_SLEW_RATE = 10;
 
     public static final double kControllerDeadband = 0.05;
 
-    public static final double kvVoltSecondsPerInch = .52;
+    public static final double kvVoltSecondsPerInch = .48;
 
     public static final double kAVoltSecondSquaredPerInch = 0;
 
@@ -267,7 +267,7 @@ public final class Constants {
 
     public static final TrapezoidProfile.Constraints extendArmFastConstraints
 
-        = new Constraints(25, 25);
+        = new Constraints(40, 60); //25,25
 
     public static final double JOG_SLEW_RATE = 10;
 

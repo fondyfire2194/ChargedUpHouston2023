@@ -18,11 +18,16 @@ import frc.robot.subsystems.LimelightVision;
 public class SetSwerveDriveCube extends CommandBase {
   private final DriveSubsystem m_drive;
   private final SlewRateLimiter m_slewX = new SlewRateLimiter(DriverConstants.kTranslationSlew);
-  private final DoubleSupplier m_throttleInput;
+  private final SlewRateLimiter m_slewY = new SlewRateLimiter(DriverConstants.kTranslationSlew, -10000, 0);
+  private final SlewRateLimiter m_slewRot = new SlewRateLimiter(DriverConstants.kRotationSlew, -10000, 0);
+  private final DoubleSupplier m_throttleInput, m_strafeInput, m_rotationInput;
 
   private boolean lowLevel;
 
   private double throttle;
+  private double strafe;
+  private double rotation;
+
   double loadY = 0;
   // double yTolerance = .1;
   private double kpY = .35;
@@ -39,8 +44,12 @@ public class SetSwerveDriveCube extends CommandBase {
   public SetSwerveDriveCube(
       DriveSubsystem drive,
       LimelightVision llv,
-      DoubleSupplier throttleInput) {
+      DoubleSupplier throttleInput,
+      DoubleSupplier strafeInput,
+      DoubleSupplier rotationInput) {
     m_drive = drive;
+    m_strafeInput = strafeInput;
+    m_rotationInput = rotationInput;
 
     m_throttleInput = throttleInput;
 
@@ -64,9 +73,36 @@ public class SetSwerveDriveCube extends CommandBase {
 
     double throttle_sl = m_slewX.calculate(throttle);
 
+    strafe = MathUtil.applyDeadband(Math.abs(m_strafeInput.getAsDouble()),
+        DriverConstants.kControllerDeadband)
+        * Math.signum(m_strafeInput.getAsDouble());
+
+    rotation = MathUtil.applyDeadband(Math.abs(m_rotationInput.getAsDouble()),
+        DriverConstants.kControllerRotDeadband)
+        * Math.signum(m_rotationInput.getAsDouble());
+
+        throttle = Math.signum(throttle) * Math.pow(throttle, 2);
+        strafe = Math.signum(strafe) * Math.pow(strafe, 2);
+        rotation = Math.signum(rotation) * Math.pow(rotation, 2);
+    
+    
+        throttle *= -DriveConstants.kMaxSpeedMetersPerSecond;
+        strafe *= -DriveConstants.kMaxSpeedMetersPerSecond;
+        rotation *= DriveConstants.kMaxRotationRadiansPerSecond;
+    
+        if (Math.abs(rotation) < DriverConstants.kControllerRotDeadband)
+          rotation = 0;
+    
+    
+        double strafe_sl = m_slewY.calculate(strafe);
+        double rotation_sl = m_slewRot.calculate(rotation);
+        // SlewRateLimiter rotation set with very fast rate
+       
+
+
     if (!m_drive.cubeFound)
 
-      m_drive.drive(throttle_sl, 0, 0);
+      m_drive.drive(throttle_sl, strafe_sl, rotation);
 
     else {
 

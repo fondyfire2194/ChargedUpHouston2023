@@ -78,8 +78,8 @@ public class ShuffleboardArms {
                 extLayout.addNumber("GoalInches", () -> round2dp(m_ext.goalInches));
                 extLayout.addNumber("MotorOut", () -> round2dp(m_ext.appliedOutput));
                 extLayout.addNumber("VELIPS", () -> round2dp(m_ext.inchespersec));
-                extLayout.addNumber("LiftFault", () -> m_ext.extendFaultSeen);
-                extLayout.addNumber("LiftStickyFault", () -> m_ext.extendStickyFaultSeen);
+                extLayout.addNumber("ExtFault", () -> m_ext.extendFaultSeen);
+                extLayout.addNumber("ExtStickyFault", () -> m_ext.extendStickyFaultSeen);
 
                 extLayout.addBoolean("Stopped", () -> m_ext.isStopped())
                                 .withWidget(BuiltInWidgets.kTextView);

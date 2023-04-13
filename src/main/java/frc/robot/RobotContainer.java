@@ -5,7 +5,6 @@
 
 package frc.robot;
 
-import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -18,7 +17,6 @@ import frc.robot.Constants.ExtendArmConstants;
 import frc.robot.Constants.LiftArmConstants;
 import frc.robot.Constants.OIConstants;
 import frc.robot.Constants.WristConstants;
-import frc.robot.commands.Auto.AutoBalanceBackwards;
 import frc.robot.commands.DeliverRoutines.DeliverCubeFast;
 import frc.robot.commands.DeliverRoutines.EjectPieceFromIntake;
 import frc.robot.commands.DeliverRoutines.GetDeliverAngleSettings;
@@ -33,13 +31,13 @@ import frc.robot.commands.NTs.MonitorThreadWrist;
 import frc.robot.commands.PickupRoutines.GroundIntakeCubePositions;
 import frc.robot.commands.PickupRoutines.GroundIntakeUprightConePositions;
 import frc.robot.commands.PickupRoutines.IntakePiece;
+import frc.robot.commands.PickupRoutines.IntakePieceStopMotor;
 import frc.robot.commands.PickupRoutines.LoadStationPositions;
 import frc.robot.commands.PickupRoutines.LoadSubstationPositions;
 import frc.robot.commands.TeleopRoutines.RetractWristExtendLiftHome;
 import frc.robot.commands.TeleopRoutines.RetractWristExtendLiftTravel;
 import frc.robot.commands.TeleopRoutines.RotateToAngle;
 import frc.robot.commands.TeleopRoutines.SetSwerveDriveCube;
-import frc.robot.commands.TeleopRoutines.TurnToAngle;
 import frc.robot.commands.Wrist.JogWrist;
 import frc.robot.commands.Wrist.PositionProfileWrist;
 import frc.robot.commands.swerve.SetSwerveDrive;
@@ -195,7 +193,7 @@ public class RobotContainer {
 
                 // DO NOT USE LeftBumper m_driverController.leftBumper().
 
-                m_driverController.rightTrigger().whileTrue(new IntakePiece(m_intake, 11));
+                m_driverController.rightTrigger().whileTrue(new IntakePieceStopMotor(m_intake, 11));
 
                 m_driverController.rightBumper().whileTrue(new EjectPieceFromIntake(m_intake, 12));
 
@@ -253,7 +251,9 @@ public class RobotContainer {
                 // DO NOT USE m_coDriverController.leftBumper()
 
                 m_coDriverController.leftTrigger().whileTrue(
-                                new SetSwerveDriveCube(m_drive, m_llv, () -> m_coDriverController.getRawAxis(1)));
+                                new SetSwerveDriveCube(m_drive, m_llv, () -> m_coDriverController.getRawAxis(1),
+                                                () -> m_coDriverController.getRawAxis(0),
+                                                () -> m_coDriverController.getRawAxis(4)));
 
                 m_coDriverController.rightBumper()
                                 .onTrue(new LoadSubstationPositions(m_liftArm, m_wrist, m_extendArm, m_intake)
@@ -332,31 +332,35 @@ public class RobotContainer {
                 m_armsController.a().onTrue(Commands.runOnce(
                                 () -> m_wrist.setController(WristConstants.wristFastConstraints, 2, false)));
 
-                m_armsController.x().onTrue(Commands.runOnce(() -> m_intake.setCubeServoAngle(180)))
-                                .onFalse(Commands.runOnce(() -> m_intake.setCubeServoAngle(0)));
+                m_armsController.x().onTrue(Commands.runOnce(
+                                () -> m_liftArm.setController(LiftArmConstants.liftArmFastConstraints, 0, false)));
 
-                m_armsController.b().onTrue(new DeliverCubeFast(m_liftArm, m_wrist, m_intake, m_extendArm, true));
+                m_armsController.b().onTrue(Commands.runOnce(
+                        () -> m_liftArm.setController(LiftArmConstants.liftArmFastConstraints,6, false)));
 
                 m_armsController.y().onTrue(Commands.runOnce(
-                                () -> m_liftArm.setController(LiftArmConstants.liftArmFastConstraints, 12, false)));
-
-                // wrist
+                        () -> m_liftArm.setController(LiftArmConstants.liftArmFastConstraints, 12, false)));
+              
 
                 m_armsController.start().onTrue(Commands.runOnce(
                                 () -> m_wrist.setController(WristConstants.wristFastConstraints, .15,
                                                 false)));
 
                 m_armsController.povUp().onTrue(Commands.runOnce(
-                                () -> m_liftArm.setController(LiftArmConstants.liftArmFastConstraints, 0, false)));
+                                () -> m_extendArm.setController(ExtendArmConstants.extendArmFastConstraints, 0,
+                                                false)));
 
                 m_armsController.povDown().onTrue(Commands.runOnce(
-                                () -> m_liftArm.setController(LiftArmConstants.liftArmFastConstraints, 10, false)));
+                                () -> m_extendArm.setController(ExtendArmConstants.extendArmFastConstraints, 6,
+                                                false)));
 
-                m_armsController.povLeft().onTrue(Commands
-                                .runOnce(() -> m_wrist.setController(WristConstants.wristFastConstraints, .2, false)));
+                m_armsController.povLeft().onTrue(Commands.runOnce(
+                                () -> m_extendArm.setController(ExtendArmConstants.extendArmFastConstraints, 10,
+                                                false)));
 
-                m_armsController.povRight().onTrue(Commands
-                                .runOnce(() -> m_wrist.setController(WristConstants.wristFastConstraints, 1, false)));
+                m_armsController.povRight().onTrue(Commands.runOnce(
+                                () -> m_extendArm.setController(ExtendArmConstants.extendArmFastConstraints, 21,
+                                                false)));
 
                 // m_armsController.back() DO NOT ASSIGN ALREADY USED IN JOG COMMANDS TO
                 // OVERRIDE SOFTWARE LIMITS

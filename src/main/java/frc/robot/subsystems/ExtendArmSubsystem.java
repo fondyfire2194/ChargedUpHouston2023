@@ -6,7 +6,9 @@ import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMax.SoftLimitDirection;
 import com.revrobotics.CANSparkMaxLowLevel;
 import com.revrobotics.CANSparkMaxLowLevel.PeriodicFrame;
+import com.revrobotics.SparkMaxLimitSwitch.Type;
 import com.revrobotics.RelativeEncoder;
+import com.revrobotics.SparkMaxLimitSwitch;
 import com.revrobotics.SparkMaxPIDController;
 
 import edu.wpi.first.math.controller.ProfiledPIDController;
@@ -75,6 +77,10 @@ public class ExtendArmSubsystem extends SubsystemBase {
 
     public ProfiledPIDController m_extController = new ProfiledPIDController(0.1, 0, 0,
             ExtendArmConstants.extendArmFastConstraints);
+
+    public SparkMaxLimitSwitch m_reverseLimit;
+
+    public SparkMaxLimitSwitch m_forwardLimit;
 
     private double inPositionBandwidth = .25;
 
@@ -175,6 +181,14 @@ public class ExtendArmSubsystem extends SubsystemBase {
 
         }
 
+        m_reverseLimit = m_motor.getReverseLimitSwitch(Type.kNormallyClosed);
+
+        m_reverseLimit.enableLimitSwitch(true);
+
+        m_forwardLimit = m_motor.getForwardLimitSwitch(Type.kNormallyClosed);
+
+        m_forwardLimit.enableLimitSwitch(true);
+
         SmartDashboard.putNumber("EXENCSET",
                 ExtendArmConstants.INCHES_PER_ENCODER_REV);
         SmartDashboard.putNumber("EXENMAXV",
@@ -212,6 +226,9 @@ public class ExtendArmSubsystem extends SubsystemBase {
             loopctr = 0;
 
         }
+
+        SmartDashboard.putBoolean("REVLS", m_reverseLimit.isPressed());
+        SmartDashboard.putBoolean("FWDLS", m_forwardLimit.isPressed());
 
     }
 

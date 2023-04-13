@@ -188,8 +188,6 @@ public class DriveSubsystem extends SubsystemBase {
 
   private final double rotErrLimit = .5;
 
-  private boolean firstCorrection = true;
-
   private double endYTarget;
 
   private double endXTarget;
@@ -216,11 +214,13 @@ public class DriveSubsystem extends SubsystemBase {
 
   public double fieldOrientOffset = 180;
 
-  public double autoBalanceGyroStart = -7;
+  public float gyroStartPitch = -7;
 
   public int moduleFaultSeen;
 
   public int moduleStickyFaultSeen;
+
+  private boolean firstCorrection;
 
   /** Creates a new DriveSubsystem. */
   public DriveSubsystem() {
@@ -317,7 +317,20 @@ public class DriveSubsystem extends SubsystemBase {
     m_backLeft.m_isOpenLoop = !on;
     m_backRight.m_isOpenLoop = !on;
     isOpenLoop = !on;
+  }
 
+  public void setAngleCorrection(double value) {
+    m_frontLeft.angleCorrection = value;
+    m_frontRight.angleCorrection = -value;
+    m_backLeft.angleCorrection = -value;
+    m_backRight.angleCorrection = value;
+  }
+
+  public void clearAngleCorrection() {
+    m_frontLeft.angleCorrection = 0;
+    m_frontRight.angleCorrection = 0;
+    m_backLeft.angleCorrection = 0;
+    m_backRight.angleCorrection = 0;
   }
 
   @Override
@@ -481,6 +494,10 @@ public class DriveSubsystem extends SubsystemBase {
 
   public float getGyroPitch() {
     return m_gyro.getPitch();
+  }
+
+  public float getCompedGyroPitch(){
+    return m_gyro.getPitch() - gyroStartPitch;
   }
 
   public float getGyroRoll() {
@@ -783,6 +800,10 @@ public class DriveSubsystem extends SubsystemBase {
   }
 
   public double getAnglefromThrottle() {
+    return 0;
+  }
+
+  public double getGyrocompedPitch() {
     return 0;
   }
 

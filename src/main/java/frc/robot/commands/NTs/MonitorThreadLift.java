@@ -33,6 +33,7 @@ public class MonitorThreadLift {
     public DoublePublisher amps;
     public DoublePublisher relenc;
     public DoublePublisher accel;
+    public DoublePublisher gravval;
 
     public BooleanPublisher inizone;
     public BooleanPublisher atGoal;
@@ -57,6 +58,7 @@ public class MonitorThreadLift {
         amps = liftprof.getDoubleTopic("CURRENT").publish();
         relenc = liftprof.getDoubleTopic("RELENC").publish();
         accel = liftprof.getDoubleTopic("ACCELIPSSQD").publish();
+        gravval = liftprof.getDoubleTopic("GRAVVAL").publish();
 
     }
 
@@ -93,6 +95,7 @@ public class MonitorThreadLift {
                         amps.set(m_lift.amps);
                         relenc.set(m_lift.positioninches);
                         accel.set(m_lift.acceleration);
+                        gravval.set(m_lift.gravVal);
 
                     }
                     Thread.sleep(100);

@@ -167,15 +167,6 @@ public class TrajectoryFactory {
 
     }
 
-    public void setLeftPickup(boolean leftPickup) {
-
-        activeTranslation = rightTranslation;
-
-        if (leftPickup)
-
-            activeTranslation = leftTranslation;
-    }
-
     public PathPlannerTrajectory getSimpleTraj() {
 
         // Simple path without holonomic rotation. Stationary start/end. Max velocity of

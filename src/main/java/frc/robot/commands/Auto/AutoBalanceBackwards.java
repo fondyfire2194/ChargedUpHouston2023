@@ -29,7 +29,6 @@ public class AutoBalanceBackwards extends CommandBase {
   @Override
   public void initialize() {
     startTime = Timer.getFPGATimestamp();
-    gyroStartPosition = m_drive.autoBalanceGyroStart;
     endCommand = false;
     positionHeld = 0;
   }
@@ -38,10 +37,9 @@ public class AutoBalanceBackwards extends CommandBase {
   @Override
   public void execute() {
     double currentTime = Timer.getFPGATimestamp();
-    double currentGyro = m_drive.getGyroPitch();
+    double currentPitchDegrees= m_drive.getCompedGyroPitch();
 
-    double currentPitch = currentGyro - gyroStartPosition;
-    double currentPitchRadians = ((currentPitch * Math.PI) / 180);
+    double currentPitchRadians = ((currentPitchDegrees * Math.PI) / 180);
     double motorMultiplier = Math.sin(currentPitchRadians) * -1;
 
     double motorSpeed = motorMultiplier * DriveConstants.kMaxSpeedMetersPerSecond * 1.8;
@@ -51,9 +49,12 @@ public class AutoBalanceBackwards extends CommandBase {
     // motorSpeed = Math.signum(motorSpeed) *
     // DriveConstants.kMaxSpeedMetersPerSecond;
     // }
-    
+
     m_drive.drive(motorSpeed, 0, 0);
-    if (motorMultiplier < 0.005 || motorMultiplier > -0.005) {
+    // if (motorMultiplier < 0.005 || motorMultiplier > -0.005) {
+
+    if (motorMultiplier < 0.01 && motorMultiplier > -0.01) {
+
       positionHeld++;
       if (positionHeld > 40) {
         endCommand = true;
