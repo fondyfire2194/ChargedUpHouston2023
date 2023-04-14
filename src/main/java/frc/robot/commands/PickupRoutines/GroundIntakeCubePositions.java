@@ -45,7 +45,7 @@ public class GroundIntakeCubePositions extends SequentialCommandGroup {
                                 new SetWristGoal(wrist, presetWristAngles.PICKUP_CUBE_GROUND
                                                 .getAngleRads()).asProxy(),
 
-                                new WaitWristAtTarget(wrist, 1, 2, 3).asProxy(),
+                                new WaitWristAtTarget(wrist, .1, 2, 3).asProxy(),
 
                                 new SetExtArmGoal(extend,
                                                 presetExtArmDistances.PICKUP_CUBE_GROUND.getDistance())

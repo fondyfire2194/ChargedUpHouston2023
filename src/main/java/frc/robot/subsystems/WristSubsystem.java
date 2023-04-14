@@ -38,21 +38,21 @@ public class WristSubsystem extends SubsystemBase {
 
         TRAVEL(38),
 
-        PICKUP_CUBE_GROUND(54),
+        PICKUP_CUBE_GROUND(46),
 
         PICKUP_CONE_GROUND(54),
 
         PICKUP_UPRIGHT_CONE_GROUND(55), // 40
 
-        PICKUP_SIDE_LOAD_STATION(9),
+        PICKUP_SIDE_LOAD_STATION(10),
 
         PICKUP_LOAD_STATION(145.7),
 
         PLACE_GROUND(15),
 
-        PLACE_MID(123),
+        PLACE_MID(108),
 
-        PLACE_TOP(110);
+        PLACE_TOP(108);
 
         private double angle;
 

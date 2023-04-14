@@ -31,6 +31,7 @@ import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -214,13 +215,15 @@ public class DriveSubsystem extends SubsystemBase {
 
   public double fieldOrientOffset = 180;
 
-  public float gyroStartPitch = -7;
+  public float gyroStartPitch;;
 
   public int moduleFaultSeen;
 
   public int moduleStickyFaultSeen;
 
   private boolean firstCorrection;
+
+  public double pitchRateOfChange;
 
   /** Creates a new DriveSubsystem. */
   public DriveSubsystem() {
@@ -337,6 +340,9 @@ public class DriveSubsystem extends SubsystemBase {
   public void periodic() {
     // Update the odometry in the periodic block
 
+    SmartDashboard.putNumber("TurnFL", m_frontLeft.angleCorrection);
+    SmartDashboard.putNumber("TurnFR", m_frontRight.angleCorrection);
+
     updateOdometry();
 
     if (moduleFaultSeen == 0) {
@@ -376,11 +382,11 @@ public class DriveSubsystem extends SubsystemBase {
             Commands.run(
                 () -> this.drive(Pref.getPref("balancerate") * DriveConstants.kMaxSpeedMetersPerSecond,
                     0, 0),
-                this).until(() -> this.getGyroPitch() >= Pref.getPref("balancehigh")),
+                this).until(() -> this.getCompedGyroPitch() >= Pref.getPref("balancehigh")),
             Commands.run(
                 () -> this.drive(0.2 * DriveConstants.kMaxSpeedMetersPerSecond,
                     0, 0),
-                this).until(() -> this.getGyroPitch() <= Pref.getPref("balancelow")),
+                this).until(() -> this.getCompedGyroPitch() <= Pref.getPref("balancelow")),
             Commands.run(this::setX, this)),
         Commands.waitSeconds(15));
     // Commands.run(
@@ -496,7 +502,7 @@ public class DriveSubsystem extends SubsystemBase {
     return m_gyro.getPitch();
   }
 
-  public float getCompedGyroPitch(){
+  public float getCompedGyroPitch() {
     return m_gyro.getPitch() - gyroStartPitch;
   }
 

@@ -8,16 +8,13 @@ import com.revrobotics.CANSparkMax.SoftLimitDirection;
 import com.revrobotics.CANSparkMaxLowLevel;
 import com.revrobotics.CANSparkMaxLowLevel.PeriodicFrame;
 import com.revrobotics.RelativeEncoder;
+
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.RobotBase;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.CanConstants;
 import frc.robot.Constants.LiftArmConstants;
@@ -40,19 +37,19 @@ public class LiftArmSubsystem extends SubsystemBase {
 
         CLEAR_ARMS(38, .68), // .85
 
-        PICKUP_CUBE_GROUND(42, 2), // 2.5
+        PICKUP_CUBE_GROUND(43, 2.57), // 2.5
 
         PICKUP_UPRIGHT_CONE_GROUND(43, 2), // 2.5
 
-        PICKUP_SIDE_LOAD_STATION(55, 3.68), // 4.6
+        PICKUP_SIDE_LOAD_STATION(55, 5.2), // 4.6
 
         PICKUP_LOAD_STATION(102.5, 11.6), // 14.5
 
         PLACE_GROUND(72, 7.04), // 8.8
 
-        PLACE_MID(89, 8.89), // 11/11
+        PLACE_MID(86, 12.92), // 11/11
 
-        PLACE_TOP(99.6, 10.8);// 13.5
+        PLACE_TOP(99.6, 15.9);// 13.5
 
         private double angle;
         private double inches;

@@ -15,24 +15,27 @@ import frc.robot.subsystems.DriveSubsystem;
 public class AutoBalance extends CommandBase {
   /** Creates a new AutoBalance. */
   private DriveSubsystem m_drive;
-  private boolean m_forward;
+
   private double isBalancedStartTime;
   private boolean endCommand;
   private boolean onRamp;
   private LinearFilter pitchFilter = LinearFilter.movingAverage(10);// 200ms
 
-  double isBalancedDegrees = 1;
+  double isBalancedDegrees = 0.7;
 
   double isBalancedTime = .8;// secs
 
   private double pitchMultiplier;
 
-  double motorSpeed;
+  private double lastPitchDegrees;
 
-  public AutoBalance(DriveSubsystem drive, boolean forward) {
+  double motorSpeed;
+  private double lastPitchTime;
+
+  public AutoBalance(DriveSubsystem drive) {
     // Use addRequirements() here to declare subsystem dependencies.
     m_drive = drive;
-    m_forward = forward;
+
     addRequirements(m_drive);
   }
 
@@ -46,10 +49,6 @@ public class AutoBalance extends CommandBase {
     onRamp = false;
     motorSpeed = 1;
     pitchMultiplier = 1.8;
-    if (m_forward) {
-      motorSpeed *= -1;
-      pitchMultiplier *= -1;//
-    }
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -60,13 +59,21 @@ public class AutoBalance extends CommandBase {
 
     double currentPitchRadians = Units.degreesToRadians(currentPitchDegrees);
 
-    double speedMultiplier = Math.sin(currentPitchRadians) * pitchMultiplier;
+    double speedMultiplier = Math.sin(currentPitchRadians) * -1;
 
-    motorSpeed = speedMultiplier * DriveConstants.kMaxSpeedMetersPerSecond;
+    motorSpeed = speedMultiplier * DriveConstants.kMaxSpeedMetersPerSecond * pitchMultiplier;
 
     SmartDashboard.putNumber("motorNum", speedMultiplier);
 
     m_drive.drive(motorSpeed, 0, 0);
+
+    m_drive.pitchRateOfChange = (currentPitchDegrees - lastPitchDegrees) / (Timer.getFPGATimestamp() - lastPitchTime);
+
+    SmartDashboard.putNumber("PitchRate", m_drive.pitchRateOfChange);
+    
+    lastPitchDegrees = currentPitchDegrees;
+
+    lastPitchTime = Timer.getFPGATimestamp();
 
     if (Math.abs(currentPitchDegrees) < isBalancedDegrees) {
 

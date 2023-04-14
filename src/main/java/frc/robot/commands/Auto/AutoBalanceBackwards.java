@@ -37,17 +37,18 @@ public class AutoBalanceBackwards extends CommandBase {
   @Override
   public void execute() {
     double currentTime = Timer.getFPGATimestamp();
-    double currentPitchDegrees= m_drive.getCompedGyroPitch();
+    double currentPitchDegrees = m_drive.getCompedGyroPitch();
 
     double currentPitchRadians = ((currentPitchDegrees * Math.PI) / 180);
-    double motorMultiplier = Math.sin(currentPitchRadians) * -1;
 
-    double motorSpeed = motorMultiplier * DriveConstants.kMaxSpeedMetersPerSecond * 1.8;
+    double motorMultiplier = -Math.sin(currentPitchRadians) * 1.8;
+
+    double motorSpeed = motorMultiplier * DriveConstants.kMaxSpeedMetersPerSecond;
 
     SmartDashboard.putNumber("motorNum", motorMultiplier);
     // if (Math.abs(motorSpeed) > DriveConstants.kMaxSpeedMetersPerSecond) {
-    // motorSpeed = Math.signum(motorSpeed) *
-    // DriveConstants.kMaxSpeedMetersPerSecond;
+    //   motorSpeed = Math.signum(motorSpeed) *
+    //       DriveConstants.kMaxSpeedMetersPerSecond;
     // }
 
     m_drive.drive(motorSpeed, 0, 0);

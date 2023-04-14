@@ -267,7 +267,7 @@ public final class Constants {
 
     public static final TrapezoidProfile.Constraints extendArmFastConstraints
 
-        = new Constraints(40, 60); //25,25
+        = new Constraints(40, 60); //25,25     40, 60
 
     public static final double JOG_SLEW_RATE = 10;
 
@@ -303,7 +303,7 @@ public final class Constants {
 
     public static final TrapezoidProfile.Constraints wristFastConstraints =
 
-        new Constraints(2.5, 2.5);
+        new Constraints(4, 8); //2.5, 2.5
 
     public static final double JOG_SLEW_RATE = 10;
 

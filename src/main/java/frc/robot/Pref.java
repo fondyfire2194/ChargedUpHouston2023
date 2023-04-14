@@ -89,26 +89,26 @@ public class Pref {
     prefDict.put("tapeStopTy", 1.);
 
     // lift characterization
-    prefDict.put("liftKs", 0.6);
-    prefDict.put("liftKg", 0.5);
-    prefDict.put("liftKv", .385);
+    prefDict.put("liftKs", 0.25);
+    prefDict.put("liftKg", 0.34);
+    prefDict.put("liftKv", .45);
 
-    prefDict.put("liftKp", .25);
+    prefDict.put("liftKp", 1.0);
 
     // ext characterization
-    prefDict.put("extKs", .1);
-    prefDict.put("extKv", .6);//
-    prefDict.put("extKa", .0);
-    prefDict.put("extKg", .25);
+    prefDict.put("extKs", 0.05);
+    prefDict.put("extKv", 0.26);//
+    prefDict.put("extKa", 0.0);
+    prefDict.put("extKg", 0.0);
 
-    prefDict.put("extKp", .005);
+    prefDict.put("extKp", 1.3);
 
     // wrist characterization
     prefDict.put("wristKs", .06);
-    prefDict.put("wristKg", .05);
-    prefDict.put("wristKv", 1.);
+    prefDict.put("wristKg", -0.2);
+    prefDict.put("wristKv", 1.65);
 
-    prefDict.put("wristKp", 0.005);
+    prefDict.put("wristKp", 1.0);
 
     // intake values
     prefDict.put("intakeInIlim", 2.);

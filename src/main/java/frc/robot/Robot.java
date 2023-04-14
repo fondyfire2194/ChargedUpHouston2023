@@ -81,7 +81,6 @@ public class Robot extends TimedRobot {
 
     loopCtr++;
 
-
     if (loopCtr >= 100) {
 
       m_robotContainer.m_drive.ALL_CANOK = m_robotContainer.m_drive.checkCANOK()
@@ -137,7 +136,7 @@ public class Robot extends TimedRobot {
 
     Shuffleboard.startRecording();
 
-    // m_robotContainer.m_drive.fieldOrientOffset = 180;
+    m_robotContainer.m_drive.gyroStartPitch = m_robotContainer.m_drive.getGyroPitch();
 
     m_robotContainer.m_drive.m_fieldOriented = true;
 
@@ -152,8 +151,7 @@ public class Robot extends TimedRobot {
     m_robotContainer.m_wrist.setController(WristConstants.wristFastConstraints,
         presetWristAngles.HOME.getAngleRads(), false);
 
-    m_robotContainer.m_intake.mIntakeMotor.setVoltage(1);
-
+   
     m_robotContainer.m_drive.setClosedLoop(true);
 
     m_startDelay = m_robotContainer.m_autoFactory.m_startDelayChooser.getSelected();
@@ -183,6 +181,9 @@ public class Robot extends TimedRobot {
     // teleop starts running. If you want the a
     // continue until interrupted by another command, remove
     // this line or comment it out.
+
+    if (!autoHasRun)
+      m_robotContainer.m_drive.gyroStartPitch = m_robotContainer.m_drive.getGyroPitch();
 
     if (autoHasRun)
 

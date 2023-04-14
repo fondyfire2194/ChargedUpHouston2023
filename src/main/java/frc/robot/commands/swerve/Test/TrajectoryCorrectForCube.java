@@ -4,6 +4,7 @@
 
 package frc.robot.commands.swerve.Test;
 
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -13,8 +14,8 @@ import frc.robot.subsystems.DriveSubsystem;
 public class TrajectoryCorrectForCube extends CommandBase {
   /** Creates a new TrajectoryCorrectForCube. */
   private DriveSubsystem m_drive;
-  private ProfiledPIDController m_pidController;
-  private TrapezoidProfile.Constraints trapCon;
+  private PIDController m_pidController;
+ 
 
   public TrajectoryCorrectForCube(DriveSubsystem drive) {
     // Use addRequirements() here to declare subsystem dependencies.
@@ -24,9 +25,10 @@ public class TrajectoryCorrectForCube extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+
     m_drive.clearAngleCorrection();
-    trapCon = new TrapezoidProfile.Constraints(.5, 1);
-    m_pidController = new ProfiledPIDController(.1, 0, 0, trapCon);
+ 
+    m_pidController = new PIDController(1, 0, 0);
   }
 
   // Called every time the scheduler runs while the command is scheduled.

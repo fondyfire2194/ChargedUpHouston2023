@@ -12,12 +12,12 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants.ExtendArmConstants;
 import frc.robot.Constants.LiftArmConstants;
 import frc.robot.Constants.OIConstants;
 import frc.robot.Constants.WristConstants;
-import frc.robot.commands.DeliverRoutines.DeliverCubeFast;
 import frc.robot.commands.DeliverRoutines.EjectPieceFromIntake;
 import frc.robot.commands.DeliverRoutines.GetDeliverAngleSettings;
 import frc.robot.commands.ExtendArm.JogExtendArm;
@@ -37,7 +37,7 @@ import frc.robot.commands.PickupRoutines.LoadSubstationPositions;
 import frc.robot.commands.TeleopRoutines.RetractWristExtendLiftHome;
 import frc.robot.commands.TeleopRoutines.RetractWristExtendLiftTravel;
 import frc.robot.commands.TeleopRoutines.RotateToAngle;
-import frc.robot.commands.TeleopRoutines.SetSwerveDriveCube;
+import frc.robot.commands.TeleopRoutines.SetSwerveDriveGamepiece;
 import frc.robot.commands.Wrist.JogWrist;
 import frc.robot.commands.Wrist.PositionProfileWrist;
 import frc.robot.commands.swerve.SetSwerveDrive;
@@ -250,10 +250,36 @@ public class RobotContainer {
 
                 // DO NOT USE m_coDriverController.leftBumper()
 
-                m_coDriverController.leftTrigger().whileTrue(
-                                new SetSwerveDriveCube(m_drive, m_llv, () -> m_coDriverController.getRawAxis(1),
-                                                () -> m_coDriverController.getRawAxis(0),
-                                                () -> m_coDriverController.getRawAxis(4)));
+                m_coDriverController.leftTrigger()
+                                .onTrue(new GroundIntakeCubePositions(m_liftArm, m_wrist, m_extendArm, m_intake)
+                                                .withTimeout(10))
+
+                                .whileTrue(new ConditionalCommand(
+                                                new ParallelCommandGroup(
+                                                                new SetSwerveDriveGamepiece(m_drive, m_llv, true,
+                                                                                () -> m_coDriverController
+                                                                                                .getRawAxis(1),
+                                                                                () -> m_coDriverController
+                                                                                                .getRawAxis(0),
+                                                                                () -> m_coDriverController
+                                                                                                .getRawAxis(4)),
+                                                                new IntakePieceStopMotor(m_intake, 10)),
+
+                                                new ParallelCommandGroup(
+                                                                new SetSwerveDriveGamepiece(m_drive, m_llv, false,
+                                                                                () -> m_coDriverController
+                                                                                                .getRawAxis(1),
+                                                                                () -> m_coDriverController
+                                                                                                .getRawAxis(0),
+                                                                                () -> m_coDriverController
+                                                                                                .getRawAxis(4)),
+                                                                new IntakePieceStopMotor(m_intake, 10).
+
+                                                                                andThen(new RetractWristExtendLiftTravel(
+                                                                                                m_liftArm, m_extendArm,
+                                                                                                m_wrist))),
+
+                                                () -> m_coDriverController.getHID().getLeftBumper()));
 
                 m_coDriverController.rightBumper()
                                 .onTrue(new LoadSubstationPositions(m_liftArm, m_wrist, m_extendArm, m_intake)
@@ -268,14 +294,11 @@ public class RobotContainer {
                                                                 .withTimeout(8),
                                                 () -> m_coDriverController.getHID().getLeftBumper()));
 
-                m_coDriverController.a().onTrue(new ConditionalCommand(
-                                new GroundIntakeUprightConePositions(m_liftArm, m_wrist, m_extendArm, m_intake)
-                                                .withTimeout(10),
+                m_coDriverController.a().onTrue(
                                 new GroundIntakeCubePositions(m_liftArm, m_wrist, m_extendArm, m_intake)
-                                                .withTimeout(10),
-                                () -> m_coDriverController.getHID().getLeftBumper()));
+                                                .withTimeout(10));
 
-                m_coDriverController.x().onTrue(deliverPositionsCommand(1).withTimeout(8));
+                // m_coDriverController.x().
 
                 // m_coDriverController.y()
 
@@ -336,31 +359,26 @@ public class RobotContainer {
                                 () -> m_liftArm.setController(LiftArmConstants.liftArmFastConstraints, 0, false)));
 
                 m_armsController.b().onTrue(Commands.runOnce(
-                        () -> m_liftArm.setController(LiftArmConstants.liftArmFastConstraints,6, false)));
+                                () -> m_liftArm.setController(LiftArmConstants.liftArmFastConstraints, 6, false)));
 
                 m_armsController.y().onTrue(Commands.runOnce(
-                        () -> m_liftArm.setController(LiftArmConstants.liftArmFastConstraints, 12, false)));
-              
+                                () -> m_liftArm.setController(LiftArmConstants.liftArmFastConstraints, 12, false)));
 
                 m_armsController.start().onTrue(Commands.runOnce(
                                 () -> m_wrist.setController(WristConstants.wristFastConstraints, .15,
                                                 false)));
 
                 m_armsController.povUp().onTrue(Commands.runOnce(
-                                () -> m_extendArm.setController(ExtendArmConstants.extendArmFastConstraints, 0,
-                                                false)));
+                                () -> m_wrist.setController(WristConstants.wristFastConstraints, 1, false)));
 
                 m_armsController.povDown().onTrue(Commands.runOnce(
-                                () -> m_extendArm.setController(ExtendArmConstants.extendArmFastConstraints, 6,
-                                                false)));
+                        () -> m_wrist.setController(WristConstants.wristFastConstraints, 2, false)));
 
                 m_armsController.povLeft().onTrue(Commands.runOnce(
-                                () -> m_extendArm.setController(ExtendArmConstants.extendArmFastConstraints, 10,
-                                                false)));
+                        () -> m_wrist.setController(WristConstants.wristFastConstraints, 3, false)));
 
                 m_armsController.povRight().onTrue(Commands.runOnce(
-                                () -> m_extendArm.setController(ExtendArmConstants.extendArmFastConstraints, 21,
-                                                false)));
+                        () -> m_wrist.setController(WristConstants.wristFastConstraints, 4, false)));
 
                 // m_armsController.back() DO NOT ASSIGN ALREADY USED IN JOG COMMANDS TO
                 // OVERRIDE SOFTWARE LIMITS

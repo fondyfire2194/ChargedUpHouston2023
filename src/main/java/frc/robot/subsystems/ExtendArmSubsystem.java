@@ -6,9 +6,9 @@ import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMax.SoftLimitDirection;
 import com.revrobotics.CANSparkMaxLowLevel;
 import com.revrobotics.CANSparkMaxLowLevel.PeriodicFrame;
-import com.revrobotics.SparkMaxLimitSwitch.Type;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkMaxLimitSwitch;
+import com.revrobotics.SparkMaxLimitSwitch.Type;
 import com.revrobotics.SparkMaxPIDController;
 
 import edu.wpi.first.math.controller.ProfiledPIDController;
@@ -19,9 +19,9 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Pref;
 import frc.robot.Constants.CanConstants;
 import frc.robot.Constants.ExtendArmConstants;
+import frc.robot.Pref;
 
 public class ExtendArmSubsystem extends SubsystemBase {
 
@@ -42,19 +42,19 @@ public class ExtendArmSubsystem extends SubsystemBase {
 
         TRAVEL(2.75),
 
-        PICKUP_CUBE_GROUND(10.0),
+        PICKUP_CUBE_GROUND(13.82),
 
         PICKUP_UPRIGHT_CONE_GROUND(10.25),
 
-        PICKUP_SIDE_LOAD_STATION(.2),
+        PICKUP_SIDE_LOAD_STATION(.5),
 
         PICKUP_LOAD_STATION(0.2),
 
         PLACE_GROUND(0),
 
-        PLACE_MID(7.8),
+        PLACE_MID(8.09),
 
-        PLACE_TOP(20.92);
+        PLACE_TOP(24.8);
 
         private double distance;
 
