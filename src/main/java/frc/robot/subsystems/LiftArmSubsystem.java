@@ -43,7 +43,7 @@ public class LiftArmSubsystem extends SubsystemBase {
 
         PICKUP_SIDE_LOAD_STATION(55, 5.2), // 4.6
 
-        PICKUP_LOAD_STATION(102.5, 11.6), // 14.5
+        PICKUP_LOAD_STATION(102.5, 14.0), // 14.5
 
         PLACE_GROUND(72, 7.04), // 8.8
 
@@ -186,9 +186,13 @@ public class LiftArmSubsystem extends SubsystemBase {
         setSoftwareLimits();
 
         enableSoftLimits(useSoftwareLimit);
+        m_sff = new SimpleMotorFeedforward(Pref.getPref("liftKs"), Pref.getPref("liftKv"));
 
-        m_sff = new SimpleMotorFeedforward(LiftArmConstants.ksVolts,
-                LiftArmConstants.kvVoltSecondsPerInch, LiftArmConstants.kAVoltSecondSquaredPerInch);
+        m_liftController.setP(Pref.getPref("liftKp"));
+
+
+        // m_sff = new SimpleMotorFeedforward(LiftArmConstants.ksVolts,
+        //         LiftArmConstants.kvVoltSecondsPerInch, LiftArmConstants.kAVoltSecondSquaredPerInch);
 
     }
 

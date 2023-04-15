@@ -5,8 +5,7 @@
 package frc.robot.commands.swerve.Test;
 
 import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.controller.ProfiledPIDController;
-import edu.wpi.first.math.trajectory.TrapezoidProfile;
+
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.DriveSubsystem;
@@ -15,12 +14,10 @@ public class TrajectoryCorrectForCube extends CommandBase {
   /** Creates a new TrajectoryCorrectForCube. */
   private DriveSubsystem m_drive;
   private PIDController m_pidController;
-  private boolean m_isFieldOriented;
 
-  public TrajectoryCorrectForCube(DriveSubsystem drive, boolean isFieldOriented) {
+  public TrajectoryCorrectForCube(DriveSubsystem drive) {
     // Use addRequirements() here to declare subsystem dependencies.
     m_drive = drive;
-    m_isFieldOriented = isFieldOriented;
   }
 
   // Called when the command is initially scheduled.
@@ -28,6 +25,8 @@ public class TrajectoryCorrectForCube extends CommandBase {
   public void initialize() {
 
     m_drive.clearAngleCorrection();
+
+  //  m_drive.m_fieldOriented = false;
 
     m_pidController = new PIDController(1, 0, 0);
   }
@@ -44,9 +43,6 @@ public class TrajectoryCorrectForCube extends CommandBase {
 
       double xError = m_pidController.calculate(m_drive.tx, -1.25);
 
-      if (m_isFieldOriented)
-        xError *= -1;
-
       SmartDashboard.putNumber("XCUBERR", xError);
 
       double temp = xError;
@@ -60,6 +56,7 @@ public class TrajectoryCorrectForCube extends CommandBase {
   @Override
   public void end(boolean interrupted) {
     m_drive.clearAngleCorrection();
+    //m_drive.m_fieldOriented = true;
   }
 
   // Returns true when the command should end.

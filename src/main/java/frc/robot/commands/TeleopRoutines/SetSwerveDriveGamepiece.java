@@ -66,6 +66,8 @@ public class SetSwerveDriveGamepiece extends CommandBase {
     else
       m_llv.setConeDetectorPipeline();
 
+    //m_drive.m_fieldOriented = false;
+
   };
 
   @Override
@@ -109,7 +111,7 @@ public class SetSwerveDriveGamepiece extends CommandBase {
       m_drive.drive(throttle_sl, 0, xError);
 
     } else {
-      
+
       m_drive.drive(throttle_sl, strafe_sl, rotation);
 
     }
@@ -119,6 +121,7 @@ public class SetSwerveDriveGamepiece extends CommandBase {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
+   // m_drive.m_fieldOriented = true;
   }
 
   // Returns true when the command should end.

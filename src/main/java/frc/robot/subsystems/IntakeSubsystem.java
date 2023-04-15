@@ -110,6 +110,8 @@ public class IntakeSubsystem extends SubsystemBase {
 
       rpm = getRPM();
 
+      // if (Math.abs(voltage) > 0 && Math.abs(voltage) < 1 && rpm > 100)
+      //   setMotorVolts(0);
     }
     if (loopctr == 15) {
 

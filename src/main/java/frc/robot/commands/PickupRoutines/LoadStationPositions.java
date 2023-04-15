@@ -39,19 +39,19 @@ public class LoadStationPositions extends SequentialCommandGroup {
                                 new SetWristGoal(wrist,
                                                 presetWristAngles.PICKUP_LOAD_STATION
                                                                 .getAngleRads())
-                                                .asProxy(),
+                                                .asProxy());
 
-                                new WaitLiftAtTarget(lift, 1, .5, 1).asProxy(),
+                                // new WaitLiftAtTarget(lift, 1, .5, 1).asProxy(),
 
-                                new WaitWristAtTarget(wrist, 1, .2, 3).asProxy(),
+                                // new WaitWristAtTarget(wrist, 1, .2, 1).asProxy());
 
-                                new SetExtArmGoal(extend,
-                                                ExtendArmConstants.extendArmFastConstraints,
-                                                presetExtArmDistances.PICKUP_LOAD_STATION
-                                                                .getDistance())
-                                                .asProxy(),
+                                // new SetExtArmGoal(extend,
+                                //                 ExtendArmConstants.extendArmFastConstraints,
+                                //                 presetExtArmDistances.PICKUP_LOAD_STATION
+                                //                                 .getDistance())
+                                //                 .asProxy(),
 
-                                new WaitExtendAtTarget(extend, 1, 4, 3).asProxy());
+                                // new WaitExtendAtTarget(extend, 1, 4, 3).asProxy());
 
         }
 }

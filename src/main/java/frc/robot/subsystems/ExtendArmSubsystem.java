@@ -198,8 +198,11 @@ public class ExtendArmSubsystem extends SubsystemBase {
 
         enableSoftLimits(useSoftwareLimit);
 
-        m_feedforward = new SimpleMotorFeedforward(ExtendArmConstants.ksExtArmVolts,
-                ExtendArmConstants.kvExtArmVoltSecondsPerInch);
+        m_feedforward = new SimpleMotorFeedforward(Pref.getPref("extKs"), Pref.getPref("extKv"));
+        m_extController.setP(Pref.getPref("extKp"));
+
+        // m_feedforward = new SimpleMotorFeedforward(ExtendArmConstants.ksExtArmVolts,
+        // ExtendArmConstants.kvExtArmVoltSecondsPerInch);
 
     }
 

@@ -48,12 +48,15 @@ public class PositionProfileLiftInches extends CommandBase {
 
     m_goalInches = goalInches;
 
+    setController = true;
+
     addRequirements(m_lift);
   }
 
   public PositionProfileLiftInches(LiftArmSubsystem lift, ExtendArmSubsystem ext) {
     m_lift = lift;
     m_ext = ext;
+    setController = false;
     addRequirements(m_lift);
   }
 

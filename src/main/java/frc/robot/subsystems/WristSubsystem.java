@@ -46,13 +46,13 @@ public class WristSubsystem extends SubsystemBase {
 
         PICKUP_SIDE_LOAD_STATION(10),
 
-        PICKUP_LOAD_STATION(145.7),
+        PICKUP_LOAD_STATION(85), //90
 
         PLACE_GROUND(15),
 
-        PLACE_MID(108),
+        PLACE_MID(86), // 108
 
-        PLACE_TOP(108);
+        PLACE_TOP(100); // 108
 
         private double angle;
 
@@ -167,8 +167,13 @@ public class WristSubsystem extends SubsystemBase {
 
         enableSoftLimits(useSoftwareLimit);
 
-        m_wristfeedforward = new ArmFeedforward(WristConstants.ksVolts, 0,
-                WristConstants.kvWristVoltSecondsPerRadian, WristConstants.kaWristVoltSecondsSquaredPerRadian);
+        m_wristfeedforward = new ArmFeedforward(Pref.getPref("wristKs"), 0,
+                Pref.getPref("wristKv"));
+
+        m_wristController.setP(Pref.getPref("wristKp"));
+
+        // m_wristfeedforward = new ArmFeedforward(WristConstants.ksVolts, 0,
+        //         WristConstants.kvWristVoltSecondsPerRadian, WristConstants.kaWristVoltSecondsSquaredPerRadian);
 
     }
 

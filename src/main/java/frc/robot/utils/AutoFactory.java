@@ -17,6 +17,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
+import frc.robot.Constants.LiftArmConstants;
 import frc.robot.commands.Auto.AutoBalance;
 import frc.robot.commands.Auto.AutoBalanceBackwards;
 import frc.robot.commands.Auto.DoNothing;
@@ -26,10 +27,12 @@ import frc.robot.commands.DeliverRoutines.EjectPieceFromIntake;
 import frc.robot.commands.DeliverRoutines.GetDeliverAngleSettingsAuto;
 import frc.robot.commands.PickupRoutines.GroundIntakeCubePositions;
 import frc.robot.commands.PickupRoutines.GroundIntakeUprightConePositions;
-import frc.robot.commands.PickupRoutines.IntakePiece;
+//import frc.robot.commands.PickupRoutines.IntakePiece;
 import frc.robot.commands.PickupRoutines.IntakePieceStopMotor;
 import frc.robot.commands.TeleopRoutines.DriveToPickup;
+import frc.robot.commands.TeleopRoutines.RetractWristExtendLiftHome;
 import frc.robot.commands.TeleopRoutines.RetractWristExtendLiftTravel;
+import frc.robot.commands.TeleopRoutines.TurnToGamepiece;
 import frc.robot.commands.swerve.Test.TrajectoryCorrectForCube;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.ExtendArmSubsystem;
@@ -90,6 +93,8 @@ public class AutoFactory {
 
     private boolean traj1Reqd;
 
+    private List<PathPlannerTrajectory> bumpStartTrajs;
+
     public AutoFactory(DriveSubsystem drive, LiftArmSubsystem lift, ExtendArmSubsystem extend,
             WristSubsystem wrist, IntakeSubsystem intake, TrajectoryFactory tf) {
 
@@ -135,6 +140,9 @@ public class AutoFactory {
         m_autoChooser1.addOption("PickupScore2ndCube", 2);
 
         m_autoChooser1.addOption("Balance", 3);
+
+        bumpStartTrajs = m_tf.getPathPlannerTrajectoryGroup("LeftShelfToLeftCubeRotate",
+                    2.5, 4.0, false);
 
     }
 
@@ -219,7 +227,7 @@ public class AutoFactory {
             PathPlannerTrajectory eventPath = m_tf.getPathPlannerTrajectory("LeftShelfToLeftCubeRotate", 2.0, 4.0,
                     false);
             List<PathPlannerTrajectory> eventPaths = m_tf.getPathPlannerTrajectoryGroup("LeftShelfToLeftCubeRotate",
-                    2.0, 4.0, false);
+                    2.5, 4.0, false);
 
             HashMap<String, Command> eventMap = new HashMap<>();
             // eventMap.put("DropIntake1", new GroundIntakeUprightConePositions(m_lift,
@@ -233,11 +241,18 @@ public class AutoFactory {
             // new FollowPathWithEvents(m_tf.followTrajectoryCommand(eventPath, true),
             // eventPath.getMarkers(), eventMap);
             SequentialCommandGroup eventCommand = new SequentialCommandGroup(
-                    m_tf.followTrajectoryCommand(eventPaths.get(0), true),
+                    Commands.runOnce(() -> m_lift.setController(LiftArmConstants.liftArmFastConstraints, 1, false)),
+                    m_tf.followTrajectoryCommand(bumpStartTrajs.get(0), true),
+                    new WaitCommand(.1),
+                    new TurnToGamepiece(m_drive, -.25, true),
                     new GroundIntakeCubePositions(m_lift, m_wrist, m_extend, m_intake),
-                    m_tf.followTrajectoryCommand(eventPaths.get(1), false)
-                            .raceWith(new IntakePieceStopMotor(m_intake, 11))
-                            .raceWith(new TrajectoryCorrectForCube(m_drive, true)));
+                    new WaitCommand(.1),
+                    m_tf.followTrajectoryCommand(bumpStartTrajs.get(1), false)
+                            .raceWith(new IntakePieceStopMotor(m_intake, 11)),
+                    new RetractWristExtendLiftTravel(m_lift, m_extend, m_wrist),
+                    m_tf.followTrajectoryCommand(bumpStartTrajs.get(2), false),
+                    new EjectPieceFromIntake(m_intake, 11).withTimeout(1));
+            // .raceWith(new TrajectoryCorrectForCube(m_drive)));
 
             tempCommand = eventCommand;
         }
@@ -264,7 +279,7 @@ public class AutoFactory {
             HashMap<String, Command> eventMap1 = new HashMap<>();
             eventMap1.put("DropIntake1", new GroundIntakeUprightConePositions(m_lift, m_wrist, m_extend, m_intake)
                     .withTimeout(5));
-            eventMap1.put("RunIntake1", new IntakePiece(m_intake, 11).withTimeout(6));
+            eventMap1.put("RunIntake1", new IntakePieceStopMotor(m_intake, 11).withTimeout(6));
 
             HashMap<String, Command> eventMap2 = new HashMap<>();
             eventMap2.put("HomePosition", new RetractWristExtendLiftTravel(m_lift, m_extend, m_wrist)

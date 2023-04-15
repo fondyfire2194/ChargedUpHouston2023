@@ -14,12 +14,13 @@ public class TurnToGamepiece extends CommandBase {
   private double m_speed;
   private double m_angle;
   private final boolean m_cube;
-  private PIDController m_controller = new PIDController(.05, 0, 0);
+  private PIDController m_controller = new PIDController(.1, 0, 0);
 
   public TurnToGamepiece(DriveSubsystem drive, double speed, boolean cube) {
     // Use addRequirements() here to declare subsystem dependencies.
     m_drive = drive;
     m_cube = cube;
+    m_speed=speed;
     addRequirements(m_drive);
   }
 
@@ -52,6 +53,6 @@ public class TurnToGamepiece extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return m_cube && Math.abs(m_drive.tx) < .2;
+    return m_drive.cubeFound && Math.abs(m_drive.tx) < .2;
   }
 }
