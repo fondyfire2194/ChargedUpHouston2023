@@ -7,6 +7,7 @@ package frc.robot.commands.NTs;
 import edu.wpi.first.networktables.DoublePublisher;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.RobotController;
 import frc.robot.subsystems.IntakeSubsystem;
 
 /** Add your docs here. */
@@ -21,6 +22,8 @@ public class MonitorThreadIntake {
     public DoublePublisher rpm;
     public DoublePublisher amps;
     public DoublePublisher volts;
+    public DoublePublisher batteryvolts;
+    
 
     public MonitorThreadIntake(IntakeSubsystem intake) {
 
@@ -32,7 +35,7 @@ public class MonitorThreadIntake {
  
         volts = intprof.getDoubleTopic("VOLTS").publish();
 
-
+        batteryvolts = intprof.getDoubleTopic("BATTERYVOLTS").publish();
 
     }
 
@@ -49,14 +52,16 @@ public class MonitorThreadIntake {
         public void run() {
             try {
                 while (!Thread.currentThread().isInterrupted()) {
-                    m_intake.tstctr++;
 
                     if (true) {
+
                         rpm.set(m_intake.getRPM());
 
                         amps.set(m_intake.getAmps());
 
                         volts.set(m_intake.voltage);
+
+                        batteryvolts.set(RobotController.getBatteryVoltage());
 
                     }
                     Thread.sleep(100);

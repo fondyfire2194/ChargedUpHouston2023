@@ -16,7 +16,7 @@ public class TurnToGamepiece extends CommandBase {
   private final boolean m_cube;
   private PIDController m_controller = new PIDController(.05, 0, 0);
 
-  public TurnToGamepiece(DriveSubsystem drive, double speed, double targetAngle, boolean cube) {
+  public TurnToGamepiece(DriveSubsystem drive, double speed, boolean cube) {
     // Use addRequirements() here to declare subsystem dependencies.
     m_drive = drive;
     m_cube = cube;

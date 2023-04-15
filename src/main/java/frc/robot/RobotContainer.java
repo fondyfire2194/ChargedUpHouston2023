@@ -38,6 +38,8 @@ import frc.robot.commands.TeleopRoutines.RetractWristExtendLiftHome;
 import frc.robot.commands.TeleopRoutines.RetractWristExtendLiftTravel;
 import frc.robot.commands.TeleopRoutines.RotateToAngle;
 import frc.robot.commands.TeleopRoutines.SetSwerveDriveGamepiece;
+import frc.robot.commands.TeleopRoutines.TurnToAngle;
+import frc.robot.commands.TeleopRoutines.TurnToGamepiece;
 import frc.robot.commands.Wrist.JogWrist;
 import frc.robot.commands.Wrist.PositionProfileWrist;
 import frc.robot.commands.swerve.SetSwerveDrive;
@@ -193,6 +195,7 @@ public class RobotContainer {
                 m_driverController.leftTrigger()
                                 .onTrue(new GroundIntakeCubePositions(m_liftArm, m_wrist, m_extendArm, m_intake)
                                                 .withTimeout(10))
+                                .onFalse(new RetractWristExtendLiftHome(m_liftArm, m_extendArm, m_wrist))
                                 .whileTrue(new ConditionalCommand(
                                                 new ParallelCommandGroup(
                                                                 new SetSwerveDriveGamepiece(m_drive, m_llv, true,
@@ -217,6 +220,7 @@ public class RobotContainer {
                                                                                                 m_wrist))),
 
                                                 () -> m_coDriverController.getHID().getLeftBumper()));
+                                                
                 // DO NOT USE LeftBumper m_driverController.leftBumper().
 
                 m_driverController.rightTrigger().whileTrue(new IntakePieceStopMotor(m_intake, 11));
@@ -277,33 +281,6 @@ public class RobotContainer {
                 // DO NOT USE m_coDriverController.leftBumper()
 
                 // m_coDriverController.leftTrigger()
-                // .onTrue(new GroundIntakeCubePositions(m_liftArm, m_wrist, m_extendArm,
-                // m_intake)
-                // .withTimeout(10))
-                // .whileTrue(new ConditionalCommand(
-                // new ParallelCommandGroup(
-                // new SetSwerveDriveGamepiece(m_drive, m_llv, true,
-                // () -> m_coDriverController
-                // .getRawAxis(1),
-                // () -> m_coDriverController
-                // .getRawAxis(0),
-                // () -> m_coDriverController
-                // .getRawAxis(4)),
-                // new IntakePieceStopMotor(m_intake, 10)),
-                // new ParallelCommandGroup(
-                // new SetSwerveDriveGamepiece(m_drive, m_llv, false,
-                // () -> m_coDriverController
-                // .getRawAxis(1),
-                // () -> m_coDriverController
-                // .getRawAxis(0),
-                // () -> m_coDriverController
-                // .getRawAxis(4)),
-                // new IntakePieceStopMotor(m_intake, 10).
-                // andThen(new RetractWristExtendLiftTravel(
-                // m_liftArm, m_extendArm,
-                // m_wrist))),
-
-                // () -> m_coDriverController.getHID().getLeftBumper()));
 
                 m_coDriverController.rightBumper()
                                 .onTrue(new LoadSubstationPositions(m_liftArm, m_wrist, m_extendArm, m_intake)
@@ -389,21 +366,15 @@ public class RobotContainer {
                 m_armsController.y().onTrue(Commands.runOnce(
                                 () -> m_liftArm.setController(LiftArmConstants.liftArmFastConstraints, 12, false)));
 
-                m_armsController.start().onTrue(Commands.runOnce(
-                                () -> m_wrist.setController(WristConstants.wristFastConstraints, .15,
-                                                false)));
+                m_armsController.start().onTrue(new TurnToGamepiece(m_drive, 1, true).withTimeout(3));
 
-                m_armsController.povUp().onTrue(Commands.runOnce(
-                                () -> m_wrist.setController(WristConstants.wristFastConstraints, 1, false)));
+                m_armsController.povUp().onTrue(new TurnToAngle(m_drive, 0, false));
 
-                m_armsController.povDown().onTrue(Commands.runOnce(
-                                () -> m_wrist.setController(WristConstants.wristFastConstraints, 2, false)));
+                m_armsController.povDown().onTrue(new TurnToAngle(m_drive, 90, false));
 
-                m_armsController.povLeft().onTrue(Commands.runOnce(
-                                () -> m_wrist.setController(WristConstants.wristFastConstraints, 3, false)));
+                m_armsController.povLeft().onTrue(new TurnToAngle(m_drive, 180, false));
 
-                m_armsController.povRight().onTrue(Commands.runOnce(
-                                () -> m_wrist.setController(WristConstants.wristFastConstraints, 4, false)));
+                m_armsController.povRight().onTrue(new TurnToAngle(m_drive, 45, false));
 
                 // m_armsController.back() DO NOT ASSIGN ALREADY USED IN JOG COMMANDS TO
                 // OVERRIDE SOFTWARE LIMITS
