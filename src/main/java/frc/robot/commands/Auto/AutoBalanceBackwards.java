@@ -43,19 +43,19 @@ public class AutoBalanceBackwards extends CommandBase {
 
     double motorMultiplier = -Math.sin(currentPitchRadians) * 1.8;
 
-    double motorSpeed = motorMultiplier * DriveConstants.kMaxSpeedMetersPerSecond;
+    double motorMPS = motorMultiplier * DriveConstants.kMaxSpeedMetersPerSecond;
 
-    SmartDashboard.putNumber("motorNum", motorMultiplier);
+    SmartDashboard.putNumber("motorMPS", motorMPS);
     // if (Math.abs(motorSpeed) > DriveConstants.kMaxSpeedMetersPerSecond) {
-    //   motorSpeed = Math.signum(motorSpeed) *
-    //       DriveConstants.kMaxSpeedMetersPerSecond;
+    // motorSpeed = Math.signum(motorSpeed) *
+    // DriveConstants.kMaxSpeedMetersPerSecond;
     // }
 
-    m_drive.drive(motorSpeed, 0, 0);
+    m_drive.drive(motorMPS, 0, 0);
     // if (motorMultiplier < 0.005 || motorMultiplier > -0.005) {
 
-    if (motorMultiplier < 0.01 && motorMultiplier > -0.01) {
-
+    // if (motorMultiplier < 0.01 && motorMultiplier > -0.01) {
+    if (Math.abs(currentPitchDegrees) < 2.5) {
       positionHeld++;
       if (positionHeld > 40) {
         endCommand = true;

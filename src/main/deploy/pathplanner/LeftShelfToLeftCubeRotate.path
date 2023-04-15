@@ -32,7 +32,7 @@
         "y": 6.7742875610104285
       },
       "nextControl": {
-        "x": 7.058097996367176,
+        "x": 7.0580979963671755,
         "y": 5.248875205311038
       },
       "holonomicAngle": -90.0,
@@ -50,11 +50,11 @@
     {
       "anchorPoint": {
         "x": 7.080968912294458,
-        "y": 5.294617037165601
+        "y": 5.065907877892789
       },
       "prevControl": {
         "x": 7.080968912294458,
-        "y": 5.624664244595406
+        "y": 5.395955085322594
       },
       "nextControl": null,
       "holonomicAngle": -90.0,
@@ -70,12 +70,12 @@
       }
     }
   ],
-  "maxVelocity": 3.0,
-  "maxAcceleration": null,
+  "maxVelocity": 2.0,
+  "maxAcceleration": 1.0,
   "isReversed": null,
   "markers": [
     {
-      "position": 0.3636363636363721,
+      "position": 0.16000000000001177,
       "names": [
         "DropIntake1"
       ]

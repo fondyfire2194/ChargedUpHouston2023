@@ -230,13 +230,13 @@ public final class Constants {
 
     public static final TrapezoidProfile.Constraints liftArmFastConstraints
 
-        = new Constraints(20, 45); //35
+        = new Constraints(20, 45); // 35
 
     public static final double JOG_SLEW_RATE = 10;
 
     public static final double kControllerDeadband = 0.05;
 
-    public static final double kvVoltSecondsPerInch = .48;
+    public static final double kvVoltSecondsPerInch = .45;
 
     public static final double kAVoltSecondSquaredPerInch = 0;
 
@@ -267,11 +267,11 @@ public final class Constants {
 
     public static final TrapezoidProfile.Constraints extendArmFastConstraints
 
-        = new Constraints(40, 60); //25,25     40, 60
+        = new Constraints(40, 60); // 25,25 40, 60
 
     public static final double JOG_SLEW_RATE = 10;
 
-    public static final double kgVolts = 0.02;
+    public static final double kgVolts = 0;
 
   }
 
@@ -303,7 +303,7 @@ public final class Constants {
 
     public static final TrapezoidProfile.Constraints wristFastConstraints =
 
-        new Constraints(4, 8); //2.5, 2.5
+        new Constraints(4, 8); // 2.5, 2.5
 
     public static final double JOG_SLEW_RATE = 10;
 
@@ -311,7 +311,7 @@ public final class Constants {
 
     public static double ksVolts = .06;
 
-    public static double kgVolts = .17;
+    public static double kgVolts = -0.2;
 
     public static double kvWristVoltSecondsPerRadian = 1.65;//
 
@@ -366,7 +366,7 @@ public final class Constants {
     // / 10;
     // public static final double kMaxAccelerationMetersPerSecondSquared = 3;
 
-    public static final double kPXController = 2;
+    public static final double kPXController = 3.2;// 2
     public static final double kDXController = 0;
     public static final double kIXController = 0;
 
@@ -374,7 +374,7 @@ public final class Constants {
     public static final double kDYController = 0;
     public static final double kIYController = 0;
 
-    public static final double kPThetaController = 0.22;
+    public static final double kPThetaController = .35;// .22
     public static final double kDThetaController = 0;
     public static final double kIThetaController = 0;
 

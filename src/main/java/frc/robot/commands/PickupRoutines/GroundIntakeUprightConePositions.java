@@ -7,6 +7,7 @@ package frc.robot.commands.PickupRoutines;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.commands.ExtendArm.SetExtArmGoal;
+import frc.robot.commands.ExtendArm.WaitExtendAtTarget;
 import frc.robot.commands.LiftArm.SetLiftGoal;
 import frc.robot.commands.LiftArm.WaitLiftAtTarget;
 import frc.robot.commands.Wrist.SetWristGoal;
@@ -45,16 +46,16 @@ public class GroundIntakeUprightConePositions extends SequentialCommandGroup {
 
                                 new WaitLiftAtTarget(lift, 1, 1.5, 1).asProxy(),
 
-                                new WaitWristAtTarget(wrist, 1, .2,3).asProxy(),
+                                new WaitWristAtTarget(wrist, 1, .2,1).asProxy(),
 
                                 new SetExtArmGoal(extend,
                                                 presetExtArmDistances.PICKUP_UPRIGHT_CONE_GROUND
                                                                 .getDistance())
                                                 .asProxy(),
 
-                                new WaitCommand(2),
+                                new WaitCommand(.2),
 
-                                new WaitLiftAtTarget(lift, 1, .5, 1).asProxy());
+                                new WaitExtendAtTarget(extend, 1, .5, 1).asProxy());
 
         }
 }

@@ -86,7 +86,7 @@ public class IntakeSubsystem extends SubsystemBase {
 
     setCANTimes();
 
-    shootCubeServo.setAngle(180);
+    shootCubeServo.setAngle(40);
   }
 
   @Override

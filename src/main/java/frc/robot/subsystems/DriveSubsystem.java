@@ -8,8 +8,6 @@ import com.ctre.phoenix.unmanaged.Unmanaged;
 import com.kauailabs.navx.frc.AHRS;
 import com.revrobotics.CANSparkMax.IdleMode;
 
-import edu.wpi.first.hal.PowerDistributionFaults;
-import edu.wpi.first.hal.PowerDistributionStickyFaults;
 import edu.wpi.first.hal.SimDouble;
 import edu.wpi.first.hal.simulation.SimDeviceDataJNI;
 import edu.wpi.first.math.VecBuilder;

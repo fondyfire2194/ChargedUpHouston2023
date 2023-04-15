@@ -18,7 +18,6 @@ public class AutoBalance extends CommandBase {
 
   private double isBalancedStartTime;
   private boolean endCommand;
-  private boolean onRamp;
   private LinearFilter pitchFilter = LinearFilter.movingAverage(10);// 200ms
 
   double isBalancedDegrees = 0.7;
@@ -46,7 +45,6 @@ public class AutoBalance extends CommandBase {
     isBalancedStartTime = 0;
     pitchFilter.reset();
     m_drive.setClosedLoop(true);
-    onRamp = false;
     motorSpeed = 1;
     pitchMultiplier = 1.8;
   }
@@ -59,7 +57,7 @@ public class AutoBalance extends CommandBase {
 
     double currentPitchRadians = Units.degreesToRadians(currentPitchDegrees);
 
-    double speedMultiplier = Math.sin(currentPitchRadians) * -1;
+    double speedMultiplier = -Math.sin(currentPitchRadians);
 
     motorSpeed = speedMultiplier * DriveConstants.kMaxSpeedMetersPerSecond * pitchMultiplier;
 

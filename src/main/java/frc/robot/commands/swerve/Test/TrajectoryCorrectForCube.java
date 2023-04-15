@@ -15,11 +15,12 @@ public class TrajectoryCorrectForCube extends CommandBase {
   /** Creates a new TrajectoryCorrectForCube. */
   private DriveSubsystem m_drive;
   private PIDController m_pidController;
- 
+  private boolean m_isFieldOriented;
 
-  public TrajectoryCorrectForCube(DriveSubsystem drive) {
+  public TrajectoryCorrectForCube(DriveSubsystem drive, boolean isFieldOriented) {
     // Use addRequirements() here to declare subsystem dependencies.
     m_drive = drive;
+    m_isFieldOriented = isFieldOriented;
   }
 
   // Called when the command is initially scheduled.
@@ -27,7 +28,7 @@ public class TrajectoryCorrectForCube extends CommandBase {
   public void initialize() {
 
     m_drive.clearAngleCorrection();
- 
+
     m_pidController = new PIDController(1, 0, 0);
   }
 
@@ -42,6 +43,9 @@ public class TrajectoryCorrectForCube extends CommandBase {
     else {
 
       double xError = m_pidController.calculate(m_drive.tx, -1.25);
+
+      if (m_isFieldOriented)
+        xError *= -1;
 
       SmartDashboard.putNumber("XCUBERR", xError);
 

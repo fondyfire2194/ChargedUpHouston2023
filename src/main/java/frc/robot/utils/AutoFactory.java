@@ -22,7 +22,11 @@ import frc.robot.commands.Auto.AutoBalance;
 import frc.robot.commands.Auto.AutoBalanceBackwards;
 import frc.robot.commands.Auto.DoNothing;
 import frc.robot.commands.DeliverRoutines.DeliverCubeFast;
+import frc.robot.commands.DeliverRoutines.DeliverPiecePositions;
 import frc.robot.commands.DeliverRoutines.EjectPieceFromIntake;
+import frc.robot.commands.DeliverRoutines.GetDeliverAngleSettings;
+import frc.robot.commands.DeliverRoutines.GetDeliverAngleSettingsAuto;
+import frc.robot.commands.PickupRoutines.GroundIntakeCubePositions;
 import frc.robot.commands.PickupRoutines.GroundIntakeUprightConePositions;
 import frc.robot.commands.PickupRoutines.IntakePiece;
 import frc.robot.commands.PickupRoutines.IntakePieceStopMotor;
@@ -38,9 +42,10 @@ import frc.robot.subsystems.WristSubsystem;
 /** Add your docs here. */
 public class AutoFactory {
 
-    int sl_coop_0 = 0;
-    int sl_noBumpShelf_1 = 1;
-    int sl_bumpShelf_2 = 2;
+    int sl_coopShelf_0 = 0;
+    int sl_coopPipe_1 = 1;
+    int sl_noBumpShelf_2 = 2;
+    int sl_bumpShelf_3 = 3;
 
     int as_doNothing_0 = 0;
     int as_pushCube_1 = 1;
@@ -49,7 +54,7 @@ public class AutoFactory {
 
     int as1_driveThruChargeAndBalance_1 = 1;
     int as1_secondCube_2 = 2;
-    int as1_balance_3 = 3;;
+    int as1_balance_3 = 3;
 
     List<PathPlannerTrajectory> pathGroup;
 
@@ -109,11 +114,13 @@ public class AutoFactory {
         m_startDelayChooser.addOption("Four Seconds", 4.);
         m_startDelayChooser.addOption("Five Seconds", 4.);
 
-        m_startLocationChooser.setDefaultOption("Coop", 0);
+        m_startLocationChooser.setDefaultOption("CoopShelf", 0);
 
-        m_startLocationChooser.addOption("NoBumpShelf", 1);
+        m_startLocationChooser.addOption("CoopPipe", 1);
 
-        m_startLocationChooser.addOption("BumpShelf", 2);
+        m_startLocationChooser.addOption("NoBumpShelf", 2);
+
+        m_startLocationChooser.addOption("BumpShelf", 3);
 
         m_autoChooser.setDefaultOption("Do Nothing", 0);
 
@@ -143,17 +150,17 @@ public class AutoFactory {
 
         int autoselect = m_autoChooser.getSelected();
 
-        if (startLocation == sl_coop_0 && autoselect == as_pushCube_1) {
+        if (startLocation == sl_coopShelf_0 && autoselect == as_pushCube_1) {
             traj1name = "PushCubeCenter";
             traj1Reqd = true;
         }
 
-        if (startLocation == sl_noBumpShelf_1 && autoselect == as_pushCube_1) {
+        if (startLocation == sl_noBumpShelf_2 && autoselect == as_pushCube_1) {
             traj1name = "PushCubeLeftShelf";
             traj1Reqd = true;
         }
 
-        if (startLocation == sl_bumpShelf_2 && autoselect == as_pushCube_1) {
+        if (startLocation == sl_bumpShelf_3 && autoselect == as_pushCube_1) {
             traj1name = "PushCubeRightShelf";
             traj1Reqd = true;
         }
@@ -163,13 +170,26 @@ public class AutoFactory {
             tempCommand = m_tf.followTrajectoryCommand(traj1, traj1Reqd).withTimeout(8);
         }
 
-        if (autoselect == as_deliverMid_2) {
+        if ((startLocation == sl_coopShelf_0 || startLocation == sl_noBumpShelf_2) && autoselect == as_deliverMid_2) {
             tempCommand = new DeliverCubeFast(m_lift, m_wrist, m_intake, m_extend, false);
         }
 
-        if (autoselect == as_deliverTop_3) {
+        if ((startLocation == sl_coopShelf_0 || startLocation == sl_noBumpShelf_2) && autoselect == as_deliverTop_3) {
             tempCommand = new DeliverCubeFast(m_lift, m_wrist, m_intake, m_extend, true);
         }
+
+        if (startLocation == sl_coopPipe_1 && autoselect == as_deliverMid_2) {
+            tempCommand = new SequentialCommandGroup(
+                    new GetDeliverAngleSettingsAuto(m_lift, m_extend, m_wrist, m_intake, 1),
+                    new DeliverPiecePositions(m_lift, m_extend, m_wrist, m_intake));
+        }
+
+        if (startLocation == sl_coopPipe_1 && autoselect == as_deliverTop_3) {
+            tempCommand = new SequentialCommandGroup(
+                    new GetDeliverAngleSettingsAuto(m_lift, m_extend, m_wrist, m_intake, 2),
+                    new DeliverPiecePositions(m_lift, m_extend, m_wrist, m_intake));
+        }
+
         return tempCommand;
     }
 
@@ -181,7 +201,7 @@ public class AutoFactory {
 
         int autoselect1 = m_autoChooser1.getSelected();
 
-        if (startLocation == sl_coop_0) {// any of the coop starts
+        if (startLocation == sl_coopShelf_0) {// any of the coop starts
             if (autoselect1 == as1_driveThruChargeAndBalance_1) {
                 // gy = m_drive.getGyroPitch();
                 List<PathPlannerTrajectory> balanceCommandList = m_tf.getPathPlannerTrajectoryGroup("BackUpCenter", 2.2,
@@ -196,23 +216,35 @@ public class AutoFactory {
 
         }
 
-        if (startLocation == sl_noBumpShelf_1 && autoselect1 == as1_secondCube_2) {
+        if (startLocation == sl_noBumpShelf_2 && autoselect1 == as1_secondCube_2) {
 
-            PathPlannerTrajectory eventPath = m_tf.getPathPlannerTrajectory("LeftShelfToLeftCubeRotate", 2, 1, false);
+            PathPlannerTrajectory eventPath = m_tf.getPathPlannerTrajectory("LeftShelfToLeftCubeRotate", 2.0, 4.0,
+                    false);
+            List<PathPlannerTrajectory> eventPaths = m_tf.getPathPlannerTrajectoryGroup("LeftShelfToLeftCubeRotate",
+                    2.0, 4.0, false);
+
             HashMap<String, Command> eventMap = new HashMap<>();
-            eventMap.put("DropIntake1", new GroundIntakeUprightConePositions(m_lift, m_wrist, m_extend, m_intake)
-                    .withTimeout(5));
-            eventMap.put("RunIntake1", new IntakePieceStopMotor(m_intake, 11).withTimeout(4));
+            // eventMap.put("DropIntake1", new GroundIntakeUprightConePositions(m_lift,
+            // m_wrist, m_extend, m_intake)
+            // .withTimeout(5));
+            // eventMap.put("RunIntake1", new IntakePieceStopMotor(m_intake,
+            // 11).withTimeout(4));
 
-            FollowPathWithEvents eventCommand =
+            // FollowPathWithEvents eventCommand =
 
-                    new FollowPathWithEvents(m_tf.followTrajectoryCommand(eventPath, true),
-                            eventPath.getMarkers(), eventMap);
+            // new FollowPathWithEvents(m_tf.followTrajectoryCommand(eventPath, true),
+            // eventPath.getMarkers(), eventMap);
+            SequentialCommandGroup eventCommand = new SequentialCommandGroup(
+                    m_tf.followTrajectoryCommand(eventPaths.get(0), true),
+                    new GroundIntakeCubePositions(m_lift, m_wrist, m_extend, m_intake),
+                    m_tf.followTrajectoryCommand(eventPaths.get(1), false)
+                            .raceWith(new IntakePieceStopMotor(m_intake, 11))
+                            .raceWith(new TrajectoryCorrectForCube(m_drive, true)));
 
-            tempCommand = new ParallelRaceGroup(eventCommand, new TrajectoryCorrectForCube(m_drive));
+            tempCommand = eventCommand;
         }
 
-        if (startLocation == sl_coop_0) {// any of the coop starts
+        if (startLocation == sl_coopShelf_0) {// any of the coop starts
 
             if (autoselect1 == as1_balance_3) {
 
@@ -221,14 +253,13 @@ public class AutoFactory {
                 tempCommand = new SequentialCommandGroup(
 
                         m_tf.followTrajectoryCommand(traj2, true).withTimeout(3), new AutoBalance(m_drive));
-                        
 
                 // new AutoBalance(m_drive, false));
             }
 
         }
 
-        if (startLocation == sl_bumpShelf_2 && autoselect1 == as1_secondCube_2) {
+        if (startLocation == sl_bumpShelf_3 && autoselect1 == as1_secondCube_2) {
 
             List<PathPlannerTrajectory> eventPaths = m_tf.getPathPlannerTrajectoryGroup("RightSideSecondCube", 2, 1,
                     false);
@@ -254,7 +285,7 @@ public class AutoFactory {
 
             tempCommand = new SequentialCommandGroup(
 
-                    new ParallelRaceGroup(eventCommand1, new TrajectoryCorrectForCube(m_drive)), 
+                    eventCommand1,
                     new WaitCommand(0.5),
                     eventCommand2,
                     new EjectPieceFromIntake(m_intake, 12).withTimeout(1));

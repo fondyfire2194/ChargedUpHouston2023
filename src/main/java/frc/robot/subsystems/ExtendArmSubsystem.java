@@ -75,7 +75,7 @@ public class ExtendArmSubsystem extends SubsystemBase {
 
     public SparkMaxPIDController m_posnController;
 
-    public ProfiledPIDController m_extController = new ProfiledPIDController(0.1, 0, 0,
+    public ProfiledPIDController m_extController = new ProfiledPIDController(1.3, 0, 0,
             ExtendArmConstants.extendArmFastConstraints);
 
     public SparkMaxLimitSwitch m_reverseLimit;
