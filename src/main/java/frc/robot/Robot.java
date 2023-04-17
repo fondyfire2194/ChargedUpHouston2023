@@ -62,10 +62,10 @@ public class Robot extends TimedRobot {
       // Instantiate our RobotContainer.
       // Record both DS control and joystick data
       DriverStation.startDataLog(DataLogManager.getLog());
+
+      Timer.delay(10);// allow navx to init Chief Delphi post fix intermiitent trajectory failures
+                      // after start up
     }
-
-    Timer.delay(10);// allow navx to init Chief Delphi post fix intermiitent trajectory failures after start up
-
     m_robotContainer = new RobotContainer();
 
   }
