@@ -189,10 +189,10 @@ public class ExtendArmSubsystem extends SubsystemBase {
 
         m_forwardLimit.enableLimitSwitch(true);
 
-        SmartDashboard.putNumber("EXENCSET",
-                ExtendArmConstants.INCHES_PER_ENCODER_REV);
-        SmartDashboard.putNumber("EXENMAXV",
-                ExtendArmConstants.MAX_RATE_INCHES_PER_SEC);
+       // SmartDashboard.putNumber("EXENCSET",
+      //          ExtendArmConstants.INCHES_PER_ENCODER_REV);
+       // SmartDashboard.putNumber("EXENMAXV",
+          //      ExtendArmConstants.MAX_RATE_INCHES_PER_SEC);
 
         setSoftwareLimits();
 
@@ -230,8 +230,8 @@ public class ExtendArmSubsystem extends SubsystemBase {
 
         }
 
-        SmartDashboard.putBoolean("REVLS", m_reverseLimit.isPressed());
-        SmartDashboard.putBoolean("FWDLS", m_forwardLimit.isPressed());
+      //  SmartDashboard.putBoolean("REVLS", m_reverseLimit.isPressed());
+      //  SmartDashboard.putBoolean("FWDLS", m_forwardLimit.isPressed());
 
     }
 

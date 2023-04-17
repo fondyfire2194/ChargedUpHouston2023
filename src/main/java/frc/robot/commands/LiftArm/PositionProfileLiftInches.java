@@ -103,11 +103,11 @@ public class PositionProfileLiftInches extends CommandBase {
     m_lift.extendGravityVal = extAdderVolts
         * (m_ext.getPositionInches() * Math.sin(m_lift.getCanCoderRadians() / ExtendArmConstants.MAX_POSITION));
 
-    SmartDashboard.putNumber("LiftExtAdder", m_lift.extendGravityVal);
+   // SmartDashboard.putNumber("LiftExtAdder", m_lift.extendGravityVal);
 
     m_lift.gravVal = Pref.getPref("liftKg") * Math.sin(m_lift.getCanCoderRadians());
 
-    SmartDashboard.putNumber("LiftGravval", m_lift.gravVal);
+  //  SmartDashboard.putNumber("LiftGravval", m_lift.gravVal);
 
     m_lift.pidVal = m_lift.m_liftController.calculate(m_lift.getPositionInches(),
         m_lift.goalInches);

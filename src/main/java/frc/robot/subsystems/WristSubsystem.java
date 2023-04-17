@@ -149,9 +149,9 @@ public class WristSubsystem extends SubsystemBase {
 
         mEncoder.setVelocityConversionFactor(WristConstants.RADIANS_PER_ENCODER_REV / 60);
 
-        SmartDashboard.putNumber("WRRDPR", WristConstants.RADIANS_PER_ENCODER_REV);
+     //   SmartDashboard.putNumber("WRRDPR", WristConstants.RADIANS_PER_ENCODER_REV);
 
-        SmartDashboard.putNumber("WRDGPR", Units.radiansToDegrees(WristConstants.RADIANS_PER_ENCODER_REV));
+      //  SmartDashboard.putNumber("WRDGPR", Units.radiansToDegrees(WristConstants.RADIANS_PER_ENCODER_REV));
 
         mEncoder.setPosition(presetWristAngles.HOME.getAngleRads());
 

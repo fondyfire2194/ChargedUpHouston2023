@@ -342,8 +342,8 @@ public class DriveSubsystem extends SubsystemBase {
   public void periodic() {
     // Update the odometry in the periodic block
 
-    SmartDashboard.putNumber("TurnFL", m_frontLeft.angleCorrection);
-    SmartDashboard.putNumber("TurnFR", m_frontRight.angleCorrection);
+   // SmartDashboard.putNumber("TurnFL", m_frontLeft.angleCorrection);
+   // SmartDashboard.putNumber("TurnFR", m_frontRight.angleCorrection);
 
     updateOdometry();
 

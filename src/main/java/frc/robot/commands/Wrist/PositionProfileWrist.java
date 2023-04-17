@@ -112,11 +112,11 @@ public class PositionProfileWrist extends CommandBase {
 
     m_wrist.netWristAngle = (m_wrist.getAngleRadians() - wristOffsetRads) + m_lift.getRadiansFromHorizontal();
 
-    SmartDashboard.putNumber("WristAngle", m_wrist.netWristAngle);
+   // SmartDashboard.putNumber("WristAngle", m_wrist.netWristAngle);
 
     m_wrist.gravVal = Pref.getPref("wristKg") * Math.cos(m_wrist.netWristAngle);
 
-    SmartDashboard.putNumber("wristGravVal", m_wrist.gravVal);
+ //   SmartDashboard.putNumber("wristGravVal", m_wrist.gravVal);
 
     m_wrist.ff = m_wrist.m_wristfeedforward.calculate(
         m_wrist.m_wristController.getSetpoint().position - (m_wrist.netWristAngle),
@@ -126,7 +126,7 @@ public class PositionProfileWrist extends CommandBase {
 
     if (allowDown && m_wrist.volts > 0 || allowUp && m_wrist.volts < 0) {
 
-      SmartDashboard.putNumber("volts", m_wrist.volts);
+    //  SmartDashboard.putNumber("volts", m_wrist.volts);
 
       m_wrist.m_motor.setVoltage(m_wrist.volts);
 
@@ -152,7 +152,7 @@ public class PositionProfileWrist extends CommandBase {
     else {
 
       m_wrist.m_motor.setVoltage(0);
-      SmartDashboard.putNumber("volts", 0);
+   //   SmartDashboard.putNumber("volts", 0);
 
     }
 

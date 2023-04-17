@@ -28,6 +28,7 @@ import frc.robot.commands.PickupRoutines.GroundIntakeUprightConePositions;
 //import frc.robot.commands.PickupRoutines.IntakePiece;
 import frc.robot.commands.PickupRoutines.IntakePieceStopMotor;
 import frc.robot.commands.TeleopRoutines.RetractWristExtendLiftTravel;
+import frc.robot.commands.TeleopRoutines.TurnToGamepiece;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.ExtendArmSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
@@ -91,6 +92,8 @@ public class AutoFactory {
 
     private List<PathPlannerTrajectory> noBumpStartTrajsAlt;
 
+    private List<PathPlannerTrajectory> bumpStartTrajsAlt;
+
     List<PathPlannerTrajectory> balanceCommandList;
 
     List<PathPlannerTrajectory> bumpEventPathsList;
@@ -141,16 +144,19 @@ public class AutoFactory {
 
         m_autoChooser1.addOption("Balance", 3);
 
-        noBumpStartTrajs = m_tf.getPathPlannerTrajectoryGroup("LeftShelfToLeftCubeRotate",
+        noBumpStartTrajs = m_tf.getPathPlannerTrajectoryGroup("NoBumpSide",
                 2.5, 4.0, false);
 
-        noBumpStartTrajsAlt = m_tf.getPathPlannerTrajectoryGroup("NoBumpSide",
+        noBumpStartTrajsAlt = m_tf.getPathPlannerTrajectoryGroup("NoBumpSideAlt",
+                2.5, 4.0, false);
+
+        bumpStartTrajsAlt = m_tf.getPathPlannerTrajectoryGroup("BumpSideAlt",
                 2.5, 4.0, false);
 
         balanceCommandList = m_tf.getPathPlannerTrajectoryGroup("BackUpCenter", 2.2,
                 7, false);
 
-        bumpEventPathsList = m_tf.getPathPlannerTrajectoryGroup("RightSideSecondCube", 2, 1,
+        bumpEventPathsList = m_tf.getPathPlannerTrajectoryGroup("BumpSide", 2, 1,
                 false);
 
     }
@@ -268,8 +274,9 @@ public class AutoFactory {
                     Commands.runOnce(() -> m_lift.setController(LiftArmConstants.liftArmFastConstraints, 1, false)),
                     m_tf.followTrajectoryCommand(noBumpStartTrajsAlt.get(0), true),
                     new WaitCommand(.1),
-                    new GroundIntakeCubePositions(m_lift, m_wrist, m_extend, m_intake),
-                    new WaitCommand(.1),
+                    new GroundIntakeCubePositions(m_lift, m_wrist, m_extend, m_intake)
+                            .raceWith(new TurnToGamepiece(m_drive, autoselect1, true)),
+                  //  new WaitCommand(.1),
                     m_tf.followTrajectoryCommand(noBumpStartTrajsAlt.get(1), false)
                             .raceWith(new IntakePieceStopMotor(m_intake, 11)),
                     new RetractWristExtendLiftTravel(m_lift, m_extend, m_wrist),
@@ -322,6 +329,19 @@ public class AutoFactory {
                     m_intake.tipRearCube(0),
                     eventCommand2,
                     new EjectPieceFromIntake(m_intake, 12).withTimeout(1));
+
+            SequentialCommandGroup eventCommandAlt = new SequentialCommandGroup(
+                    Commands.runOnce(() -> m_lift.setController(LiftArmConstants.liftArmFastConstraints, 1, false)),
+                    m_tf.followTrajectoryCommand(bumpStartTrajsAlt.get(0), true),
+                    new WaitCommand(.1),
+                    new TurnToGamepiece(m_drive, autoselect1, true),
+                    new GroundIntakeCubePositions(m_lift, m_wrist, m_extend, m_intake),
+                    new WaitCommand(.1),
+                    m_tf.followTrajectoryCommand(bumpStartTrajsAlt.get(1), false)
+                            .raceWith(new IntakePieceStopMotor(m_intake, 11)),
+                    new RetractWristExtendLiftTravel(m_lift, m_extend, m_wrist),
+                    m_tf.followTrajectoryCommand(bumpStartTrajsAlt.get(2), false),
+                    new EjectPieceFromIntake(m_intake, 11).withTimeout(1));
 
         }
 

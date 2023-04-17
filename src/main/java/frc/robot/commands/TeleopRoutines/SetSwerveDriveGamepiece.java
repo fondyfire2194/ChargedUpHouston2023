@@ -106,7 +106,7 @@ public class SetSwerveDriveGamepiece extends CommandBase {
 
       double xError = m_controller.calculate(m_drive.tx, -1.25);
 
-      SmartDashboard.putNumber("XCUBERR", xError);
+    //  SmartDashboard.putNumber("XCUBERR", xError);
 
       m_drive.drive(throttle_sl, 0, xError);
 

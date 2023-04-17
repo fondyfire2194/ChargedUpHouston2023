@@ -43,7 +43,7 @@ public class TrajectoryCorrectForCube extends CommandBase {
 
       double xError = m_pidController.calculate(m_drive.tx, -1.25);
 
-      SmartDashboard.putNumber("XCUBERR", xError);
+     // SmartDashboard.putNumber("XCUBERR", xError);
 
       double temp = xError;
 

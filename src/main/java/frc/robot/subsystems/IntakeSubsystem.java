@@ -212,7 +212,7 @@ public class IntakeSubsystem extends SubsystemBase {
 
   public void setCubeServoAngle(double angle) {
     shootCubeServo.setAngle(angle);
-    SmartDashboard.putNumber("SER", angle);
+  //  SmartDashboard.putNumber("SER", angle);
   }
 
   public Command tipRearCube(double angle) {
