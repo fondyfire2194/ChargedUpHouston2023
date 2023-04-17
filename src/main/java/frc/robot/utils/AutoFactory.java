@@ -95,6 +95,12 @@ public class AutoFactory {
 
     private List<PathPlannerTrajectory> bumpStartTrajs;
 
+    private List<PathPlannerTrajectory> bumpStartTrajsAlt;
+
+    List<PathPlannerTrajectory> balanceCommandList;
+
+    List<PathPlannerTrajectory> bumpEventPathsList;
+
     public AutoFactory(DriveSubsystem drive, LiftArmSubsystem lift, ExtendArmSubsystem extend,
             WristSubsystem wrist, IntakeSubsystem intake, TrajectoryFactory tf) {
 
@@ -142,7 +148,16 @@ public class AutoFactory {
         m_autoChooser1.addOption("Balance", 3);
 
         bumpStartTrajs = m_tf.getPathPlannerTrajectoryGroup("LeftShelfToLeftCubeRotate",
-                    2.5, 4.0, false);
+                2.5, 4.0, false);
+
+        bumpStartTrajsAlt = m_tf.getPathPlannerTrajectoryGroup("BumpSide",
+                2.5, 4.0, false);
+
+        balanceCommandList = m_tf.getPathPlannerTrajectoryGroup("BackUpCenter", 2.2,
+                7, false);
+
+        bumpEventPathsList = m_tf.getPathPlannerTrajectoryGroup("RightSideSecondCube", 2, 1,
+                false);
 
     }
 
@@ -210,8 +225,7 @@ public class AutoFactory {
         if (startLocation == sl_coopShelf_0) {// any of the coop starts
             if (autoselect1 == as1_driveThruChargeAndBalance_1) {
                 // gy = m_drive.getGyroPitch();
-                List<PathPlannerTrajectory> balanceCommandList = m_tf.getPathPlannerTrajectoryGroup("BackUpCenter", 2.2,
-                        7, false);
+                //
                 tempCommand = new SequentialCommandGroup(
 
                         m_tf.followTrajectoryCommand(balanceCommandList.get(0), true),
@@ -224,13 +238,15 @@ public class AutoFactory {
 
         if (startLocation == sl_noBumpShelf_2 && autoselect1 == as1_secondCube_2) {
 
-            PathPlannerTrajectory eventPath = m_tf.getPathPlannerTrajectory("LeftShelfToLeftCubeRotate", 2.0, 4.0,
-                    false);
-            List<PathPlannerTrajectory> eventPaths = m_tf.getPathPlannerTrajectoryGroup("LeftShelfToLeftCubeRotate",
-                    2.5, 4.0, false);
+            // PathPlannerTrajectory eventPath =
+            // m_tf.getPathPlannerTrajectory("LeftShelfToLeftCubeRotate", 2.0, 4.0,
+            // false);
+            // List<PathPlannerTrajectory> eventPaths =
+            // m_tf.getPathPlannerTrajectoryGroup("LeftShelfToLeftCubeRotate",
+            // 2.5, 4.0, false);
 
-            HashMap<String, Command> eventMap = new HashMap<>();
-            // eventMap.put("DropIntake1", new GroundIntakeUprightConePositions(m_lift,
+            // HashMap<String, Command> eventMap = new HashMap<>();
+            // // eventMap.put("DropIntake1", new GroundIntakeUprightConePositions(m_lift,
             // m_wrist, m_extend, m_intake)
             // .withTimeout(5));
             // eventMap.put("RunIntake1", new IntakePieceStopMotor(m_intake,
@@ -240,11 +256,12 @@ public class AutoFactory {
 
             // new FollowPathWithEvents(m_tf.followTrajectoryCommand(eventPath, true),
             // eventPath.getMarkers(), eventMap);
+
             SequentialCommandGroup eventCommand = new SequentialCommandGroup(
                     Commands.runOnce(() -> m_lift.setController(LiftArmConstants.liftArmFastConstraints, 1, false)),
                     m_tf.followTrajectoryCommand(bumpStartTrajs.get(0), true),
                     new WaitCommand(.1),
-                    new TurnToGamepiece(m_drive, -.25, true),
+                    // new TurnToGamepiece(m_drive, -.25, true),
                     new GroundIntakeCubePositions(m_lift, m_wrist, m_extend, m_intake),
                     new WaitCommand(.1),
                     m_tf.followTrajectoryCommand(bumpStartTrajs.get(1), false)
@@ -252,7 +269,18 @@ public class AutoFactory {
                     new RetractWristExtendLiftTravel(m_lift, m_extend, m_wrist),
                     m_tf.followTrajectoryCommand(bumpStartTrajs.get(2), false),
                     new EjectPieceFromIntake(m_intake, 11).withTimeout(1));
-            // .raceWith(new TrajectoryCorrectForCube(m_drive)));
+
+            SequentialCommandGroup eventCommandAlt = new SequentialCommandGroup(
+                    Commands.runOnce(() -> m_lift.setController(LiftArmConstants.liftArmFastConstraints, 1, false)),
+                    m_tf.followTrajectoryCommand(bumpStartTrajsAlt.get(0), true),
+                    new WaitCommand(.1),
+                    new GroundIntakeCubePositions(m_lift, m_wrist, m_extend, m_intake),
+                    new WaitCommand(.1),
+                    m_tf.followTrajectoryCommand(bumpStartTrajsAlt.get(1), false)
+                            .raceWith(new IntakePieceStopMotor(m_intake, 11)),
+                    new RetractWristExtendLiftTravel(m_lift, m_extend, m_wrist),
+                    m_tf.followTrajectoryCommand(bumpStartTrajsAlt.get(2), false),
+                    new EjectPieceFromIntake(m_intake, 11).withTimeout(1));
 
             tempCommand = eventCommand;
         }
@@ -267,15 +295,12 @@ public class AutoFactory {
 
                         m_tf.followTrajectoryCommand(traj2, true).withTimeout(3), new AutoBalance(m_drive));
 
-                // new AutoBalance(m_drive, false));
             }
 
         }
 
         if (startLocation == sl_bumpShelf_3 && autoselect1 == as1_secondCube_2) {
 
-            List<PathPlannerTrajectory> eventPaths = m_tf.getPathPlannerTrajectoryGroup("RightSideSecondCube", 2, 1,
-                    false);
             HashMap<String, Command> eventMap1 = new HashMap<>();
             eventMap1.put("DropIntake1", new GroundIntakeUprightConePositions(m_lift, m_wrist, m_extend, m_intake)
                     .withTimeout(5));
@@ -286,8 +311,8 @@ public class AutoFactory {
                     .withTimeout(5));
             eventMap2.put("Eject1", new EjectPieceFromIntake(m_intake, 12).withTimeout(1));
 
-            PathPlannerTrajectory eventPath1 = eventPaths.get(0);
-            PathPlannerTrajectory eventPath2 = eventPaths.get(1);
+            PathPlannerTrajectory eventPath1 = bumpEventPathsList.get(0);
+            PathPlannerTrajectory eventPath2 = bumpEventPathsList.get(1);
 
             FollowPathWithEvents eventCommand1 = new FollowPathWithEvents(
                     m_tf.followTrajectoryCommand(eventPath1, true),
@@ -326,30 +351,6 @@ public class AutoFactory {
         autonomousCommand = new SequentialCommandGroup(command0, command1, command2);
 
         return autonomousCommand;
-
-    }
-
-    public Command bumpShelfAlt(DriveSubsystem drive, IntakeSubsystem intake, LiftArmSubsystem lift,
-            ExtendArmSubsystem extend, WristSubsystem wrist) {
-
-        Command temp = new DoNothing();
-
-        Command one = new SequentialCommandGroup(
-                new ParallelCommandGroup(
-                        new DriveToPickup(drive, 4.5, 3),
-                        new SequentialCommandGroup(
-                                new WaitCommand(2),
-                                new ParallelCommandGroup(
-                                        new GroundIntakeUprightConePositions(lift, wrist, extend, intake),
-                                        new IntakePieceStopMotor(intake, 11)))),
-                new RetractWristExtendLiftTravel(lift, extend, wrist));
-
-        Command two = new SequentialCommandGroup(
-                Commands.runOnce(() -> drive.resetOdometry(new Pose2d())),
-                new DriveToPickup(drive, 4.5, 3),
-                new DeliverCubeFast(lift, wrist, intake, extend, true));
-
-        return new SequentialCommandGroup(one, two);
 
     }
 

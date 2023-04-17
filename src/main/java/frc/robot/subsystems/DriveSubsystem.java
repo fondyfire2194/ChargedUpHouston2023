@@ -243,6 +243,10 @@ public class DriveSubsystem extends SubsystemBase {
       m_simAngle = new SimDouble((SimDeviceDataJNI.getSimValueHandle(dev, "Yaw")));
 
       rotatePID.setP(.004);
+
+      thetaPID.setP(.005);
+
+
     }
 
     // m_Field2d = new Field2d();

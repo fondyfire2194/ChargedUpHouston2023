@@ -10,7 +10,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants.ExtendArmConstants;
@@ -188,43 +187,14 @@ public class RobotContainer {
 
                 m_driverController.leftTrigger()
                                 .whileTrue(getSlowDriveCommand());
-                // m_driverController.leftTrigger()
-                // .onTrue(new GroundIntakeCubePositions(m_liftArm, m_wrist, m_extendArm,
-                // m_intake)
-                // .withTimeout(10))
-                // .onFalse(new RetractWristExtendLiftHome(m_liftArm, m_extendArm, m_wrist))
-                // .whileTrue(new ConditionalCommand(
-                // new ParallelCommandGroup(
-                // new SetSwerveDriveGamepiece(m_drive, m_llv, true,
-                // () -> m_driverController
-                // .getRawAxis(1),
-                // () -> m_driverController
-                // .getRawAxis(0),
-                // () -> m_driverController
-                // .getRawAxis(4)),
-                // new IntakePieceStopMotor(m_intake, 10)),
-                // new ParallelCommandGroup(
-                // new SetSwerveDriveGamepiece(m_drive, m_llv, false,
-                // () -> m_driverController
-                // .getRawAxis(1),
-                // () -> m_driverController
-                // .getRawAxis(0),
-                // () -> m_driverController
-                // .getRawAxis(4)),
-                // new IntakePieceStopMotor(m_intake, 10).andThen(
-                // new RetractWristExtendLiftTravel(
-                // m_liftArm, m_extendArm,
-                // m_wrist))),
-
-                // () -> m_coDriverController.getHID().getLeftBumper()));
-
-                // DO NOT USE LeftBumper m_driverController.leftBumper().
 
                 m_driverController.rightTrigger().whileTrue(new IntakePieceStopMotor(m_intake, 11));
 
                 m_driverController.rightBumper().whileTrue(new EjectPieceFromIntake(m_intake, 10));
 
                 m_driverController.leftBumper().whileTrue(new EjectPieceFromIntake(m_intake, 5));
+
+                // m_driverController.a()
 
                 m_driverController.b().onTrue(
                                 deliverPositionsCommand(2).withTimeout(15));
@@ -235,9 +205,6 @@ public class RobotContainer {
                                 .onTrue(new LoadStationPositions(m_liftArm, m_wrist, m_extendArm, m_intake)
                                                 .withTimeout(10))
                                 .onTrue(new IntakePieceStopMotor(m_intake, 11));
-
-                // m_driverController.a()
-                // .onTrue(new ToggleFieldOriented(m_drive));
 
                 m_driverController.back()
                                 .onTrue(new InstantCommand(() -> m_drive.resetGyro()));
@@ -263,9 +230,14 @@ public class RobotContainer {
 
         private void configCodriverButtons() {
 
-                // DO NOT USE m_coDriverController.leftBumper()
+                m_coDriverController.leftBumper()
+                                .onTrue(new LoadStationPositions(m_liftArm, m_wrist, m_extendArm, m_intake)
+                                                .withTimeout(10))
+                                .onTrue(new IntakePieceStopMotor(m_intake, 11));
 
-                // m_coDriverController.leftTrigger()
+                m_coDriverController.leftTrigger().onTrue(
+                                new RetractWristExtendLiftHome(m_liftArm, m_extendArm, m_wrist)
+                                                .withTimeout(8));
 
                 m_coDriverController.rightBumper()
                                 .onTrue(new LoadSubstationPositions(m_liftArm, m_wrist, m_extendArm, m_intake)
@@ -273,51 +245,35 @@ public class RobotContainer {
                                 .onTrue(new IntakePieceStopMotor(m_intake, 11));
 
                 m_coDriverController.rightTrigger()
-                                .onTrue(new ConditionalCommand(
-                                                new RetractWristExtendLiftHome(m_liftArm, m_extendArm, m_wrist)
-                                                                .withTimeout(8),
-                                                new RetractWristExtendLiftTravel(m_liftArm, m_extendArm, m_wrist)
-                                                                .withTimeout(8),
-                                                () -> m_coDriverController.getHID().getLeftBumper()));
+                                .onTrue(new RetractWristExtendLiftTravel(m_liftArm, m_extendArm, m_wrist)
+                                                .withTimeout(8));
 
                 m_coDriverController.a().onTrue(
                                 new GroundIntakeCubePositions(m_liftArm, m_wrist, m_extendArm, m_intake)
                                                 .withTimeout(10))
                                 .onTrue(new IntakePieceStopMotor(m_intake, 11));
 
-                m_coDriverController.x().onTrue(Commands.runOnce(() -> m_intake.setCubeServoAngle(110)))
-                                .onFalse(Commands.runOnce(() -> m_intake.setCubeServoAngle(40)));
+                // m_coDriverController.b()
 
-                m_coDriverController.y().onTrue(new LoadStationPositions(m_liftArm, m_wrist, m_extendArm, m_intake)
-                                .withTimeout(10))
-                                .onTrue(new IntakePieceStopMotor(m_intake, 11));
+                m_coDriverController.x().onTrue(deliverPositionsCommand(2).withTimeout(8));
 
-                m_coDriverController.b().onTrue(new ConditionalCommand(deliverPositionsCommand(2).withTimeout(8),
-                                deliverPositionsCommand(1).withTimeout(10),
-                                () -> m_coDriverController.getHID().getLeftBumper()));
+                m_coDriverController.y().onTrue(
+                                deliverPositionsCommand(1).withTimeout(10));
 
                 m_coDriverController.start()
                                 .onTrue(Commands.runOnce(() -> m_ls.togglePY()));
 
                 m_coDriverController.povUp().onTrue(
-                                new ConditionalCommand(Commands.runOnce(() -> m_wrist.incGoal(-.5)),
-                                                Commands.runOnce(() -> m_wrist.incGoal(-.25)),
-                                                () -> m_coDriverController.getHID().getLeftBumper()));
+                                Commands.runOnce(() -> m_wrist.incGoal(-.1)));
 
                 m_coDriverController.povDown()
-                                .onTrue(new ConditionalCommand(Commands.runOnce(() -> m_wrist.incGoal(.5)),
-                                                Commands.runOnce(() -> m_wrist.incGoal(.25)),
-                                                () -> m_coDriverController.getHID().getLeftBumper()));
+                                .onTrue(Commands.runOnce(() -> m_wrist.incGoal(.1)));
 
                 m_coDriverController.povLeft()
-                                .onTrue(new ConditionalCommand(Commands.runOnce(() -> m_extendArm.incGoal(.75)),
-                                                Commands.runOnce(() -> m_extendArm.incGoal(.25)),
-                                                () -> m_coDriverController.getHID().getLeftBumper()));
+                                .onTrue(Commands.runOnce(() -> m_extendArm.incGoal(.5)));
 
                 m_coDriverController.povRight()
-                                .onTrue(new ConditionalCommand(Commands.runOnce(() -> m_extendArm.incGoal(-.75)),
-                                                Commands.runOnce(() -> m_extendArm.incGoal(-.25)),
-                                                () -> m_coDriverController.getHID().getLeftBumper()));
+                                .onTrue(Commands.runOnce(() -> m_extendArm.incGoal(-.5)));
 
         }
 
@@ -342,8 +298,8 @@ public class RobotContainer {
                                 .onTrue(Commands.runOnce(() -> m_intake.clearFaults()))
                                 .onTrue(Commands.runOnce(() -> m_drive.clearFaults()));
 
-                m_armsController.a().onTrue(Commands.runOnce(
-                                () -> m_wrist.setController(WristConstants.wristFastConstraints, 2, false)));
+                m_armsController.a().onTrue(Commands.runOnce(() -> m_intake.setCubeServoAngle(110)))
+                                .onFalse(Commands.runOnce(() -> m_intake.setCubeServoAngle(40)));
 
                 m_armsController.x().onTrue(Commands.runOnce(
                                 () -> m_liftArm.setController(LiftArmConstants.liftArmFastConstraints, 0, false)));

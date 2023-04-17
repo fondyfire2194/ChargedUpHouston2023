@@ -366,7 +366,7 @@ public final class Constants {
     // / 10;
     // public static final double kMaxAccelerationMetersPerSecondSquared = 3;
 
-    public static final double kPXController = 3.2;// 2
+    public static final double kPXController = 2;// 3.2 returned to manitowoc values
     public static final double kDXController = 0;
     public static final double kIXController = 0;
 
@@ -374,7 +374,7 @@ public final class Constants {
     public static final double kDYController = 0;
     public static final double kIYController = 0;
 
-    public static final double kPThetaController = .35;// .22
+    public static final double kPThetaController = .22;// .35 returned to Manitowoc values
     public static final double kDThetaController = 0;
     public static final double kIThetaController = 0;
 
