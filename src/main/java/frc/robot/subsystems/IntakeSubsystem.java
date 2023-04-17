@@ -111,7 +111,7 @@ public class IntakeSubsystem extends SubsystemBase {
       rpm = getRPM();
 
       // if (Math.abs(voltage) > 0 && Math.abs(voltage) < 1 && rpm > 100)
-      //   setMotorVolts(0);
+      // setMotorVolts(0);
     }
     if (loopctr == 15) {
 
@@ -213,6 +213,10 @@ public class IntakeSubsystem extends SubsystemBase {
   public void setCubeServoAngle(double angle) {
     shootCubeServo.setAngle(angle);
     SmartDashboard.putNumber("SER", angle);
+  }
+
+  public Command tipRearCube(double angle) {
+    return Commands.runOnce(() -> setCubeServoAngle(angle));
   }
 
 }
