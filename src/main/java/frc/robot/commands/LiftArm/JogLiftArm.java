@@ -64,7 +64,7 @@ public class JogLiftArm extends CommandBase {
     //SmartDashboard.putNumber("LIFTV", volts);
 
     if (throttle_sl > 0 & allowUp || throttle_sl < 0 && allowDown) {
-      //SmartDashboard.putNumber("ArmVolts", volts);
+      SmartDashboard.putNumber("ArmVolts", volts);
       m_lift.m_motor.setVoltage(volts);
 
     }

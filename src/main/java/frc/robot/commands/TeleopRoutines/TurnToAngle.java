@@ -7,6 +7,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants;
 import frc.robot.subsystems.DriveSubsystem;
@@ -57,8 +58,8 @@ public class TurnToAngle extends CommandBase {
             targetPose2d = new Pose2d(startPos.getTranslation(), Rotation2d.fromDegrees(goal));
         }
         // if (DriverStation.getAlliance() == Alliance.Red) {
-        //     targetPose2d = new Pose2d(targetPose2d.getTranslation(),
-        //             targetPose2d.getRotation().rotateBy(Rotation2d.fromDegrees(180)));
+        // targetPose2d = new Pose2d(targetPose2d.getTranslation(),
+        // targetPose2d.getRotation().rotateBy(Rotation2d.fromDegrees(180)));
         // }
     }
 
@@ -82,6 +83,6 @@ public class TurnToAngle extends CommandBase {
         } else {
             finishCounter = 0;
         }
-        return finishCounter > 2;
+        return RobotBase.isSimulation() || finishCounter > 2;
     }
 }

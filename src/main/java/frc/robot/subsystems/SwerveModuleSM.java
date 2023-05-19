@@ -244,8 +244,24 @@ public class SwerveModuleSM extends SubsystemBase {
     return new SwerveModuleState(getDriveVelocity(), Rotation2d.fromDegrees((getTurnAngleDegs())));
   }
 
+  public double[] getMeasuredState() {
+    double[] temp = { 0, 0 };
+    temp[0] = getState().angle.getDegrees();
+    temp[1] = getState().speedMetersPerSecond;
+    return temp;
+  }
+
   public SwerveModulePosition getPosition() {
     return new SwerveModulePosition(getDrivePosition(), getHeadingRotation2d());
+  }
+
+  public double[] getDesiredState() {
+    double[] temp = { 0, 0 };
+    if (state != null) {
+      temp[0] = state.angle.getDegrees();
+      temp[1] = state.speedMetersPerSecond;
+    }
+    return temp;
   }
 
   /**

@@ -59,18 +59,12 @@ public class TrajectoryFactory {
 
     public Pose2d startLoadPose;
 
-    
-
     public TrajectoryFactory(DriveSubsystem drive, FieldSim fs) {
 
         m_drive = drive;
         m_fs = fs;
 
-
-
     }
-
-
 
     public PathPlannerTrajectory getPathPlannerTrajectory(String pathName, double maxvel, double maxaccel,
             boolean reversed) {
@@ -180,6 +174,23 @@ public class TrajectoryFactory {
 
                 new PathPoint(new Translation2d(3.0, 3.0), Rotation2d.fromDegrees(45)) // position, heading
         );
+        return traj1;
+    }
+
+    public PathPlannerTrajectory getTrajFromCurrentlocation(Pose2d endPose) {
+
+        // Simple path without holonomic rotation. Stationary start/end. Max velocity of
+        // 4 m/s and max accel of 3 m/s^2
+
+        PathPlannerTrajectory traj1 = PathPlanner.generatePath(
+
+                new PathConstraints(2, 2),
+
+                new PathPoint(m_drive.getEstimatedPosition().getTranslation(),
+                        m_drive.getEstimatedPosition().getRotation()), // starting pose
+
+                new PathPoint(new Translation2d(endPose.getX(), endPose.getY()), endPose.getRotation()));
+
         return traj1;
     }
 

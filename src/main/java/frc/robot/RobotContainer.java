@@ -45,6 +45,7 @@ import frc.robot.oi.ShuffleboardCompetition;
 import frc.robot.simulation.FieldSim;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.ExtendArmSubsystem;
+import frc.robot.subsystems.GameHandlerSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.LLDriveLinkerSubsystem;
 import frc.robot.subsystems.LiftArmSubsystem;
@@ -79,6 +80,8 @@ public class RobotContainer {
         public TrajectoryFactory m_tf;
 
         public FieldSim m_fieldSim = null;
+
+        public GameHandlerSubsystem m_ghs = new GameHandlerSubsystem();
 
         // The driver, codriver and arm controllers
 
@@ -147,7 +150,7 @@ public class RobotContainer {
 
                 m_tf = new TrajectoryFactory(m_drive, m_fieldSim);
 
-                m_autoFactory = new AutoFactory(m_drive, m_liftArm, m_extendArm, m_wrist, m_intake, m_tf);
+                m_autoFactory = new AutoFactory(m_drive, m_liftArm, m_extendArm, m_wrist, m_intake, m_tf, m_llv, m_ghs);
 
                 m_fieldSim = new FieldSim(m_drive);
 
@@ -194,7 +197,7 @@ public class RobotContainer {
 
                 m_driverController.leftBumper().whileTrue(new EjectPieceFromIntake(m_intake, 5));
 
-                // m_driverController.a()
+                m_driverController.a().onTrue(new TurnToGamepiece(m_drive, 2, true));
 
                 m_driverController.b().onTrue(
                                 deliverPositionsCommand(2).withTimeout(15));
@@ -253,15 +256,13 @@ public class RobotContainer {
                                                 .withTimeout(10))
                                 .onTrue(new IntakePieceStopMotor(m_intake, 11));
 
-                // m_coDriverController.b()
+                m_coDriverController.b()
+                                .onTrue(Commands.runOnce(() -> m_ls.togglePY()));
 
                 m_coDriverController.x().onTrue(deliverPositionsCommand(2).withTimeout(8));
 
                 m_coDriverController.y().onTrue(
                                 deliverPositionsCommand(1).withTimeout(10));
-
-                m_coDriverController.start()
-                                .onTrue(Commands.runOnce(() -> m_ls.togglePY()));
 
                 m_coDriverController.povUp().onTrue(
                                 Commands.runOnce(() -> m_wrist.incGoal(-.1)));

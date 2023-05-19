@@ -5,6 +5,7 @@
 package frc.robot.commands.TeleopRoutines;
 
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.DriveSubsystem;
 
@@ -20,7 +21,7 @@ public class TurnToGamepiece extends CommandBase {
     // Use addRequirements() here to declare subsystem dependencies.
     m_drive = drive;
     m_cube = cube;
-    m_speed=speed;
+    m_speed = speed;
     addRequirements(m_drive);
   }
 
@@ -53,6 +54,6 @@ public class TurnToGamepiece extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return m_drive.cubeFound && Math.abs(m_drive.tx) < .2;
+    return RobotBase.isSimulation() || m_drive.cubeFound && Math.abs(m_drive.tx) < .2;
   }
 }

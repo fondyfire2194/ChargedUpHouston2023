@@ -1,7 +1,22 @@
 {
+  "Clients": {
+    "open": true
+  },
+  "Connections": {
+    "open": true
+  },
   "NetworkTables Settings": {
-    "mode": "Client (NT3)",
+    "mode": "Client (NT4)",
     "serverTeam": "10.21.94.2"
+  },
+  "Persistent Values": {
+    "open": false
+  },
+  "Server": {
+    "open": true
+  },
+  "Transitory Values": {
+    "open": false
   },
   "transitory": {
     "limelight-fifteen": {

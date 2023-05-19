@@ -96,7 +96,7 @@ public class FieldSim {
 
     // simulationPeriodic();
 
-    // SmartDashboard.putData("Field2d", m_field2d);
+     SmartDashboard.putData("Field2d", m_field2d);
   }
 
   public void simulationPeriodic() {

@@ -23,8 +23,8 @@ import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.Timer;
@@ -223,6 +223,10 @@ public class DriveSubsystem extends SubsystemBase {
 
   public double pitchRateOfChange;
 
+  public double[] measuredStates = { 0, 0, 0, 0, 0, 0, 0, 0 };
+
+  public double[] desiredStates = { 0, 0, 0, 0, 0, 0, 0, 0 };
+
   /** Creates a new DriveSubsystem. */
   public DriveSubsystem() {
 
@@ -245,7 +249,6 @@ public class DriveSubsystem extends SubsystemBase {
       rotatePID.setP(.004);
 
       thetaPID.setP(.005);
-
 
     }
 
@@ -288,8 +291,7 @@ public class DriveSubsystem extends SubsystemBase {
     m_frontRight.setDesiredState(swerveModuleStates[1]);
     m_backLeft.setDesiredState(swerveModuleStates[2]);
     m_backRight.setDesiredState(swerveModuleStates[3]);
-    // SmartDashboard.putNumber("DRSROT",
-    // swerveModuleStates[0].speedMetersPerSecond);
+
   }
 
   /**
@@ -342,10 +344,34 @@ public class DriveSubsystem extends SubsystemBase {
   public void periodic() {
     // Update the odometry in the periodic block
 
-   // SmartDashboard.putNumber("TurnFL", m_frontLeft.angleCorrection);
-   // SmartDashboard.putNumber("TurnFR", m_frontRight.angleCorrection);
+    // SmartDashboard.putNumber("TurnFL", m_frontLeft.angleCorrection);
+    // SmartDashboard.putNumber("TurnFR", m_frontRight.angleCorrection);
 
     updateOdometry();
+
+    if (DriverStation.isEnabled()) {
+
+      desiredStates[0] = m_frontLeft.getDesiredState()[0];
+      desiredStates[1] = m_frontLeft.getDesiredState()[1];
+      desiredStates[2] = m_frontRight.getDesiredState()[0];
+      desiredStates[3] = m_frontRight.getDesiredState()[1];
+      desiredStates[4] = m_backLeft.getDesiredState()[0];
+      desiredStates[5] = m_backLeft.getDesiredState()[1];
+      desiredStates[6] = m_backRight.getDesiredState()[0];
+      desiredStates[7] = m_backRight.getDesiredState()[1];
+
+      measuredStates[0] = m_frontLeft.getMeasuredState()[0];
+      measuredStates[1] = m_frontLeft.getMeasuredState()[1];
+      measuredStates[2] = m_frontRight.getMeasuredState()[0];
+      measuredStates[3] = m_frontRight.getMeasuredState()[1];
+      measuredStates[4] = m_backLeft.getMeasuredState()[0];
+      measuredStates[5] = m_backLeft.getMeasuredState()[1];
+      measuredStates[6] = m_backRight.getMeasuredState()[0];
+      measuredStates[7] = m_backRight.getMeasuredState()[1];
+
+    }
+    SmartDashboard.putNumberArray("swerve/desiredStates", desiredStates);
+    SmartDashboard.putNumberArray("swerve/measuredStates", measuredStates);
 
     if (moduleFaultSeen == 0) {
       moduleFaultSeen = m_frontLeft.getFaults() + m_frontRight.getFaults() + m_backLeft.getFaults()
