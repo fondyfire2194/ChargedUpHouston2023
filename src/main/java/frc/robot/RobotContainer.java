@@ -33,6 +33,7 @@ import frc.robot.commands.PickupRoutines.LoadSubstationPositions;
 import frc.robot.commands.TeleopRoutines.RetractWristExtendLiftHome;
 import frc.robot.commands.TeleopRoutines.RetractWristExtendLiftTravel;
 import frc.robot.commands.TeleopRoutines.RotateToAngle;
+import frc.robot.commands.TeleopRoutines.SetSwerveDriveReflectiveTape;
 import frc.robot.commands.TeleopRoutines.TurnToAngle;
 import frc.robot.commands.TeleopRoutines.TurnToGamepiece;
 import frc.robot.commands.Wrist.JogWrist;
@@ -195,7 +196,9 @@ public class RobotContainer {
 
                 m_driverController.rightBumper().whileTrue(new EjectPieceFromIntake(m_intake, 10));
 
-                m_driverController.leftBumper().whileTrue(new EjectPieceFromIntake(m_intake, 5));
+                //m_driverController.leftBumper().whileTrue(new EjectPieceFromIntake(m_intake, 5));
+
+                m_driverController.leftBumper().whileTrue(new SetSwerveDriveReflectiveTape(m_drive, m_llv));
 
                 m_driverController.a().onTrue(new TurnToGamepiece(m_drive, 2, true));
 

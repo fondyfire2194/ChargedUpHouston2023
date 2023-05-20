@@ -143,6 +143,11 @@ public class LimelightVision extends SubsystemBase {
       LimelightHelpers.setPipelineIndex("limelight", pipelines.LOAD.ordinal());
   }
 
+  public void setDefaultPipeline() {
+    if (limelightExists)
+      LimelightHelpers.setPipelineIndex("limelight", pipelines.DEFAULT.ordinal());
+  }
+
   public void setLeftLoadPipeline() {
     if (limelightExists)
       LimelightHelpers.setPipelineIndex("limelight", pipelines.LOAD_LEFT.ordinal());
