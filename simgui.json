@@ -71,8 +71,7 @@
       "SmartDashboard": {
         "Field2d": {
           "open": true
-        },
-        "open": true
+        }
       }
     }
   }

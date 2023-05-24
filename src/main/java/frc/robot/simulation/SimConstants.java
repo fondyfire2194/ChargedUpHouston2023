@@ -236,6 +236,7 @@ public final class SimConstants {
         }
 
         public static final class Tags {
+                
                 public static Pose3d[] aprilTags = new Pose3d[8];
 
                 public static Pose2d[] aprilTagsBlue = new Pose2d[8];

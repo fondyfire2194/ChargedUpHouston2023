@@ -22,7 +22,11 @@ import frc.robot.commands.ExtendArm.JogExtendArm;
 import frc.robot.commands.ExtendArm.PositionProfileExtendArm;
 import frc.robot.commands.LiftArm.JogLiftArm;
 import frc.robot.commands.LiftArm.PositionProfileLiftInches;
+import frc.robot.commands.NTs.MonitorThreadBackLeft;
+import frc.robot.commands.NTs.MonitorThreadBackRight;
 import frc.robot.commands.NTs.MonitorThreadExt;
+import frc.robot.commands.NTs.MonitorThreadFrontLeft;
+import frc.robot.commands.NTs.MonitorThreadFrontRight;
 import frc.robot.commands.NTs.MonitorThreadIntake;
 import frc.robot.commands.NTs.MonitorThreadLift;
 import frc.robot.commands.NTs.MonitorThreadWrist;
@@ -106,6 +110,11 @@ public class RobotContainer {
         public MonitorThreadWrist mwrist;
         public MonitorThreadIntake mIntake;
 
+        public MonitorThreadFrontLeft mfl;
+        public MonitorThreadFrontRight mfr;
+        public MonitorThreadBackLeft mbl;
+        public MonitorThreadBackRight mbr;
+
         /**
          * The container for the robot. Contains subsystems, OI devices, and commands.
          */
@@ -125,13 +134,13 @@ public class RobotContainer {
 
                 m_liftArm = new LiftArmSubsystem();
 
-                mlift = new MonitorThreadLift(m_liftArm);
+                // mlift = new MonitorThreadLift(m_liftArm);
 
-                mlift.startThread();
+                // mlift.startThread();
 
-                mwrist = new MonitorThreadWrist(m_wrist);
+                // mwrist = new MonitorThreadWrist(m_wrist);
 
-                mwrist.startThread();
+                // mwrist.startThread();
 
                 SmartDashboard.putData("Scheduler", CommandScheduler.getInstance());
 
@@ -145,9 +154,25 @@ public class RobotContainer {
 
                 m_extendArm = new ExtendArmSubsystem();
 
-                mext = new MonitorThreadExt(m_extendArm);
+                // mext = new MonitorThreadExt(m_extendArm);
 
-                mext.startThread();
+                // mext.startThread();
+
+                mfl = new MonitorThreadFrontLeft(m_drive);
+
+                mfl.startThread();
+
+                mfr = new MonitorThreadFrontRight(m_drive);
+
+                mfr.startThread();
+
+                mbl = new MonitorThreadBackLeft(m_drive);
+
+                mbl.startThread();
+
+                mbr = new MonitorThreadBackRight(m_drive);
+
+                mbr.startThread();
 
                 m_tf = new TrajectoryFactory(m_drive, m_fieldSim);
 
@@ -196,7 +221,8 @@ public class RobotContainer {
 
                 m_driverController.rightBumper().whileTrue(new EjectPieceFromIntake(m_intake, 10));
 
-                //m_driverController.leftBumper().whileTrue(new EjectPieceFromIntake(m_intake, 5));
+                // m_driverController.leftBumper().whileTrue(new EjectPieceFromIntake(m_intake,
+                // 5));
 
                 m_driverController.leftBumper().whileTrue(new SetSwerveDriveReflectiveTape(m_drive, m_llv));
 

@@ -132,14 +132,14 @@ public class GameHandlerSubsystem extends SubsystemBase {
 
         public enum fieldTagsBlue {
 
-                RED_LEFT(1, SimConstants.Tags.aprilTagsBlue[0]),
+                RED_BUMP(1, SimConstants.Tags.aprilTagsBlue[0]),
                 RED_CENTER(2, SimConstants.Tags.aprilTagsBlue[1]),
-                RED_RIGHT(3, SimConstants.Tags.aprilTagsBlue[2]),
+                RED_NO_BUMP(3, SimConstants.Tags.aprilTagsBlue[2]),
                 BLUE_LOAD(4, SimConstants.Tags.aprilTagsBlue[3]),
                 RED_LOAD(5, SimConstants.Tags.aprilTagsBlue[5]),
-                BLUE_LEFT(6, SimConstants.Tags.aprilTagsBlue[5]),
+                BLUE_NO_BUMP(6, SimConstants.Tags.aprilTagsBlue[5]),
                 BLUE_CENTER(7, SimConstants.Tags.aprilTagsBlue[6]),
-                BLUE_RIGHT(8, SimConstants.Tags.aprilTagsBlue[7]);
+                BLUE_BUMP(8, SimConstants.Tags.aprilTagsBlue[7]);
 
                 private int id;
 
@@ -162,14 +162,14 @@ public class GameHandlerSubsystem extends SubsystemBase {
 
         public enum fieldTagsRed {
 
-                RED_LEFT(1, SimConstants.Tags.aprilTagsRed[0]),
+                RED_BUMP(1, SimConstants.Tags.aprilTagsRed[0]),
                 RED_CENTER(2, SimConstants.Tags.aprilTagsRed[1]),
-                RED_RIGHT(3, SimConstants.Tags.aprilTagsRed[2]),
+                RED_NO_BUMP(3, SimConstants.Tags.aprilTagsRed[2]),
                 BLUE_LOAD(4, SimConstants.Tags.aprilTagsRed[3]),
                 RED_LOAD(5, SimConstants.Tags.aprilTagsRed[4]),
-                BLUE_LEFT(6, SimConstants.Tags.aprilTagsRed[5]),
+                BLUE_NO_BUMP(6, SimConstants.Tags.aprilTagsRed[5]),
                 BLUE_CENTER(7, SimConstants.Tags.aprilTagsRed[6]),
-                BLUE_RIGHT(8, SimConstants.Tags.aprilTagsRed[7]);
+                BLUE_BUMP(8, SimConstants.Tags.aprilTagsRed[7]);
 
                 private int id;
 
