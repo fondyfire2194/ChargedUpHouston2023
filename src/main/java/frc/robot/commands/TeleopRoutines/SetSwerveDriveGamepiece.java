@@ -65,8 +65,8 @@ public class SetSwerveDriveGamepiece extends CommandBase {
       m_llv.setCubeDetectorPipeline();
     else
       m_llv.setConeDetectorPipeline();
-
-    //m_drive.m_fieldOriented = false;
+    m_slewX.reset(0);
+    // m_drive.m_fieldOriented = false;
 
   };
 
@@ -106,7 +106,7 @@ public class SetSwerveDriveGamepiece extends CommandBase {
 
       double xError = m_controller.calculate(m_drive.tx, -1.25);
 
-    //  SmartDashboard.putNumber("XCUBERR", xError);
+      // SmartDashboard.putNumber("XCUBERR", xError);
 
       m_drive.drive(throttle_sl, 0, xError);
 
@@ -121,7 +121,7 @@ public class SetSwerveDriveGamepiece extends CommandBase {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-   m_drive.stopModules();
+    m_drive.stopModules();
   }
 
   // Returns true when the command should end.

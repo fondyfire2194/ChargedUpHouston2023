@@ -39,6 +39,7 @@ import frc.robot.commands.TeleopRoutines.RetractWristExtendLiftTravel;
 import frc.robot.commands.TeleopRoutines.RotateToAngle;
 import frc.robot.commands.TeleopRoutines.SetSwerveDriveReflectiveTape;
 import frc.robot.commands.TeleopRoutines.TurnToAngle;
+import frc.robot.commands.TeleopRoutines.TurnToAprilTag;
 import frc.robot.commands.TeleopRoutines.TurnToGamepiece;
 import frc.robot.commands.Wrist.JogWrist;
 import frc.robot.commands.Wrist.PositionProfileWrist;
@@ -340,7 +341,8 @@ public class RobotContainer {
                 m_armsController.y().onTrue(Commands.runOnce(
                                 () -> m_liftArm.setController(LiftArmConstants.liftArmFastConstraints, 12, false)));
 
-                m_armsController.povUp().onTrue(new TurnToGamepiece(m_drive, 2, true));// .withTimeout(3));
+                // m_armsController.povUp().onTrue(new TurnToGamepiece(m_drive, 2, true));// .withTimeout(3));
+                m_armsController.povUp().onTrue(new TurnToAprilTag(m_drive, 1.2, 3));// .withTimeout(3));
 
                 m_armsController.start().onTrue(new TurnToAngle(m_drive, 0, false));
 

@@ -42,10 +42,10 @@ public class LimelightVision extends SubsystemBase {
   public enum pipelines {
     REFL_LOW_TAPE(0, pipelinetype.retroreflective),
     REFL_HIGH_TAPE(1, pipelinetype.retroreflective),
-    LOAD(2, pipelinetype.fiducialmarkers),
-    LOAD_LEFT(3, pipelinetype.fiducialmarkers),
-    LOAD_RIGHT(4, pipelinetype.fiducialmarkers),
-    TAGS(5, pipelinetype.fiducialmarkers),
+    RED_NO_BUMP(2, pipelinetype.fiducialmarkers),
+    BLUE_NO_BUMP(3, pipelinetype.fiducialmarkers),
+    RED_BUMP(4, pipelinetype.fiducialmarkers),
+    BLUE_BUMP(5, pipelinetype.fiducialmarkers),
     DEFAULT(6, pipelinetype.fiducialmarkers),
     SPARE7(7, pipelinetype.fiducialmarkers),
     CUBE_DETECT(8, pipelinetype.detector),
@@ -138,24 +138,24 @@ public class LimelightVision extends SubsystemBase {
     return currentPipeline;
   }
 
-  public void setLoadPipeline() {
+  public void setRedNoBumpPipeline() {
     if (limelightExists)
-      LimelightHelpers.setPipelineIndex("limelight", pipelines.LOAD.ordinal());
+      LimelightHelpers.setPipelineIndex("limelight", pipelines.RED_NO_BUMP.ordinal());
   }
 
-  public void setDefaultPipeline() {
+  public void setBlueNoBumpPipeline() {
     if (limelightExists)
-      LimelightHelpers.setPipelineIndex("limelight", pipelines.DEFAULT.ordinal());
+      LimelightHelpers.setPipelineIndex("limelight", pipelines.BLUE_NO_BUMP.ordinal());
   }
 
-  public void setLeftLoadPipeline() {
+  public void setRedBumpPipeline() {
     if (limelightExists)
-      LimelightHelpers.setPipelineIndex("limelight", pipelines.LOAD_LEFT.ordinal());
+      LimelightHelpers.setPipelineIndex("limelight", pipelines.RED_BUMP.ordinal());
   }
 
-  public void setRightLoadPipeline() {
+  public void setBlueBumpPipeline() {
     if (limelightExists)
-      LimelightHelpers.setPipelineIndex("limelight", pipelines.LOAD_RIGHT.ordinal());
+      LimelightHelpers.setPipelineIndex("limelight", pipelines.BLUE_BUMP.ordinal());
   }
 
   public void setHighTapePipeline() {

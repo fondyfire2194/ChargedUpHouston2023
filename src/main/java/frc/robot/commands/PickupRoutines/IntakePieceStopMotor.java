@@ -12,7 +12,7 @@ public class IntakePieceStopMotor extends CommandBase {
   /** Creates a new GetPieceAtIntake. */
   private IntakeSubsystem m_intake;
   private double m_volts;
-  private LinearFilter rpmfilter =LinearFilter.movingAverage(50);
+  private LinearFilter rpmfilter =LinearFilter.movingAverage(5);
   private double runningThresholdRPM = 500;
   boolean intakeAtSpeed;
   double currentRPM;

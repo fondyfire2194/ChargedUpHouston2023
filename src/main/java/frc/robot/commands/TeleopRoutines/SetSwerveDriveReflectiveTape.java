@@ -51,7 +51,7 @@ public class SetSwerveDriveReflectiveTape extends CommandBase {
   @Override
   public void end(boolean interrupted) {
    m_drive.stopModules();
-   m_llv.setDefaultPipeline();
+   m_llv.setHighTapePipeline();
   }
 
   // Returns true when the command should end.

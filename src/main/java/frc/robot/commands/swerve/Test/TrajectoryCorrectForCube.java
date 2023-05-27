@@ -9,15 +9,18 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.DriveSubsystem;
+import frc.robot.subsystems.LimelightVision;
 
 public class TrajectoryCorrectForCube extends CommandBase {
   /** Creates a new TrajectoryCorrectForCube. */
   private DriveSubsystem m_drive;
+  private LimelightVision m_llv;
   private PIDController m_pidController;
 
-  public TrajectoryCorrectForCube(DriveSubsystem drive) {
+  public TrajectoryCorrectForCube(DriveSubsystem drive, LimelightVision llv) {
     // Use addRequirements() here to declare subsystem dependencies.
     m_drive = drive;
+    m_llv = llv;
   }
 
   // Called when the command is initially scheduled.
@@ -26,7 +29,9 @@ public class TrajectoryCorrectForCube extends CommandBase {
 
     m_drive.clearAngleCorrection();
 
-  //  m_drive.m_fieldOriented = false;
+    m_llv.setCubeDetectorPipeline();
+
+    // m_drive.m_fieldOriented = false;
 
     m_pidController = new PIDController(1, 0, 0);
   }
@@ -43,7 +48,7 @@ public class TrajectoryCorrectForCube extends CommandBase {
 
       double xError = m_pidController.calculate(m_drive.tx, -1.25);
 
-     // SmartDashboard.putNumber("XCUBERR", xError);
+      // SmartDashboard.putNumber("XCUBERR", xError);
 
       double temp = xError;
 
@@ -56,7 +61,7 @@ public class TrajectoryCorrectForCube extends CommandBase {
   @Override
   public void end(boolean interrupted) {
     m_drive.clearAngleCorrection();
-    //m_drive.m_fieldOriented = true;
+    // m_drive.m_fieldOriented = true;
   }
 
   // Returns true when the command should end.

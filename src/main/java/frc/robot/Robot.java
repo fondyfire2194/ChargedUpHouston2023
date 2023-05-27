@@ -4,6 +4,8 @@
 
 package frc.robot;
 
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotBase;
@@ -183,12 +185,13 @@ public class Robot extends TimedRobot {
     // continue until interrupted by another command, remove
     // this line or comment it out.
 
-    if (!autoHasRun)
+    if (!autoHasRun) {
+
       m_robotContainer.m_drive.gyroStartPitch = m_robotContainer.m_drive.getGyroPitch();
 
-    if (autoHasRun)
+      m_robotContainer.m_drive.resetOdometry(new Pose2d(0, 0, new Rotation2d(Math.PI)));
 
-      m_robotContainer.m_drive.fieldOrientOffset = 180;
+    }
 
     m_robotContainer.m_drive.setClosedLoop(false);
 
@@ -203,7 +206,6 @@ public class Robot extends TimedRobot {
 
     if (m_robotContainer.m_autoFactory.autonomousCommand != null) {
       m_robotContainer.m_autoFactory.autonomousCommand.cancel();
-
     }
 
     m_robotContainer.m_liftArm.setController(LiftArmConstants.liftArmFastConstraints,
