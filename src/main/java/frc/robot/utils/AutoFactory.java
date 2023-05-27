@@ -22,6 +22,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
@@ -175,10 +176,10 @@ public class AutoFactory {
                 // Load trajectories to save time later
 
                 noBumpStartTrajs = m_tf.getPathPlannerTrajectoryGroup("NoBumpSide",
-                                2.5, 1.0, false);
+                                2.5, 1., false);
 
                 noBumpStartTrajsAlt = m_tf.getPathPlannerTrajectoryGroup("NoBumpSideAlt",
-                                2.5, 1.0, false);
+                                3, 3., false);
 
                 bumpStartTrajsAlt = m_tf.getPathPlannerTrajectoryGroup("BumpSideAlt",
                                 2.5, 1.0, false);
@@ -301,35 +302,44 @@ public class AutoFactory {
                                         Commands.runOnce(() -> m_lift.setController(
 
                                                         LiftArmConstants.liftArmFastConstraints, 1, false)),
-                                        // move and rotate
-                                        m_tf.followTrajectoryCommand(noBumpStartTrajsAlt.get(0), true),
 
-                                        new WaitCommand(.1),
+                                        new ParallelCommandGroup(
+                                                        // move and rotate
+                                                      
+                                                        m_tf.followTrajectoryCommand(noBumpStartTrajsAlt.get(0), true),
+                                                       
+                                                        new SequentialCommandGroup(
 
-                                        new GroundIntakeCubePositions(m_lift, m_wrist, m_extend, m_intake),
+                                                                        new WaitCommand(1),
 
-                                        new WaitCommand(.1),
+                                                                        new GroundIntakeCubePositions(m_lift, m_wrist,
+                                                                                        m_extend, m_intake))),
+
+                                     //   new WaitCommand(.1),
                                         // move, alighn and pickup cone
                                         new ParallelRaceGroup(
 
                                                         m_tf.followTrajectoryCommand(noBumpStartTrajsAlt.get(1),
                                                                         false),
 
-                                                        new TrajectoryCorrectForCube(m_drive, m_llv),
+                                                        // new TrajectoryCorrectForCube(m_drive, m_llv),
 
                                                         new IntakePieceStopMotor(m_intake, 11)),
 
                                         new WaitCommand(.1),
 
-                                        new RetractWristExtendLiftTravel(m_lift, m_extend, m_wrist),
+                                        new ParallelCommandGroup(
 
-                                        new WaitCommand(.1),
+                                                        new RetractWristExtendLiftTravel(m_lift, m_extend, m_wrist),
 
-                                        m_tf.followTrajectoryCommand(noBumpStartTrajsAlt.get(2), false),
+                                                        m_tf.followTrajectoryCommand(noBumpStartTrajsAlt.get(2),
+                                                                        false),
 
-                                        new WaitCommand(5),
+                                                        new WaitCommand(5)),
 
-                                        new EjectPieceFromIntake(m_intake, 11).withTimeout(1));
+                                        m_tf.followTrajectoryCommand(noBumpStartTrajsAlt.get(3), false),
+
+                                        new EjectPieceFromIntake(m_intake, 9).withTimeout(1));
 
                 }
 
@@ -402,9 +412,11 @@ public class AutoFactory {
 
                                                         new IntakePieceStopMotor(m_intake, 11)),
 
-                                        new RetractWristExtendLiftTravel(m_lift, m_extend, m_wrist),
+                                        new ParallelCommandGroup(
 
-                                        m_tf.followTrajectoryCommand(bumpStartTrajsAlt.get(2), false),
+                                                        new RetractWristExtendLiftTravel(m_lift, m_extend, m_wrist),
+
+                                                        m_tf.followTrajectoryCommand(bumpStartTrajsAlt.get(2), false)),
 
                                         new EjectPieceFromIntake(m_intake, 11).withTimeout(1));
 

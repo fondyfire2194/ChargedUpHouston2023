@@ -138,6 +138,8 @@ public class Robot extends TimedRobot {
 
     autoHasRun = false;
 
+    
+
     Shuffleboard.startRecording();
 
     m_robotContainer.m_drive.gyroStartPitch = m_robotContainer.m_drive.getGyroPitch();
@@ -189,7 +191,7 @@ public class Robot extends TimedRobot {
 
       m_robotContainer.m_drive.gyroStartPitch = m_robotContainer.m_drive.getGyroPitch();
 
-      m_robotContainer.m_drive.resetOdometry(new Pose2d(0, 0, new Rotation2d(Math.PI)));
+     // m_robotContainer.m_drive.resetOdometry(new Pose2d(0, 0, new Rotation2d(Math.PI)));
 
     }
 

@@ -111,6 +111,7 @@ public class TrajectoryFactory {
                         PathPlannerTrajectory transformed = PathPlannerTrajectory.transformTrajectoryForAlliance(traj,
                                 DriverStation.getAlliance());
                         // m_drive.resetGyro();
+                        m_drive.resetOdometry(transformed.getInitialHolonomicPose());
                          
                     }
                 }),
@@ -141,7 +142,7 @@ public class TrajectoryFactory {
 
                         new InstantCommand(() -> run = false),
 
-                       // new InstantCommand(() -> m_drive.setInhibitVisionCorrection(false)),
+                        new InstantCommand(() -> m_drive.setInhibitVisionCorrection(false)),
 
                         new InstantCommand(() -> runTagTraj = false)));
     }

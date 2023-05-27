@@ -159,21 +159,21 @@ public class RobotContainer {
 
                 // mext.startThread();
 
-                mfl = new MonitorThreadFrontLeft(m_drive);
+                // mfl = new MonitorThreadFrontLeft(m_drive);
 
-                mfl.startThread();
+                // mfl.startThread();
 
-                mfr = new MonitorThreadFrontRight(m_drive);
+                // mfr = new MonitorThreadFrontRight(m_drive);
 
-                mfr.startThread();
+                // mfr.startThread();
 
-                mbl = new MonitorThreadBackLeft(m_drive);
+                // mbl = new MonitorThreadBackLeft(m_drive);
 
-                mbl.startThread();
+                // mbl.startThread();
 
-                mbr = new MonitorThreadBackRight(m_drive);
+                // mbr = new MonitorThreadBackRight(m_drive);
 
-                mbr.startThread();
+                // mbr.startThread();
 
                 m_tf = new TrajectoryFactory(m_drive, m_fieldSim);
 
