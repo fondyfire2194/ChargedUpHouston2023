@@ -103,7 +103,9 @@ public class TrajectoryFactory {
      * @return
      */
     public Command followTrajectoryCommand(PathPlannerTrajectory traj, boolean isFirstPath) {
+        
         return new SequentialCommandGroup(
+
                 new InstantCommand(() -> {
 
                     // Reset odometry for the first path you run during auto
@@ -152,6 +154,10 @@ public class TrajectoryFactory {
         activeTagPose = pose;
     }
 
+    public void showTrajectory(PathPlannerTrajectory traj) {
+        m_fs.getField2d().getObject("Traj").setTrajectory(traj);
+
+    }
     public void clearTrajectory() {
         PathPlannerTrajectory traj = new PathPlannerTrajectory();
         m_fs.getField2d().getObject("Traj").setTrajectory(traj);

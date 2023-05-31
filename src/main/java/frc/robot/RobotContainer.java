@@ -85,7 +85,7 @@ public class RobotContainer {
 
         public TrajectoryFactory m_tf;
 
-        public FieldSim m_fieldSim = null;
+        public FieldSim m_fieldSim;
 
         public GameHandlerSubsystem m_ghs = new GameHandlerSubsystem();
 
@@ -174,12 +174,10 @@ public class RobotContainer {
                 // mbr = new MonitorThreadBackRight(m_drive);
 
                 // mbr.startThread();
-
+                m_fieldSim = new FieldSim(m_drive);
                 m_tf = new TrajectoryFactory(m_drive, m_fieldSim);
 
                 m_autoFactory = new AutoFactory(m_drive, m_liftArm, m_extendArm, m_wrist, m_intake, m_tf, m_llv, m_ghs);
-
-                m_fieldSim = new FieldSim(m_drive);
 
                 m_fieldSim.initSim();
 
@@ -341,7 +339,8 @@ public class RobotContainer {
                 m_armsController.y().onTrue(Commands.runOnce(
                                 () -> m_liftArm.setController(LiftArmConstants.liftArmFastConstraints, 12, false)));
 
-                // m_armsController.povUp().onTrue(new TurnToGamepiece(m_drive, 2, true));// .withTimeout(3));
+                // m_armsController.povUp().onTrue(new TurnToGamepiece(m_drive, 2, true));//
+                // .withTimeout(3));
                 m_armsController.povUp().onTrue(new TurnToAprilTag(m_drive, 1.2, 3));// .withTimeout(3));
 
                 m_armsController.start().onTrue(new TurnToAngle(m_drive, 0, false));

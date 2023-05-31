@@ -7,19 +7,11 @@ package frc.robot.utils;
 import java.util.HashMap;
 import java.util.List;
 
-import javax.lang.model.util.ElementScanner14;
-
 import com.pathplanner.lib.PathPlannerTrajectory;
 import com.pathplanner.lib.commands.FollowPathWithEvents;
 
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Transform2d;
-import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
@@ -38,7 +30,6 @@ import frc.robot.commands.PickupRoutines.GroundIntakeCubePositions;
 import frc.robot.commands.PickupRoutines.GroundIntakeUprightConePositions;
 import frc.robot.commands.PickupRoutines.IntakePieceStopMotor;
 import frc.robot.commands.TeleopRoutines.RetractWristExtendLiftTravel;
-import frc.robot.commands.swerve.Test.TrajectoryCorrectForCube;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.ExtendArmSubsystem;
 import frc.robot.subsystems.GameHandlerSubsystem;
@@ -108,7 +99,7 @@ public class AutoFactory {
 
         private List<PathPlannerTrajectory> noBumpStartTrajs;
 
-        private List<PathPlannerTrajectory> noBumpStartTrajsAlt;
+        public List<PathPlannerTrajectory> noBumpStartTrajsAlt;
 
         private List<PathPlannerTrajectory> bumpStartTrajsAlt;
 
@@ -224,12 +215,12 @@ public class AutoFactory {
 
                 if ((startLocation == sl_coopShelf_0 || startLocation == sl_noBumpShelf_2)
                                 && autoselect == as_deliverMid_2) {
-                        tempCommand = new DeliverCubeFast(m_lift, m_wrist, m_intake, m_extend, false);
+                        tempCommand = new DeliverCubeFast(m_lift, m_wrist, m_intake, m_extend, false, 0);
                 }
 
                 if ((startLocation == sl_coopShelf_0 || startLocation == sl_noBumpShelf_2)
                                 && autoselect == as_deliverTop_3) {
-                        tempCommand = new DeliverCubeFast(m_lift, m_wrist, m_intake, m_extend, true);
+                        tempCommand = new DeliverCubeFast(m_lift, m_wrist, m_intake, m_extend, true, 0);
                 }
 
                 if (startLocation == sl_coopPipe_1 && autoselect == as_deliverMid_2) {
@@ -305,9 +296,9 @@ public class AutoFactory {
 
                                         new ParallelCommandGroup(
                                                         // move and rotate
-                                                      
+
                                                         m_tf.followTrajectoryCommand(noBumpStartTrajsAlt.get(0), true),
-                                                       
+
                                                         new SequentialCommandGroup(
 
                                                                         new WaitCommand(1),
@@ -315,7 +306,7 @@ public class AutoFactory {
                                                                         new GroundIntakeCubePositions(m_lift, m_wrist,
                                                                                         m_extend, m_intake))),
 
-                                     //   new WaitCommand(.1),
+                                        // new WaitCommand(.1),
                                         // move, alighn and pickup cone
                                         new ParallelRaceGroup(
 
@@ -335,11 +326,20 @@ public class AutoFactory {
                                                         m_tf.followTrajectoryCommand(noBumpStartTrajsAlt.get(2),
                                                                         false),
 
-                                                        new WaitCommand(5)),
+                                                        new WaitCommand(.1)),
 
-                                        m_tf.followTrajectoryCommand(noBumpStartTrajsAlt.get(3), false),
+                                        new ParallelCommandGroup(
 
-                                        new EjectPieceFromIntake(m_intake, 9).withTimeout(1));
+                                                        m_tf.followTrajectoryCommand(noBumpStartTrajsAlt.get(3), false),
+
+                                                        new SequentialCommandGroup(
+
+                                                                        new WaitCommand(1),
+
+                                                                        new DeliverCubeFast(m_lift, m_wrist, m_intake,
+                                                                                        m_extend, false, 1))));
+
+                        // new EjectPieceFromIntake(m_intake, 9).withTimeout(1));
 
                 }
 
@@ -390,35 +390,60 @@ public class AutoFactory {
 
                 if (startLocation == sl_bumpShelf_3 && autoselect1 == as1_secondCubeAlt_4) {
 
-                        tempCommand = new SequentialCommandGroup(
+                           tempCommand = new SequentialCommandGroup(
+
+                                        Commands.runOnce(() -> m_llv.setCubeDetectorPipeline()),
+
                                         Commands.runOnce(() -> m_lift.setController(
+
                                                         LiftArmConstants.liftArmFastConstraints, 1, false)),
 
-                                        m_tf.followTrajectoryCommand(bumpStartTrajsAlt.get(0), true),
+                                        new ParallelCommandGroup(
+                                                        // move and rotate
 
-                                        new WaitCommand(.1),
-                                        // new TurnToGamepiece(m_drive, autoselect1, true),
+                                                        m_tf.followTrajectoryCommand(bumpStartTrajsAlt.get(0), true),
 
-                                        new GroundIntakeCubePositions(m_lift, m_wrist, m_extend, m_intake),
+                                                        new SequentialCommandGroup(
 
-                                        new WaitCommand(.1),
+                                                                        new WaitCommand(1),
 
+                                                                        new GroundIntakeCubePositions(m_lift, m_wrist,
+                                                                                        m_extend, m_intake))),
+
+                                        // new WaitCommand(.1),
+                                        // move, alighn and pickup cone
                                         new ParallelRaceGroup(
 
-                                                        m_tf.followTrajectoryCommand(noBumpStartTrajsAlt.get(1),
+                                                        m_tf.followTrajectoryCommand(bumpStartTrajsAlt.get(1),
                                                                         false),
 
-                                                        new TrajectoryCorrectForCube(m_drive, m_llv),
+                                                        // new TrajectoryCorrectForCube(m_drive, m_llv),
 
                                                         new IntakePieceStopMotor(m_intake, 11)),
+
+                                        new WaitCommand(.1),
 
                                         new ParallelCommandGroup(
 
                                                         new RetractWristExtendLiftTravel(m_lift, m_extend, m_wrist),
 
-                                                        m_tf.followTrajectoryCommand(bumpStartTrajsAlt.get(2), false)),
+                                                        m_tf.followTrajectoryCommand(bumpStartTrajsAlt.get(2),
+                                                                        false),
 
-                                        new EjectPieceFromIntake(m_intake, 11).withTimeout(1));
+                                                        new WaitCommand(.1)),
+
+                                        new ParallelCommandGroup(
+
+                                                        m_tf.followTrajectoryCommand(bumpStartTrajsAlt.get(3), false),
+
+                                                        new SequentialCommandGroup(
+
+                                                                        new WaitCommand(1),
+
+                                                                        new DeliverCubeFast(m_lift, m_wrist, m_intake,
+                                                                                        m_extend, false, 1))));
+
+                        // new EjectPieceFromIntake(m_intake, 9).withTimeout(1));
 
                 }
 

@@ -15,7 +15,6 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -23,11 +22,6 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.networktables.BooleanPublisher;
-import edu.wpi.first.networktables.DoubleArrayPublisher;
-import edu.wpi.first.networktables.DoublePublisher;
-import edu.wpi.first.networktables.NetworkTable;
-import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.PowerDistribution;
@@ -233,10 +227,8 @@ public class DriveSubsystem extends SubsystemBase {
 
   public double[] desiredStates = { 0, 0, 0, 0, 0, 0, 0, 0 };
 
-
   /** Creates a new DriveSubsystem. */
   public DriveSubsystem() {
-
 
     m_gyro.reset();
 
@@ -256,9 +248,10 @@ public class DriveSubsystem extends SubsystemBase {
 
       rotatePID.setP(.004);
 
-      thetaPID.setP(1.2);
+      thetaPID.setP(0);
 
-      xPID.setP(1);   yPID.setP(1);
+      xPID.setP(1.5);
+      yPID.setP(1.5);
 
     }
 
@@ -336,7 +329,7 @@ public class DriveSubsystem extends SubsystemBase {
     isOpenLoop = !on;
   }
 
-  public void  setAngleCorrection(double value) {
+  public void setAngleCorrection(double value) {
     m_frontLeft.angleCorrection = value;
     m_frontRight.angleCorrection = -value;
     m_backLeft.angleCorrection = -value;
@@ -352,12 +345,26 @@ public class DriveSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
+    boolean tunePIDOn = false;
 
+    if (tunePIDOn) {
+
+      tuneXPIDGains();
+      tuneYPIDGains();
+      tuneThetaPIDGains();
+
+    }
 
     // Update the odometry in the periodic block
 
-    // SmartDashboard.putNumber("TurnFL", m_frontLeft.angleCorrection);
-    // SmartDashboard.putNumber("TurnFR", m_frontRight.angleCorrection);
+    SmartDashboard.putNumber("TurnFL", m_frontLeft.angleCorrection);
+    SmartDashboard.putNumber("TurnFR", m_frontRight.angleCorrection);
+    SmartDashboard.putNumber("XPIDCmd", xPID.getSetpoint());
+    SmartDashboard.putNumber("YPIDCmd", yPID.getSetpoint());
+    SmartDashboard.putNumber("ThPIDCmd", thetaPID.getSetpoint());
+    SmartDashboard.putNumber("XPIDPErr", xPID.getPositionError());
+    SmartDashboard.putNumber("YPIDPErr", yPID.getPositionError());
+    SmartDashboard.putNumber("ThPIDPErr", thetaPID.getPositionError());
 
     updateOdometry();
 

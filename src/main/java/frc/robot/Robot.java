@@ -4,8 +4,6 @@
 
 package frc.robot;
 
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotBase;
@@ -138,8 +136,6 @@ public class Robot extends TimedRobot {
 
     autoHasRun = false;
 
-    
-
     Shuffleboard.startRecording();
 
     m_robotContainer.m_drive.gyroStartPitch = m_robotContainer.m_drive.getGyroPitch();
@@ -191,7 +187,8 @@ public class Robot extends TimedRobot {
 
       m_robotContainer.m_drive.gyroStartPitch = m_robotContainer.m_drive.getGyroPitch();
 
-     // m_robotContainer.m_drive.resetOdometry(new Pose2d(0, 0, new Rotation2d(Math.PI)));
+      // m_robotContainer.m_drive.resetOdometry(new Pose2d(0, 0, new
+      // Rotation2d(Math.PI)));
 
     }
 
@@ -234,6 +231,8 @@ public class Robot extends TimedRobot {
 
     CommandScheduler.getInstance().cancelAll();
 
+    // m_robotContainer.m_tf.clearTrajectory();
+    // m_robotContainer.m_tf.showTrajectory(m_robotContainer.m_autoFactory.noBumpStartTrajsAlt.get(2));
   }
 
   /** This function is called periodically during test mode. */

@@ -4,15 +4,12 @@
 
 package frc.robot.commands.NTs;
 
-import java.sql.Driver;
-
 import edu.wpi.first.networktables.BooleanPublisher;
 import edu.wpi.first.networktables.DoublePublisher;
 import edu.wpi.first.networktables.IntegerPublisher;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import frc.robot.subsystems.DriveSubsystem;
-import frc.robot.subsystems.SwerveModuleSM;
 
 /** Add your docs here. */
 public class MonitorThreadFrontLeft {

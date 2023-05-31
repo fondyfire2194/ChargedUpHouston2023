@@ -29,7 +29,7 @@ public class DeliverCubeFast extends SequentialCommandGroup {
     /** Creates a new DeliverCubeMid. */
     public DeliverCubeFast(LiftArmSubsystem lift, WristSubsystem wrist, IntakeSubsystem intake,
             ExtendArmSubsystem extend,
-            boolean toplevel) {
+            boolean toplevel, double delShootSec) {
         // Add your commands in the addCommands() call, e.g.
         // addCommands(new FooCommand(), new BarCommand());
         double pullInVolts = 4;
@@ -60,6 +60,8 @@ public class DeliverCubeFast extends SequentialCommandGroup {
                 new WaitLiftAtTarget(lift, .5, 1, 2.5),
 
                 // new WaitWristAtTarget(wrist, .2, .2, 1),
+
+                new WaitCommand(delShootSec),
 
                 new ConditionalCommand(
 
