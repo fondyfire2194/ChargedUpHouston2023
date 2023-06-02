@@ -16,6 +16,7 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.Constants.ExtendArmConstants;
 import frc.robot.Constants.LiftArmConstants;
 import frc.robot.Constants.WristConstants;
+import frc.robot.commands.swerve.Test.TrajectoryCorrectForCube;
 import frc.robot.subsystems.ExtendArmSubsystem.presetExtArmDistances;
 import frc.robot.subsystems.LiftArmSubsystem.presetLiftAngles;
 import frc.robot.subsystems.WristSubsystem.presetWristAngles;
@@ -214,6 +215,8 @@ public class Robot extends TimedRobot {
         presetWristAngles.HOME.getAngleRads(), false);
 
     m_robotContainer.m_drive.m_fieldOriented = true;
+
+   // new TrajectoryCorrectForCube(m_robotContainer.m_drive,m_robotContainer.m_llv).schedule();
   }
 
   /** This function is called periodically during operator control. */

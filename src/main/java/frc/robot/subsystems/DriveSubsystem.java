@@ -250,7 +250,7 @@ public class DriveSubsystem extends SubsystemBase {
 
       thetaPID.setP(0);
 
-      xPID.setP(1.5);
+      xPID.setP(1.);
       yPID.setP(1.5);
 
     }

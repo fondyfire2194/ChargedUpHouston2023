@@ -374,7 +374,7 @@ public static double mk4iL1TurnGearRatio = 1 / ((14.0 / 50.0) * (10.0 / 60.0));/
     public static final double kDYController = 0;
     public static final double kIYController = 0;
 
-    public static final double kPThetaController = .5;// .35 returned to Manitowoc values
+    public static final double kPThetaController = 1.25;// .35 returned to Manitowoc values
     public static final double kDThetaController = 0;
     public static final double kIThetaController = 0;
 

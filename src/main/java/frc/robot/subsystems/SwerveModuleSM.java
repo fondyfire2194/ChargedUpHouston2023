@@ -234,9 +234,10 @@ public class SwerveModuleSM extends SubsystemBase {
 
     REVPhysicsSim.getInstance().run();
 
-    if (getTurnAngleDegs() != angle) {
-      simAngle += (angle - getTurnAngleDegs()) / 4;
-    }
+    double diff = angle - simAngle;
+
+    simAngle += diff / 10;
+
   }
 
   public SwerveModuleState getState() {
@@ -246,7 +247,7 @@ public class SwerveModuleSM extends SubsystemBase {
 
   public double[] getMeasuredState() {
     double[] temp = { 0, 0 };
-    temp[0] = getState().angle.getDegrees();
+    temp[0] = getState().angle.getRadians();
     temp[1] = getState().speedMetersPerSecond;
     return temp;
   }
@@ -258,7 +259,7 @@ public class SwerveModuleSM extends SubsystemBase {
   public double[] getDesiredState() {
     double[] temp = { 0, 0 };
     if (state != null) {
-      temp[0] = state.angle.getDegrees();
+      temp[0] = state.angle.getRadians();
       temp[1] = state.speedMetersPerSecond;
     }
     return temp;

@@ -61,6 +61,11 @@ public class ShuffleboardCompetition {
                 area1.addNumber("Heading", () -> round2dp(m_drive.getHeadingDegrees()))
                                 .withSize(1, 1)
                                 .withPosition(0, 4);
+
+                area1.addNumber("EstPosRad", () -> round2dp(m_drive.getEstimatedPosition().getRotation().getRadians()))
+                                .withSize(1, 1)
+                                .withPosition(0, 4);
+
                 area1.addNumber("Pitch", () -> round2dp(m_drive.getCompedGyroPitch()))
                                 .withSize(1, 1)
                                 .withPosition(1, 4);
