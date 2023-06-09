@@ -154,7 +154,7 @@ public class Robot extends TimedRobot {
     m_robotContainer.m_wrist.setController(WristConstants.wristFastConstraints,
         presetWristAngles.HOME.getAngleRads(), false);
 
-    m_robotContainer.m_drive.setClosedLoop(true);
+    m_robotContainer.m_drive.setClosedLoop(RobotBase.isReal());
 
     m_startDelay = m_robotContainer.m_autoFactory.m_startDelayChooser.getSelected();
 
@@ -216,7 +216,8 @@ public class Robot extends TimedRobot {
 
     m_robotContainer.m_drive.m_fieldOriented = true;
 
-   // new TrajectoryCorrectForCube(m_robotContainer.m_drive,m_robotContainer.m_llv).schedule();
+    // new
+    // TrajectoryCorrectForCube(m_robotContainer.m_drive,m_robotContainer.m_llv).schedule();
   }
 
   /** This function is called periodically during operator control. */

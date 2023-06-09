@@ -159,6 +159,7 @@ public class LiftArmSubsystem extends SubsystemBase {
         m_motor.setInverted(true);
         m_motor.setOpenLoopRampRate(.1);
         m_motor.setClosedLoopRampRate(.1);
+        m_motor.enableVoltageCompensation(11);
 
         // absolute encoder used to establish known wheel position on start position
         m_liftCANcoder = new CANCoder(CanConstants.LIFT_CANCODER, "CV1");
@@ -166,9 +167,9 @@ public class LiftArmSubsystem extends SubsystemBase {
         m_liftCANcoder.configAllSettings(AngleUtils.generateCanCoderConfig());
 
         mEncoder.setPositionConversionFactor(LiftArmConstants.INCHES_PER_ENCODER_REV);
-      //  SmartDashboard.putNumber("LDPER", LiftArmConstants.INCHES_PER_ENCODER_REV);
+        // SmartDashboard.putNumber("LDPER", LiftArmConstants.INCHES_PER_ENCODER_REV);
         mEncoder.setVelocityConversionFactor(LiftArmConstants.INCHES_PER_ENCODER_REV / 60);
-      //  SmartDashboard.putNumber("LVIPS", LiftArmConstants.MAX_RATE_INCHES_PER_SEC);
+        // SmartDashboard.putNumber("LVIPS", LiftArmConstants.MAX_RATE_INCHES_PER_SEC);
 
         mEncoder.setPosition(0);
 
@@ -186,13 +187,14 @@ public class LiftArmSubsystem extends SubsystemBase {
         setSoftwareLimits();
 
         enableSoftLimits(useSoftwareLimit);
+
         m_sff = new SimpleMotorFeedforward(Pref.getPref("liftKs"), Pref.getPref("liftKv"));
 
         m_liftController.setP(Pref.getPref("liftKp"));
 
-
         // m_sff = new SimpleMotorFeedforward(LiftArmConstants.ksVolts,
-        //         LiftArmConstants.kvVoltSecondsPerInch, LiftArmConstants.kAVoltSecondSquaredPerInch);
+        // LiftArmConstants.kvVoltSecondsPerInch,
+        // LiftArmConstants.kAVoltSecondSquaredPerInch);
 
     }
 

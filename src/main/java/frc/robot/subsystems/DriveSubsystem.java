@@ -17,6 +17,7 @@ import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.geometry.Twist2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
@@ -34,6 +35,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
 import frc.robot.Constants.CanConstants;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.IDConstants;
@@ -41,6 +43,7 @@ import frc.robot.Constants.PDPConstants;
 import frc.robot.Constants.PPConstants;
 import frc.robot.LimelightHelpers.LimelightResults;
 import frc.robot.Pref;
+import frc.robot.Robot;
 
 public class DriveSubsystem extends SubsystemBase {
 
@@ -226,6 +229,8 @@ public class DriveSubsystem extends SubsystemBase {
   public double[] measuredStates = { 0, 0, 0, 0, 0, 0, 0, 0 };
 
   public double[] desiredStates = { 0, 0, 0, 0, 0, 0, 0, 0 };
+
+  public Pose2d simOdometryPose;
 
   /** Creates a new DriveSubsystem. */
   public DriveSubsystem() {
@@ -445,13 +450,16 @@ public class DriveSubsystem extends SubsystemBase {
   }
 
   public void updateOdometry() {
+    Rotation2d temp = m_gyro.getRotation2d();
+    if (RobotBase.isSimulation())
+      temp = new Rotation2d(m_simAngle.get());
 
     if (true) {
 
       /** Updates the field relative position of the robot. */
 
       m_poseEstimator.update(
-          m_gyro.getRotation2d(),
+          temp, // m_gyro.getRotation2d(),
           new SwerveModulePosition[] {
               m_frontLeft.getPosition(),
               m_frontRight.getPosition(),
@@ -732,7 +740,7 @@ public class DriveSubsystem extends SubsystemBase {
      */
 
     double temp = chassisSpeedSim.omegaRadiansPerSecond * 1.15;
-    // SmartDashboard.putNumber("CHSSM", chassisSpeedSim.omegaRadiansPerSecond);
+     SmartDashboard.putNumber("CHSSM", chassisSpeedSim.omegaRadiansPerSecond);
     temp += m_simAngle.get();
     m_simAngle.set(temp);
 

@@ -331,7 +331,7 @@ public class AutoFactory {
 
                                         // new TrajectoryCorrectForCube(m_drive, m_llv)),
 
-                                        // new StopIntake(m_intake),
+                                         new StopIntake(m_intake),
 
                                         new WaitCommand(.1),
 

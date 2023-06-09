@@ -159,21 +159,21 @@ public class RobotContainer {
 
                 // mext.startThread();
 
-                // mfl = new MonitorThreadFrontLeft(m_drive);
+                mfl = new MonitorThreadFrontLeft(m_drive);
 
-                // mfl.startThread();
+                mfl.startThread();
 
-                // mfr = new MonitorThreadFrontRight(m_drive);
+                mfr = new MonitorThreadFrontRight(m_drive);
 
-                // mfr.startThread();
+                mfr.startThread();
 
-                // mbl = new MonitorThreadBackLeft(m_drive);
+                mbl = new MonitorThreadBackLeft(m_drive);
 
-                // mbl.startThread();
+                mbl.startThread();
 
-                // mbr = new MonitorThreadBackRight(m_drive);
+                mbr = new MonitorThreadBackRight(m_drive);
 
-                // mbr.startThread();
+                mbr.startThread();
                 m_fieldSim = new FieldSim(m_drive);
                 m_tf = new TrajectoryFactory(m_drive, m_fieldSim);
 
@@ -223,7 +223,8 @@ public class RobotContainer {
                 // m_driverController.leftBumper().whileTrue(new EjectPieceFromIntake(m_intake,
                 // 5));
 
-                m_driverController.leftBumper().whileTrue(new SetSwerveDriveReflectiveTape(m_drive, m_llv));
+                m_driverController.leftBumper().whileTrue(new SetSwerveDriveReflectiveTape(m_drive, m_llv,
+                                () -> m_driverController.getRawAxis(1), () -> m_driverController.getRawAxis(4)));
 
                 m_driverController.a().onTrue(new TurnToGamepiece(m_drive, 2, true));
 

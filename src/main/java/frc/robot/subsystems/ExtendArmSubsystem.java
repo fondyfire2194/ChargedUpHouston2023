@@ -156,6 +156,7 @@ public class ExtendArmSubsystem extends SubsystemBase {
         m_motor.setInverted(true);
         m_motor.setOpenLoopRampRate(.1);
         m_motor.setClosedLoopRampRate(.1);
+        m_motor.enableVoltageCompensation(11);
 
         m_posnController = m_motor.getPIDController();
 

@@ -144,6 +144,7 @@ public class WristSubsystem extends SubsystemBase {
         m_motor.setInverted(false);
         m_motor.setOpenLoopRampRate(.1);
         m_motor.setClosedLoopRampRate(.1);
+        m_motor.enableVoltageCompensation(11);
 
         mEncoder.setPositionConversionFactor(WristConstants.RADIANS_PER_ENCODER_REV);
 
