@@ -20,6 +20,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
@@ -103,10 +104,10 @@ public class TrajectoryFactory {
      * @return
      */
     public Command followTrajectoryCommand(PathPlannerTrajectory traj, boolean isFirstPath) {
-        
+
         return new SequentialCommandGroup(
 
-                new InstantCommand(() -> {
+                Commands.runOnce(() -> {
 
                     // Reset odometry for the first path you run during auto
                     if (isFirstPath) {
@@ -114,7 +115,11 @@ public class TrajectoryFactory {
                                 DriverStation.getAlliance());
                         // m_drive.resetGyro();
                         m_drive.resetOdometry(transformed.getInitialHolonomicPose());
-                         
+                        
+                        m_drive.yTrajStart = m_drive.getY();
+
+                        m_drive.trajectoryRunning = true;
+
                     }
                 }),
                 new PPSwerveControllerCommand(
@@ -142,11 +147,13 @@ public class TrajectoryFactory {
 
                 new ParallelCommandGroup(
 
-                        new InstantCommand(() -> run = false),
+                        Commands.runOnce(() -> m_drive.trajectoryRunning = false),
 
-                        new InstantCommand(() -> m_drive.setInhibitVisionCorrection(false)),
+                        Commands.runOnce(() -> run = false),
 
-                        new InstantCommand(() -> runTagTraj = false)));
+                        Commands.runOnce(() -> m_drive.setInhibitVisionCorrection(false)),
+
+                        Commands.runOnce(() -> runTagTraj = false)));
     }
 
     public void setActiveTagPose(Pose2d pose) {
@@ -158,6 +165,7 @@ public class TrajectoryFactory {
         m_fs.getField2d().getObject("Traj").setTrajectory(traj);
 
     }
+
     public void clearTrajectory() {
         PathPlannerTrajectory traj = new PathPlannerTrajectory();
         m_fs.getField2d().getObject("Traj").setTrajectory(traj);

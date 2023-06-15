@@ -288,10 +288,10 @@ public class RobotContainer {
                 m_coDriverController.b()
                                 .onTrue(Commands.runOnce(() -> m_ls.togglePY()));
 
-                m_coDriverController.x().onTrue(deliverPositionsCommand(2).withTimeout(8));
+                m_coDriverController.x().onTrue(deliverPositionsCommand(1).withTimeout(8));
 
                 m_coDriverController.y().onTrue(
-                                deliverPositionsCommand(1).withTimeout(10));
+                                deliverPositionsCommand(2).withTimeout(10));
 
                 m_coDriverController.povUp().onTrue(
                                 Commands.runOnce(() -> m_wrist.incGoal(-.1)));

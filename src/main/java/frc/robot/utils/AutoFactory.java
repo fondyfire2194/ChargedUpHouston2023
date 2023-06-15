@@ -4,17 +4,15 @@
 
 package frc.robot.utils;
 
-import java.util.HashMap;
 import java.util.List;
 
 import com.pathplanner.lib.PathPlannerTrajectory;
-import com.pathplanner.lib.commands.FollowPathWithEvents;
 
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
@@ -31,11 +29,8 @@ import frc.robot.commands.DeliverRoutines.EjectPieceFromIntake;
 import frc.robot.commands.DeliverRoutines.GetDeliverAngleSettingsAuto;
 import frc.robot.commands.Intake.StopIntake;
 import frc.robot.commands.PickupRoutines.GroundIntakeCubePositions;
-import frc.robot.commands.PickupRoutines.GroundIntakeUprightConePositions;
 import frc.robot.commands.PickupRoutines.IntakePiece;
-import frc.robot.commands.PickupRoutines.IntakePieceStopMotor;
 import frc.robot.commands.TeleopRoutines.RetractWristExtendLiftTravel;
-import frc.robot.commands.TeleopRoutines.TurnToGamepiece;
 import frc.robot.commands.swerve.Test.TrajectoryCorrectForCube;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.ExtendArmSubsystem;
@@ -59,14 +54,13 @@ public class AutoFactory {
         int as_deliverTop_3 = 3;
 
         int as1_driveThruChargeAndBalance_1 = 1;
-        int as1_secondCube_2 = 2;
+        int as1_secondCubeAlt_2 = 2;
         int as1_balance_3 = 3;
-        int as1_secondCubeAlt_4 = 4;
-        int as_1_driveOutZone_5 = 5;
+        int as_1_driveOutZone_4 = 4;
 
         List<PathPlannerTrajectory> pathGroup;
 
-        public Command autonomousCommand = new DoNothing();
+       // public Command autonomousCommand = new DoNothing();
 
         public final SendableChooser<Integer> m_autoChooser = new SendableChooser<Integer>();
 
@@ -103,8 +97,6 @@ public class AutoFactory {
         public String traj1name = "PushCubeCenter";
 
         private boolean traj1Reqd;
-
-        private List<PathPlannerTrajectory> noBumpStartTrajs;
 
         public List<PathPlannerTrajectory> noBumpStartTrajsAlt;
 
@@ -167,14 +159,9 @@ public class AutoFactory {
 
                 m_autoChooser1.addOption("Balance", 3);
 
-                m_autoChooser1.addOption("PickupScore2ndCubeAlt", 4);
-
-                m_autoChooser1.addOption("DriveOutZone", 5);
+                m_autoChooser1.addOption("DriveOutZone", 4);
 
                 // Load trajectories to save time later
-
-                noBumpStartTrajs = m_tf.getPathPlannerTrajectoryGroup("NoBumpSide",
-                                .5, 1., false);
 
                 noBumpStartTrajsAlt = m_tf.getPathPlannerTrajectoryGroup("NoBumpSideAlt",
                                 1.5, 2., false);
@@ -184,9 +171,6 @@ public class AutoFactory {
 
                 balanceCommandList = m_tf.getPathPlannerTrajectoryGroup("BackUpCenter", 2.2,
                                 2, false);
-
-                bumpEventPathsList = m_tf.getPathPlannerTrajectoryGroup("BumpSide", 2, 1,
-                                false);
 
         }
 
@@ -255,8 +239,7 @@ public class AutoFactory {
 
                 if (startLocation == sl_coopShelf_0 || startLocation == sl_coopPipe_1) {// any of the coop starts
                         if (autoselect1 == as1_driveThruChargeAndBalance_1) {
-                                // gy = m_drive.getGyroPitch();
-                                //
+                              
                                 tempCommand = new SequentialCommandGroup(
 
                                                 m_tf.followTrajectoryCommand(balanceCommandList.get(0), true),
@@ -267,44 +250,26 @@ public class AutoFactory {
 
                 }
 
-                if (startLocation == sl_noBumpShelf_2 && autoselect1 == as1_secondCube_2) {
-
-                        SequentialCommandGroup eventCommand = new SequentialCommandGroup(
-                                        Commands.runOnce(() -> m_lift.setController(
-                                                        LiftArmConstants.liftArmFastConstraints, 1, false)),
-                                        m_tf.followTrajectoryCommand(noBumpStartTrajs.get(0), true),
-                                        new WaitCommand(.1),
-                                        // new TurnToGamepiece(m_drive, -.25, true),
-                                        new GroundIntakeCubePositions(m_lift, m_wrist, m_extend, m_intake),
-                                        new WaitCommand(.1),
-                                        m_tf.followTrajectoryCommand(noBumpStartTrajs.get(1), false)
-                                                        .raceWith(new IntakePieceStopMotor(m_intake, 11)),
-                                        new RetractWristExtendLiftTravel(m_lift, m_extend, m_wrist),
-                                        m_tf.followTrajectoryCommand(noBumpStartTrajs.get(2), false),
-                                        new EjectPieceFromIntake(m_intake, 11).withTimeout(1));
-
-                        tempCommand = eventCommand;
-                }
                 /**
                  * Blue drive station no bump shelf is tag Id 6
                  * Red drive station no bump shelf is tag Id 3
                  * 
                  */
 
-                if (startLocation == sl_noBumpShelf_2 && autoselect1 == as1_secondCubeAlt_4) {
+                if (startLocation == sl_noBumpShelf_2 && autoselect1 == as1_secondCubeAlt_2) {
 
-                        // m_llv.setRedNoBumpPipeline();
-                        // if (DriverStation.getAlliance() == Alliance.Blue) {
-                        // m_llv.setBlueNoBumpPipeline();
-                        // }
+                        m_drive.yTrajStart = 4.4;
 
                         tempCommand = new SequentialCommandGroup(
+
+                                        Commands.runOnce(() -> m_llv.setCubeDetectorPipeline()),
 
                                         Commands.runOnce(() -> m_lift.setController(
 
                                                         LiftArmConstants.liftArmFastConstraints, 1, false)),
 
                                         new ParallelCommandGroup(
+
                                                         // move and rotate
 
                                                         m_tf.followTrajectoryCommand(noBumpStartTrajsAlt.get(0), true),
@@ -314,12 +279,10 @@ public class AutoFactory {
                                                                         new WaitCommand(2.5),
 
                                                                         new GroundIntakeCubePositions(m_lift, m_wrist,
-                                                                                        m_extend, m_intake))),
+                                                                                        m_extend, m_intake)
+                                                                                        .withTimeout(1))),
 
                                         new WaitCommand(.1),
-                                        // move, align and pickup cone
-                                        //
-                                        // new TurnToGamepiece(m_drive, -.2, true),
 
                                         new ParallelRaceGroup(
                                                         new IntakePiece(m_intake, 11),
@@ -329,20 +292,27 @@ public class AutoFactory {
 
                                         // Commands.runOnce(() -> m_llv.setCubeDetectorPipeline()),
 
-                                        // new TrajectoryCorrectForCube(m_drive, m_llv)),
+                                        new ConditionalCommand(
 
-                                         new StopIntake(m_intake),
+                                                        new TrajectoryCorrectForCube(m_drive, m_llv), new DoNothing(),
+                                                        () -> RobotBase.isReal()),
+
+                                        new StopIntake(m_intake),
 
                                         new WaitCommand(.1),
 
                                         new ParallelCommandGroup(
 
-                                                        new RetractWristExtendLiftTravel(m_lift, m_extend, m_wrist),
+                                                        new RetractWristExtendLiftTravel(m_lift, m_extend, m_wrist)
+                                                                        .withTimeout(2),
 
                                                         m_tf.followTrajectoryCommand(noBumpStartTrajsAlt.get(2),
                                                                         false)),
 
                                         new WaitCommand(.1),
+
+                                        m_tf.followTrajectoryCommand(noBumpStartTrajsAlt.get(3),
+                                                        false),
 
                                         new EjectPieceFromIntake(m_intake, 9).withTimeout(1));
 
@@ -362,40 +332,7 @@ public class AutoFactory {
 
                 }
 
-                if (startLocation == sl_bumpShelf_3 && autoselect1 == as1_secondCube_2) {
-
-                        HashMap<String, Command> eventMap1 = new HashMap<>();
-                        eventMap1.put("DropIntake1",
-                                        new GroundIntakeUprightConePositions(m_lift, m_wrist, m_extend, m_intake)
-                                                        .withTimeout(5));
-                        eventMap1.put("RunIntake1", new IntakePieceStopMotor(m_intake, 11).withTimeout(6));
-
-                        HashMap<String, Command> eventMap2 = new HashMap<>();
-                        eventMap2.put("HomePosition", new RetractWristExtendLiftTravel(m_lift, m_extend, m_wrist)
-                                        .withTimeout(5));
-                        eventMap2.put("Eject1", new EjectPieceFromIntake(m_intake, 12).withTimeout(1));
-
-                        PathPlannerTrajectory eventPath1 = bumpEventPathsList.get(0);
-                        PathPlannerTrajectory eventPath2 = bumpEventPathsList.get(1);
-
-                        FollowPathWithEvents eventCommand1 = new FollowPathWithEvents(
-                                        m_tf.followTrajectoryCommand(eventPath1, true),
-                                        eventPath1.getMarkers(), eventMap1);
-                        FollowPathWithEvents eventCommand2 = new FollowPathWithEvents(
-                                        m_tf.followTrajectoryCommand(eventPath2, false),
-                                        eventPath2.getMarkers(), eventMap2);
-
-                        tempCommand = new SequentialCommandGroup(
-                                        m_intake.tipRearCube(90),
-                                        eventCommand1,
-                                        new WaitCommand(0.5),
-                                        m_intake.tipRearCube(0),
-                                        eventCommand2,
-                                        new EjectPieceFromIntake(m_intake, 12).withTimeout(1));
-
-                }
-
-                if (startLocation == sl_bumpShelf_3 && autoselect1 == as1_secondCubeAlt_4) {
+                if (startLocation == sl_bumpShelf_3 && autoselect1 == as1_secondCubeAlt_2) {
 
                         tempCommand = new SequentialCommandGroup(
 
@@ -406,55 +343,55 @@ public class AutoFactory {
                                                         LiftArmConstants.liftArmFastConstraints, 1, false)),
 
                                         new ParallelCommandGroup(
+
                                                         // move and rotate
 
                                                         m_tf.followTrajectoryCommand(bumpStartTrajsAlt.get(0), true),
 
                                                         new SequentialCommandGroup(
 
-                                                                        new WaitCommand(1),
+                                                                        new WaitCommand(2.5),
 
                                                                         new GroundIntakeCubePositions(m_lift, m_wrist,
-                                                                                        m_extend, m_intake))),
+                                                                                        m_extend, m_intake)
+                                                                                        .withTimeout(1))),
 
-                                        // new WaitCommand(.1),
-                                        // move, alighn and pickup cone
+                                        new WaitCommand(.1),
+
                                         new ParallelRaceGroup(
+                                                        new IntakePiece(m_intake, 11),
 
                                                         m_tf.followTrajectoryCommand(bumpStartTrajsAlt.get(1),
-                                                                        false),
+                                                                        false)),
 
-                                                        // new TrajectoryCorrectForCube(m_drive, m_llv),
+                                        // Commands.runOnce(() -> m_llv.setCubeDetectorPipeline()),
 
-                                                        new IntakePieceStopMotor(m_intake, 11)),
+                                        new ConditionalCommand(
+
+                                                        new TrajectoryCorrectForCube(m_drive, m_llv), new DoNothing(),
+                                                        () -> RobotBase.isReal()),
+
+                                        new StopIntake(m_intake),
 
                                         new WaitCommand(.1),
 
                                         new ParallelCommandGroup(
 
-                                                        new RetractWristExtendLiftTravel(m_lift, m_extend, m_wrist),
+                                                        new RetractWristExtendLiftTravel(m_lift, m_extend, m_wrist)
+                                                                        .withTimeout(2),
 
                                                         m_tf.followTrajectoryCommand(bumpStartTrajsAlt.get(2),
-                                                                        false),
+                                                                        false)),
 
-                                                        new WaitCommand(.1)),
+                                        new WaitCommand(.1),
 
-                                        new ParallelCommandGroup(
+                                        m_tf.followTrajectoryCommand(bumpStartTrajsAlt.get(3),
+                                                        false),
 
-                                                        m_tf.followTrajectoryCommand(bumpStartTrajsAlt.get(3), false),
-
-                                                        new SequentialCommandGroup(
-
-                                                                        new WaitCommand(1),
-
-                                                                        new DeliverCubeFast(m_lift, m_wrist, m_intake,
-                                                                                        m_extend, false, 1))));
-
-                        // new EjectPieceFromIntake(m_intake, 9).withTimeout(1));
-
+                                        new EjectPieceFromIntake(m_intake, 9).withTimeout(1));
                 }
 
-                if (startLocation == sl_bumpShelf_3 && autoselect1 == as_1_driveOutZone_5) {
+                if (startLocation == sl_bumpShelf_3 && autoselect1 == as_1_driveOutZone_4) {
 
                         PathPlannerTrajectory traj2 = m_tf.getPathPlannerTrajectory("BumpDriveOut", 2.2, 4, false);
 
@@ -462,7 +399,7 @@ public class AutoFactory {
 
                 }
 
-                if (startLocation == sl_noBumpShelf_2 && autoselect1 == as_1_driveOutZone_5) {
+                if (startLocation == sl_noBumpShelf_2 && autoselect1 == as_1_driveOutZone_4) {
 
                         PathPlannerTrajectory traj2 = m_tf.getPathPlannerTrajectory("NoBumpDriveOut", 2.2, 4, false);
 
@@ -488,10 +425,12 @@ public class AutoFactory {
 
                 createCommands();
 
-                autonomousCommand = new SequentialCommandGroup(command0, command1, command2);
+                m_drive.autonomousCommand = new SequentialCommandGroup(command0, command1, command2);
 
-                return autonomousCommand;
+                return m_drive.autonomousCommand;
 
         }
+
+       
 
 }

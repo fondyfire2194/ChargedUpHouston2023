@@ -27,6 +27,7 @@ import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.ModuleConstants;
 import frc.robot.Constants.ModuleTuneConstants;
 import frc.robot.Constants.SYSIDConstants;
+import frc.robot.commands.TeleopRoutines.DriveToPickup;
 import frc.robot.Pref;
 import frc.robot.utils.AngleUtils;
 
@@ -49,7 +50,8 @@ public class SwerveModuleSM extends SubsystemBase {
       ModuleTuneConstants.kIModuleTurningController, ModuleTuneConstants.kDModuleTurningController);
 
   public final CANCoder m_turnCANcoder;
-  SwerveModuleState state;
+
+  SwerveModuleState state = new SwerveModuleState();
 
   public int m_moduleNumber;
 
@@ -193,6 +195,8 @@ public class SwerveModuleSM extends SubsystemBase {
 
       m_turnPosController.setP(.01);
 
+      m_driveVelController.setP(.25);
+
     }
 
   }
@@ -305,10 +309,9 @@ public class SwerveModuleSM extends SubsystemBase {
   }
 
   public double getDriveSpeedSetpoint() {
-    if (RobotBase.isReal())
-      return state.speedMetersPerSecond;
-    else
-      return 0;
+
+    return state.speedMetersPerSecond;
+
   }
 
   public void driveMotorMoveOpenLoop(double speed) {
@@ -319,11 +322,15 @@ public class SwerveModuleSM extends SubsystemBase {
 
   public void driveMotorMoveVelocity(double speedMPS) {
 
+    double ff = (12 * speedMPS) * .15 / DriveConstants.kMaxSpeedMetersPerSecond;
+
+    if (RobotBase.isReal())
+
+      ff = feedforward.calculate(speedMPS);
+
     m_driveMotor
 
-        .setVoltage(feedforward.calculate(speedMPS) +
-
-            m_driveVelController.calculate(getDriveVelocity(), speedMPS));
+        .setVoltage(ff + m_driveVelController.calculate(getDriveVelocity()));
 
   }
 

@@ -154,7 +154,7 @@ public class Robot extends TimedRobot {
     m_robotContainer.m_wrist.setController(WristConstants.wristFastConstraints,
         presetWristAngles.HOME.getAngleRads(), false);
 
-    m_robotContainer.m_drive.setClosedLoop(RobotBase.isReal());
+    m_robotContainer.m_drive.setClosedLoop(true);
 
     m_startDelay = m_robotContainer.m_autoFactory.m_startDelayChooser.getSelected();
 
@@ -204,8 +204,8 @@ public class Robot extends TimedRobot {
 
     m_robotContainer.m_drive.setIdleMode(true);
 
-    if (m_robotContainer.m_autoFactory.autonomousCommand != null) {
-      m_robotContainer.m_autoFactory.autonomousCommand.cancel();
+    if (m_robotContainer.m_drive.autonomousCommand != null) {
+      m_robotContainer.m_drive.autonomousCommand.cancel();
     }
 
     m_robotContainer.m_liftArm.setController(LiftArmConstants.liftArmFastConstraints,

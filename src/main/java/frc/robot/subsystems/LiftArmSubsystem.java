@@ -159,7 +159,7 @@ public class LiftArmSubsystem extends SubsystemBase {
         m_motor.setInverted(true);
         m_motor.setOpenLoopRampRate(.1);
         m_motor.setClosedLoopRampRate(.1);
-        m_motor.enableVoltageCompensation(11);
+        m_motor.enableVoltageCompensation(12);
 
         // absolute encoder used to establish known wheel position on start position
         m_liftCANcoder = new CANCoder(CanConstants.LIFT_CANCODER, "CV1");
