@@ -40,7 +40,7 @@ public class ExtendArmSubsystem extends SubsystemBase {
 
         HOME(1),
 
-        TRAVEL(2.75),
+        TRAVEL(2.6), //2.75
 
         PICKUP_CUBE_GROUND(13.82),
 

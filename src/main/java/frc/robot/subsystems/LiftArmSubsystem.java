@@ -33,7 +33,7 @@ public class LiftArmSubsystem extends SubsystemBase {
 
         HOME(34.1, 0), // 0
 
-        TRAVEL(37.7, 1.06), // 1.32
+        TRAVEL(37.7, 1.0), // 1.06
 
         CLEAR_ARMS(38, .68), // .85
 

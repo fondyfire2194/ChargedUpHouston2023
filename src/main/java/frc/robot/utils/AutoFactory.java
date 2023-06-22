@@ -60,7 +60,7 @@ public class AutoFactory {
 
         List<PathPlannerTrajectory> pathGroup;
 
-       // public Command autonomousCommand = new DoNothing();
+        // public Command autonomousCommand = new DoNothing();
 
         public final SendableChooser<Integer> m_autoChooser = new SendableChooser<Integer>();
 
@@ -238,8 +238,9 @@ public class AutoFactory {
                 int autoselect1 = m_autoChooser1.getSelected();
 
                 if (startLocation == sl_coopShelf_0 || startLocation == sl_coopPipe_1) {// any of the coop starts
+
                         if (autoselect1 == as1_driveThruChargeAndBalance_1) {
-                              
+
                                 tempCommand = new SequentialCommandGroup(
 
                                                 m_tf.followTrajectoryCommand(balanceCommandList.get(0), true),
@@ -285,17 +286,19 @@ public class AutoFactory {
                                         new WaitCommand(.1),
 
                                         new ParallelRaceGroup(
+
                                                         new IntakePiece(m_intake, 11),
 
                                                         m_tf.followTrajectoryCommand(noBumpStartTrajsAlt.get(1),
                                                                         false)),
 
-                                        // Commands.runOnce(() -> m_llv.setCubeDetectorPipeline()),
+                                        // new ConditionalCommand(
 
-                                        new ConditionalCommand(
+                                        // new TrajectoryCorrectForCube(m_drive, m_llv),
 
-                                                        new TrajectoryCorrectForCube(m_drive, m_llv), new DoNothing(),
-                                                        () -> RobotBase.isReal()),
+                                        // new DoNothing(),
+
+                                        // () -> RobotBase.isReal())),
 
                                         new StopIntake(m_intake),
 
@@ -322,7 +325,7 @@ public class AutoFactory {
 
                 {
 
-                        PathPlannerTrajectory traj2 = m_tf.getPathPlannerTrajectory("Balance", 2.2, 7, false);
+                        PathPlannerTrajectory traj2 = m_tf.getPathPlannerTrajectory("Balance", 2.2, 2, false);
 
                         tempCommand = new SequentialCommandGroup(
 
@@ -366,10 +369,11 @@ public class AutoFactory {
 
                                         // Commands.runOnce(() -> m_llv.setCubeDetectorPipeline()),
 
-                                        new ConditionalCommand(
+                                        // new ConditionalCommand(
 
-                                                        new TrajectoryCorrectForCube(m_drive, m_llv), new DoNothing(),
-                                                        () -> RobotBase.isReal()),
+                                        // new TrajectoryCorrectForCube(m_drive, m_llv),
+                                        // new DoNothing(),
+                                        // () -> RobotBase.isReal())),
 
                                         new StopIntake(m_intake),
 
@@ -430,7 +434,5 @@ public class AutoFactory {
                 return m_drive.autonomousCommand;
 
         }
-
-       
 
 }
