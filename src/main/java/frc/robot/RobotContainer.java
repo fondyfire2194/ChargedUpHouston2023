@@ -22,6 +22,7 @@ import frc.robot.commands.ExtendArm.JogExtendArm;
 import frc.robot.commands.ExtendArm.PositionProfileExtendArm;
 import frc.robot.commands.LiftArm.JogLiftArm;
 import frc.robot.commands.LiftArm.PositionProfileLiftInches;
+import frc.robot.commands.LiftArm.SetLiftGoal;
 import frc.robot.commands.NTs.MonitorThreadBackLeft;
 import frc.robot.commands.NTs.MonitorThreadBackRight;
 import frc.robot.commands.NTs.MonitorThreadExt;
@@ -286,7 +287,7 @@ public class RobotContainer {
                                 .onTrue(new IntakePieceStopMotor(m_intake, 11));
 
                 m_coDriverController.b()
-                                .onTrue(Commands.runOnce(() -> m_ls.togglePY()));
+                                .onTrue(new SetLiftGoal(m_liftArm, 2));
 
                 m_coDriverController.x().onTrue(deliverPositionsCommand(1).withTimeout(8));
 
