@@ -83,15 +83,15 @@
   "NetworkTables": {
     "transitory": {
       "Shuffleboard": {
-        "Competition": {
-          "open": true
-        },
         "open": true
       },
       "SmartDashboard": {
         "Field2d": {
           "open": true
         }
+      },
+      "apriltags": {
+        "open": true
       }
     }
   }

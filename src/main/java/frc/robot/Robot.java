@@ -187,17 +187,11 @@ public class Robot extends TimedRobot {
     if (!autoHasRun) {
 
       m_robotContainer.m_drive.gyroStartPitch = m_robotContainer.m_drive.getGyroPitch();
+      m_robotContainer.m_drive.resetGyro();
 
-      // m_robotContainer.m_drive.resetOdometry(new Pose2d(0, 0, new
-      // Rotation2d(Math.PI)));
+      autoHasRun = false;
 
     }
-
-    m_robotContainer.m_drive.setClosedLoop(false);
-
-    autoHasRun = false;
-
-    m_robotContainer.m_drive.resetGyro();
 
     m_robotContainer.m_extendArm.setController(ExtendArmConstants.extendArmFastConstraints,
         presetExtArmDistances.RETRACT.getDistance(), false);

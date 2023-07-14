@@ -103,8 +103,6 @@ public class SwerveModuleSM extends SubsystemBase {
 
   private int moduleStickyFaultSeen;
 
-  public double angleCorrection;
-
   /**
    * Constructs a SwerveModule.
    *
@@ -304,7 +302,7 @@ public class SwerveModuleSM extends SubsystemBase {
       driveMotorMoveVelocity(state.speedMetersPerSecond);
     }
 
-    positionTurn(angle + angleCorrection);
+    positionTurn(angle);
 
   }
 

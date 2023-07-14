@@ -27,11 +27,7 @@ public class TrajectoryCorrectForCube extends CommandBase {
   @Override
   public void initialize() {
 
-    m_drive.clearAngleCorrection();
-
     m_llv.setCubeDetectorPipeline();
-
-    // m_drive.m_fieldOriented = false;
 
     m_pidController = new PIDController(1, 0, 0);
   }
@@ -40,27 +36,17 @@ public class TrajectoryCorrectForCube extends CommandBase {
   @Override
   public void execute() {
 
-    if (!m_drive.cubeFound)
+    double xError = m_pidController.calculate(m_drive.tx, -5);
 
-      m_drive.clearAngleCorrection();
+    SmartDashboard.putNumber("XCUBERR", xError);
 
-    else {
+    double temp = xError;
 
-      double xError = m_pidController.calculate(m_drive.tx, -5);
-
-      SmartDashboard.putNumber("XCUBERR", xError);
-
-      double temp = xError;
-
-      m_drive.setAngleCorrection(temp);
-
-    }
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    m_drive.clearAngleCorrection();
     // m_drive.m_fieldOriented = true;
   }
 

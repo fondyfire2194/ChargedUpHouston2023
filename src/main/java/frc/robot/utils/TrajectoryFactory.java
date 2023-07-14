@@ -151,7 +151,7 @@ public class TrajectoryFactory {
 
                         Commands.runOnce(() -> run = false),
 
-                        Commands.runOnce(() -> m_drive.setInhibitVisionCorrection(false)),
+                        Commands.runOnce(() -> m_drive.setAllowVisionCorrection(false)),
 
                         Commands.runOnce(() -> runTagTraj = false)));
     }

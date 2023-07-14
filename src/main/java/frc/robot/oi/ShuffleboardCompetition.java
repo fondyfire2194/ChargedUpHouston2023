@@ -6,6 +6,8 @@ package frc.robot.oi;
 
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import frc.robot.commands.TeleopRoutines.ToggleAllowVision;
+import frc.robot.commands.TeleopRoutines.ToggleCamera;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.ExtendArmSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
@@ -72,9 +74,24 @@ public class ShuffleboardCompetition {
                 area1.addNumber("DriveSpeed", () -> round2dp(m_drive.m_frontLeft.getDriveVelocity()))
                                 .withSize(1, 1)
                                 .withPosition(2, 4);
-                area1.addBoolean("AllCANOK", () -> m_drive.ALL_CANOK)
+                area1.addBoolean("AllCanOK", () -> m_drive.ALL_CANOK)
                                 .withSize(2, 1)
                                 .withPosition(2, 2);
+                area1.addBoolean("AllowVision", () -> m_drive.allowVision)
+                                .withSize(2, 1)
+                                .withPosition(4, 2);
+
+                area1.addString("CameraName", () -> llv.activeName)
+                                .withSize(1, 1)
+                                .withPosition(6, 2);
+
+                area1.add("ToggleCam", new ToggleCamera(llv))
+                                .withSize(2, 1)
+                                .withPosition(7, 2);
+                area1.add("ToggleVision", new ToggleAllowVision(drive))
+                                .withSize(2, 1)
+                                .withPosition(4, 1);
+
                 area1.addBoolean("FieldOriented", () -> m_drive.m_fieldOriented)
                                 .withSize(2, 1)
                                 .withPosition(2, 3);

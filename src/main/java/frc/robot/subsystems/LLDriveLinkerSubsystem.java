@@ -29,67 +29,53 @@ public class LLDriveLinkerSubsystem extends SubsystemBase {
   private LimelightVision m_llv;
   private DriveSubsystem m_drive;
   private LimelightResults llresults;
-  private double llHeartbeat;
-  private double llHeartbeatLast;
-  private int samples;
   private boolean limelightExists;
   private int loopctr;
   private double neuralClassID;
   private double coneID = 0;
   private double cubeID = 1;
 
-  NetworkTable tagsTable = NetworkTableInstance.getDefault().getTable("apriltags");
-  IntegerArrayPublisher pubTags = tagsTable.getIntegerArrayTopic("tags").publish();
+  public int activeLimelight;
 
-  public LLDriveLinkerSubsystem(LimelightVision llv, DriveSubsystem drive) {
+  NetworkTable tagsTable = NetworkTableInstance.getDefault().getTable("apriltags");
+
+  IntegerArrayPublisher pubTags = tagsTable.getIntegerArrayTopic("tags").publish();
+  private int front = 0;
+  private int rear = 1;
+  private String[] m_names;
+
+  public LLDriveLinkerSubsystem(LimelightVision llv, String[] names, DriveSubsystem drive) {
     m_llv = llv;
     m_drive = drive;
-
+    m_names = names;
+    activeLimelight = front;
   }
 
   @Override
   public void periodic() {
     loopctr++;
 
-    llHeartbeat = LimelightHelpers.getLimelightNTDouble("limelight", "hb");
-
-    if (llHeartbeat == llHeartbeatLast) {
-      samples += 1;
-    } else {
-      samples = 0;
-      llHeartbeatLast = llHeartbeat;
-      limelightExists = true;
-      m_drive.limelightExists = true;
-      m_llv.limelightExists = true;
-    }
-
-    if (samples > 5) {
-      limelightExists = false;
-      m_drive.limelightExists = false;
-      m_llv.limelightExists = false;
-    }
-
-    if (RobotBase.isReal() && limelightExists && loopctr > 2 && !m_drive.inhibitVision) {
+    if (RobotBase.isReal() && loopctr > 2 && m_drive.allowVision) {
 
       loopctr = 0;
 
-      llresults = LimelightHelpers.getLatestResults("limelight");
+      llresults = LimelightHelpers.getLatestResults(m_llv.activeName);
 
-      if (m_llv.getCurrentPipelineType() == pipelinetype.fiducialmarkers) {
+      if (m_llv.getCurrentPipelineType() == pipelinetype.fiducialmarkers && LimelightHelpers.getTV(m_llv.activeName)) {
 
         m_drive.botPose = getBotPose();
         m_drive.numberTags = llresults.targetingResults.targets_Fiducials.length;
         m_drive.hasTag = m_drive.numberTags > 0;
-        m_drive.fiducialID = (int) LimelightHelpers.getFiducialID("limelight");
+        m_drive.fiducialID = (int) LimelightHelpers.getFiducialID(m_llv.activeName);
 
-        m_drive.latencyCaptureMs = LimelightHelpers.getLatency_Capture("limelight");
+        m_drive.latencyCaptureMs = LimelightHelpers.getLatency_Capture(m_llv.activeName);
         m_drive.latencyCaptureMs /= 1000;
-        m_drive.latencyPipelineMs = LimelightHelpers.getLatency_Pipeline("limelight");
+        m_drive.latencyPipelineMs = LimelightHelpers.getLatency_Pipeline(m_llv.activeName);
         m_drive.latencyPipelineMs /= 1000;
 
         if (m_drive.numberTags >= 1) {
           m_drive.tagid1 = (int) llresults.targetingResults.targets_Fiducials[0].fiducialID;
-          m_drive.tx = LimelightHelpers.getTX("limelight");
+          m_drive.tx = LimelightHelpers.getTX(m_llv.activeName);
         }
         m_drive.tagid2 = -1;
         if (m_drive.numberTags >= 2)
@@ -101,15 +87,15 @@ public class LLDriveLinkerSubsystem extends SubsystemBase {
 
         m_drive.numberTargets = llresults.targetingResults.targets_Retro.length;
         m_drive.hasTarget = m_drive.numberTargets > 0;
-        m_drive.tx = LimelightHelpers.getTX("limelight");
-        m_drive.ty = LimelightHelpers.getTY("limelight");
-        m_drive.targetArea = LimelightHelpers.getTA("limelight");
+        m_drive.tx = LimelightHelpers.getTX(m_llv.activeName);
+        m_drive.ty = LimelightHelpers.getTY(m_llv.activeName);
+        m_drive.targetArea = LimelightHelpers.getTA(m_llv.activeName);
 
       }
 
       if (m_llv.getCurrentPipeline() == pipelines.CONE_DETECT) {
 
-        neuralClassID = LimelightHelpers.getNeuralClassID("limelight");
+        neuralClassID = LimelightHelpers.getNeuralClassID(m_llv.activeName);
 
         boolean temp = false;
 
@@ -118,18 +104,18 @@ public class LLDriveLinkerSubsystem extends SubsystemBase {
 
         m_drive.coneFound = temp;
 
-        // String temp = LimelightHelpers.getNeuralClassName("limelight");
+        // String temp = LimelightHelpers.getNeuralClassName(m_llv.activeName);
         // SmartDashboard.putString("NCN1", temp);
-        m_drive.tx = LimelightHelpers.getTX("limelight");
-        m_drive.ty = LimelightHelpers.getTY("limelight");
-        m_drive.targetArea = LimelightHelpers.getTA("limelight");
+        m_drive.tx = LimelightHelpers.getTX(m_llv.activeName);
+        m_drive.ty = LimelightHelpers.getTY(m_llv.activeName);
+        m_drive.targetArea = LimelightHelpers.getTA(m_llv.activeName);
       } else {
         m_drive.coneFound = false;
       }
 
       if (m_llv.getCurrentPipeline() == pipelines.CUBE_DETECT) {
 
-        neuralClassID = LimelightHelpers.getNeuralClassID("limelight");
+        neuralClassID = LimelightHelpers.getNeuralClassID(m_llv.activeName);
 
         boolean temp = false;
 
@@ -138,9 +124,9 @@ public class LLDriveLinkerSubsystem extends SubsystemBase {
 
         m_drive.cubeFound = temp;
 
-        m_drive.tx = LimelightHelpers.getTX("limelight");
-        m_drive.ty = LimelightHelpers.getTY("limelight");
-        m_drive.targetArea = LimelightHelpers.getTA("limelight");
+        m_drive.tx = LimelightHelpers.getTX(m_llv.activeName);
+        m_drive.ty = LimelightHelpers.getTY(m_llv.activeName);
+        m_drive.targetArea = LimelightHelpers.getTA(m_llv.activeName);
       } else {
         m_drive.cubeFound = false;
       }
@@ -181,20 +167,6 @@ public class LLDriveLinkerSubsystem extends SubsystemBase {
 
     Pose3d pose = getRobotPose_FieldSpace();
 
-    // Pose2d estpose2 = m_drive.getEstimatedPosition();
-
-    // Translation2d t2 = estpose2.getTranslation();
-    // double x3= t2.getX();
-    // double y3 = t2.getY();
-
-    // Translation3d t3 = new Translation3d(x3,y3,0);
-    // Rotation2d r2 = estpose2.getRotation();
-
-    // Rotation3d r3 = new Rotation3d(0, 0, r2.getRadians());
-
-    // pose = new Pose3d(t3,r3);
-
-    m_drive.tagid1 = 4;
     tagsTable
         .getEntry("pose_" + m_drive.tagid1)
         .setDoubleArray(
@@ -212,9 +184,9 @@ public class LLDriveLinkerSubsystem extends SubsystemBase {
   public Pose2d getBotPose() {
     Pose2d temp = new Pose2d();
     if (DriverStation.getAlliance() == Alliance.Blue)
-      temp = LimelightHelpers.getBotPose2d_wpiBlue("limelight");
+      temp = LimelightHelpers.getBotPose2d_wpiBlue(m_llv.activeName);
     else
-      temp = LimelightHelpers.getBotPose2d_wpiRed("limelight");
+      temp = LimelightHelpers.getBotPose2d_wpiRed(m_llv.activeName);
     if (poseIsOnField(temp) && poseChangeInRange(temp))
       return temp;
     else
@@ -235,7 +207,7 @@ public class LLDriveLinkerSubsystem extends SubsystemBase {
   }
 
   public Pose3d getRobotPose_FieldSpace() {
-    return LimelightHelpers.getBotPose3d("Limelight");
+    return LimelightHelpers.getBotPose3d(m_llv.activeName);
   }
 
   public Double[] getBotPoseForAdvScope(Pose3d pose) {

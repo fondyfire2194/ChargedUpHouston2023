@@ -7,7 +7,9 @@ package frc.robot.subsystems;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.RobotBase;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.LimelightHelpers;
 
@@ -20,10 +22,9 @@ public class LimelightVision extends SubsystemBase {
 
   public int fiducialId;
 
-  public double llHeartbeat;
+  public double[] llHeartbeat = { 0, 0 };
 
-  public double llHeartbeatLast;
-  // public Transform3d robotPose_FS;
+  public double[] llHeartbeatLast = { 0, 0 };
 
   public boolean allianceBlue;
 
@@ -46,7 +47,7 @@ public class LimelightVision extends SubsystemBase {
     BLUE_NO_BUMP(3, pipelinetype.fiducialmarkers),
     RED_BUMP(4, pipelinetype.fiducialmarkers),
     BLUE_BUMP(5, pipelinetype.fiducialmarkers),
-    DEFAULT(6, pipelinetype.fiducialmarkers),
+    FID_MARKERS(6, pipelinetype.fiducialmarkers),
     SPARE7(7, pipelinetype.fiducialmarkers),
     CUBE_DETECT(8, pipelinetype.detector),
     CONE_DETECT(9, pipelinetype.detector);
@@ -70,14 +71,27 @@ public class LimelightVision extends SubsystemBase {
   public pipelinetype currentPipelineType;
   public pipelines currentPipeline;
 
-  private int samples;
+  private int[] samples = { 0, 0 };
 
-  public boolean limelightExists;
+  public boolean[] limelightExists = { false, false };
 
   public String limelighttypename = "fiducial";
 
-  public LimelightVision() {
-    currentPipeline = pipelines.DEFAULT;
+  private String[] m_name = new String[2];
+
+  private int numCameras = 2;
+
+  public int activeLimelight;
+
+  public String activeName;
+
+  public LimelightVision(String[] name) {
+    currentPipeline = pipelines.FID_MARKERS;
+    m_name[0] = name[0];
+    m_name[1] = name[1];
+
+    activeLimelight = 0;
+
   }
 
   public boolean getAllianceBlue() {
@@ -86,27 +100,30 @@ public class LimelightVision extends SubsystemBase {
 
   @Override
   public void periodic() {
-
+    SmartDashboard.putNumber("ActLL", activeLimelight);
+    activeName = m_name[activeLimelight];
+    SmartDashboard.putString("LLAN", activeName);
     if (RobotBase.isReal()) {
-
-      llHeartbeat = LimelightHelpers.getLimelightNTDouble("limelight", "hb");
-      if (llHeartbeat == llHeartbeatLast) {
-        samples += 1;
-      } else {
-        samples = 0;
-        llHeartbeatLast = llHeartbeat;
-        limelightExists = true;
+      for (int i = 0; i < numCameras; i++) {
+        llHeartbeat[i] = LimelightHelpers.getLimelightNTDouble(m_name[i], "hb");
+        if (llHeartbeat[i] == llHeartbeatLast[i]) {
+          samples[i] += 1;
+        } else {
+          samples[i] = 0;
+          llHeartbeatLast[i] = llHeartbeat[i];
+          limelightExists[i] = true;
+        }
+        if (samples[i] > 5)
+          limelightExists[i] = false;
       }
-      if (samples > 5)
-        limelightExists = false;
     }
     // SmartDashboard.putBoolean("LLExists", limelightExists);
 
-    if (RobotBase.isReal() && limelightExists) {
+    if (RobotBase.isReal()) {
 
-      fiducialId = (int) LimelightHelpers.getFiducialID("limelight");
-
-      currentPipelineIndex = (int) LimelightHelpers.getCurrentPipelineIndex("limelight");
+      fiducialId = (int) LimelightHelpers.getFiducialID(m_name[activeLimelight]);
+      SmartDashboard.putNumber("FIDID", fiducialId);
+      currentPipelineIndex = (int) LimelightHelpers.getCurrentPipelineIndex(m_name[activeLimelight]);
 
       currentPipeline = pipelines.values[currentPipelineIndex];
 
@@ -114,6 +131,11 @@ public class LimelightVision extends SubsystemBase {
 
       limelighttypename = getCurrentPipelineTypeName();
     }
+  }
+
+  public void setActiveCamera(int activeCam) {
+    activeLimelight = activeCam;
+    activeName = m_name[activeLimelight];
   }
 
   public double round2dp(double number) {
@@ -139,43 +161,43 @@ public class LimelightVision extends SubsystemBase {
   }
 
   public void setRedNoBumpPipeline() {
-    if (limelightExists)
-      LimelightHelpers.setPipelineIndex("limelight", pipelines.RED_NO_BUMP.ordinal());
+    if (limelightExists[activeLimelight])
+      LimelightHelpers.setPipelineIndex(activeName, pipelines.RED_NO_BUMP.ordinal());
   }
 
   public void setBlueNoBumpPipeline() {
-    if (limelightExists)
-      LimelightHelpers.setPipelineIndex("limelight", pipelines.BLUE_NO_BUMP.ordinal());
+    if (limelightExists[activeLimelight])
+      LimelightHelpers.setPipelineIndex(activeName, pipelines.BLUE_NO_BUMP.ordinal());
   }
 
   public void setRedBumpPipeline() {
-    if (limelightExists)
-      LimelightHelpers.setPipelineIndex("limelight", pipelines.RED_BUMP.ordinal());
+    if (limelightExists[activeLimelight])
+      LimelightHelpers.setPipelineIndex(activeName, pipelines.RED_BUMP.ordinal());
   }
 
   public void setBlueBumpPipeline() {
-    if (limelightExists)
-      LimelightHelpers.setPipelineIndex("limelight", pipelines.BLUE_BUMP.ordinal());
+    if (limelightExists[activeLimelight])
+      LimelightHelpers.setPipelineIndex(activeName, pipelines.BLUE_BUMP.ordinal());
   }
 
   public void setHighTapePipeline() {
-    if (limelightExists)
-      LimelightHelpers.setPipelineIndex("limelight", pipelines.REFL_HIGH_TAPE.ordinal());
+    if (limelightExists[activeLimelight])
+      LimelightHelpers.setPipelineIndex(activeName, pipelines.REFL_HIGH_TAPE.ordinal());
   }
 
   public void setLowTapePipeline() {
-    if (limelightExists)
-      LimelightHelpers.setPipelineIndex("limelight", pipelines.REFL_LOW_TAPE.ordinal());
+    if (limelightExists[activeLimelight])
+      LimelightHelpers.setPipelineIndex(activeName, pipelines.REFL_LOW_TAPE.ordinal());
   }
 
   public void setConeDetectorPipeline() {
-    if (limelightExists)
-      LimelightHelpers.setPipelineIndex("limelight", pipelines.CONE_DETECT.ordinal());
+    if (limelightExists[activeLimelight])
+      LimelightHelpers.setPipelineIndex(activeName, pipelines.CONE_DETECT.ordinal());
   }
 
   public void setCubeDetectorPipeline() {
-    if (limelightExists)
-      LimelightHelpers.setPipelineIndex("limelight", pipelines.CUBE_DETECT.ordinal());
+    if (limelightExists[activeLimelight])
+      LimelightHelpers.setPipelineIndex(activeName, pipelines.CUBE_DETECT.ordinal());
   }
 
 }

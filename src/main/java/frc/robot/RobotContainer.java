@@ -101,8 +101,6 @@ public class RobotContainer {
         public CommandXboxController m_armsController = new CommandXboxController(
                         OIConstants.kArmControllerPort);
 
-        public LimelightVision m_llvis = new LimelightVision();
-
         public LLDriveLinkerSubsystem m_lldv;
 
         public LightStrip m_ls = new LightStrip(9, 36);
@@ -128,11 +126,13 @@ public class RobotContainer {
 
                 Pref.addMissing();
 
-                m_llv = new LimelightVision();
+                String[] llnames = { "limelight", "limelight-rear" };
+
+                m_llv = new LimelightVision(llnames);
+
+                m_lldv = new LLDriveLinkerSubsystem(m_llv, llnames, m_drive);
 
                 m_ls.setColor(ledColors.PURPLE);
-
-                m_lldv = new LLDriveLinkerSubsystem(m_llv, m_drive);
 
                 m_liftArm = new LiftArmSubsystem();
 

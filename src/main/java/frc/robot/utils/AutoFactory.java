@@ -9,14 +9,15 @@ import java.util.List;
 import com.pathplanner.lib.PathPlannerTrajectory;
 
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotBase;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
-import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Constants.LiftArmConstants;
@@ -30,10 +31,8 @@ import frc.robot.commands.DeliverRoutines.GetDeliverAngleSettingsAuto;
 import frc.robot.commands.Intake.StopIntake;
 import frc.robot.commands.LiftArm.SetLiftGoal;
 import frc.robot.commands.PickupRoutines.GroundIntakeCubePositions;
-import frc.robot.commands.PickupRoutines.IntakePiece;
 import frc.robot.commands.PickupRoutines.IntakePieceStopMotor;
 import frc.robot.commands.TeleopRoutines.RetractWristExtendLiftTravel;
-import frc.robot.commands.swerve.Test.TrajectoryCorrectForCube;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.ExtendArmSubsystem;
 import frc.robot.subsystems.GameHandlerSubsystem;
@@ -110,6 +109,10 @@ public class AutoFactory {
 
         public Pose2d endPose = new Pose2d();
 
+        PathPlannerTrajectory t1;// = noBumpStartTrajsAlt.get(1);
+
+        Pose2d pickup = new Pose2d(6.62, 4.78, new Rotation2d(Units.degreesToRadians(-21)));
+
         public AutoFactory(DriveSubsystem drive, LiftArmSubsystem lift, ExtendArmSubsystem extend,
                         WristSubsystem wrist, IntakeSubsystem intake, TrajectoryFactory tf, LimelightVision llv,
                         GameHandlerSubsystem ghs) {
@@ -168,8 +171,10 @@ public class AutoFactory {
                 noBumpStartTrajsAlt = m_tf.getPathPlannerTrajectoryGroup("NoBumpSideAlt",
                                 1.5, 2., false);
 
+                t1 = noBumpStartTrajsAlt.get(1);
+
                 bumpStartTrajsAlt = m_tf.getPathPlannerTrajectoryGroup("BumpSideAlt",
-                                2.5, 1.0, false);
+                                1.5, 2.0, false);
 
                 balanceCommandList = m_tf.getPathPlannerTrajectoryGroup("BackUpCenter", 2.2,
                                 2, false);
@@ -209,13 +214,15 @@ public class AutoFactory {
                 if ((startLocation == sl_coopShelf_0 || startLocation == sl_noBumpShelf_2
                                 || startLocation == sl_bumpShelf_3)
                                 && autoselect == as_deliverMid_2) {
-                        tempCommand = new DeliverCubeFast(m_lift, m_wrist, m_intake, m_extend, false, 0);
+                        tempCommand = new DeliverCubeFast(m_lift, m_wrist, m_intake, m_extend, false, 0,
+                                        startLocation != sl_coopShelf_0);
                 }
 
                 if ((startLocation == sl_coopShelf_0 || startLocation == sl_noBumpShelf_2
                                 || startLocation == sl_bumpShelf_3)
                                 && autoselect == as_deliverTop_3) {
-                        tempCommand = new DeliverCubeFast(m_lift, m_wrist, m_intake, m_extend, true, 0);
+                        tempCommand = new DeliverCubeFast(m_lift, m_wrist, m_intake, m_extend, true, 0,
+                                        startLocation != sl_coopShelf_0);
                 }
 
                 if (startLocation == sl_coopPipe_1 && autoselect == as_deliverMid_2) {
@@ -263,46 +270,55 @@ public class AutoFactory {
 
                 if (startLocation == sl_noBumpShelf_2 && autoselect1 == as1_secondCubeAlt_2) {
 
-                        m_drive.yTrajStart = 4.4;
+                        m_llv.setActiveCamera(0);// front camera
+
+                        m_llv.setRedNoBumpPipeline();// look for AprilTag 3
+
+                        if (DriverStation.getAlliance() == Alliance.Blue)
+
+                                m_llv.setBlueNoBumpPipeline();// look for April Tag 6
+
+                        m_drive.setAllowVisionCorrection(true);// allow vision correction
 
                         tempCommand = new SequentialCommandGroup(
-
-                                        Commands.runOnce(() -> m_llv.setCubeDetectorPipeline()),
 
                                         Commands.runOnce(() -> m_lift.setController(
 
                                                         LiftArmConstants.liftArmFastConstraints, 1, false)),
 
-                                        // new ParallelCommandGroup(
+                                        Commands.runOnce(() -> m_drive.setAllowVisionCorrection(true)), // inhibit
+                                                                                                         // vision
+                                                                                                         // correction
 
                                         // move and rotate
 
                                         m_tf.followTrajectoryCommand(noBumpStartTrajsAlt.get(0), true),
 
-                                        // new SequentialCommandGroup(
+                                        Commands.runOnce(() -> m_llv.setActiveCamera(1)), // rear camera
 
-                                        // new WaitCommand(2.5),
+                                        Commands.runOnce(() -> m_drive.setAllowVisionCorrection(false)), // inhibit
+                                                                                                         // vision
+                                                                                                         // correction
 
-                                        new GroundIntakeCubePositions(m_lift, m_wrist,
-                                                        m_extend, m_intake)
-                                                        .withTimeout(1),
+                                        // new GroundIntakeCubePositions(m_lift, m_wrist,
+                                        // m_extend, m_intake)
+                                        // .withTimeout(1),
 
-                                        new WaitCommand(.1),
+                                        new WaitCommand(1),
+
+                                        Commands.runOnce(() -> m_drive.setAllowVisionCorrection(false)), // inhibit
+                                                                                                         // vision
+                                                                                                         // correction
+
+                                        Commands.runOnce(() -> t1 = m_tf
+                                                        .getTrajFromCurrentlocation(pickup)),
 
                                         new ParallelCommandGroup(
 
                                                         new IntakePieceStopMotor(m_intake, 11),
 
-                                                        m_tf.followTrajectoryCommand(noBumpStartTrajsAlt.get(1),
+                                                        m_tf.followTrajectoryCommand(t1,
                                                                         false)),
-
-                                        // new ConditionalCommand(
-
-                                        // new TrajectoryCorrectForCube(m_drive, m_llv),
-
-                                        // new DoNothing(),
-
-                                        // () -> RobotBase.isReal())),
 
                                         new StopIntake(m_intake),
 
@@ -320,7 +336,13 @@ public class AutoFactory {
                                                         m_tf.followTrajectoryCommand(noBumpStartTrajsAlt.get(2),
                                                                         false)),
 
+                                        Commands.runOnce(() -> m_llv.setActiveCamera(0)), // FRONT camera
+
+                                        Commands.runOnce(() -> m_drive.setAllowVisionCorrection(false)),
+
                                         new WaitCommand(.1),
+
+                                        Commands.runOnce(() -> m_drive.setAllowVisionCorrection(false)),
 
                                         m_tf.followTrajectoryCommand(noBumpStartTrajsAlt.get(3),
                                                         false),
@@ -347,7 +369,7 @@ public class AutoFactory {
 
                         tempCommand = new SequentialCommandGroup(
 
-                                        Commands.runOnce(() -> m_llv.setCubeDetectorPipeline()),
+                                        // Commands.runOnce(() -> m_llv.setCubeDetectorPipeline()),
 
                                         Commands.runOnce(() -> m_lift.setController(
 
@@ -423,7 +445,6 @@ public class AutoFactory {
 
                 }
 
-               
                 return tempCommand;
 
         }

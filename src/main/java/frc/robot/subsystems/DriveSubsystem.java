@@ -155,7 +155,7 @@ public class DriveSubsystem extends SubsystemBase {
    * 
    */
 
-  public boolean inhibitVision;
+  public boolean allowVision;
 
   private double lastVisionUpdateTime;
 
@@ -185,9 +185,9 @@ public class DriveSubsystem extends SubsystemBase {
 
   public boolean allianceBlue;
 
-  private final double visionTimeSet = 1;
+  private final double visionTimeSet = .1;
 
-  private final double visRobDiagErrLimit = .25;
+  private final double visRobDiagErrLimit = .1;
 
   private final double xyErrLimit = .05;
 
@@ -248,7 +248,7 @@ public class DriveSubsystem extends SubsystemBase {
 
     setIdleMode(true);
 
-    setInhibitVisionCorrection(false);
+    setAllowVisionCorrection(true);
 
     if (RobotBase.isSimulation()) {
 
@@ -340,20 +340,6 @@ public class DriveSubsystem extends SubsystemBase {
     isOpenLoop = !on;
   }
 
-  public void setAngleCorrection(double value) {
-    m_frontLeft.angleCorrection = value;
-    m_frontRight.angleCorrection = -value;
-    m_backLeft.angleCorrection = -value;
-    m_backRight.angleCorrection = value;
-  }
-
-  public void clearAngleCorrection() {
-    m_frontLeft.angleCorrection = 0;
-    m_frontRight.angleCorrection = 0;
-    m_backLeft.angleCorrection = 0;
-    m_backRight.angleCorrection = 0;
-  }
-
   @Override
   public void periodic() {
     boolean tunePIDOn = false;
@@ -373,8 +359,6 @@ public class DriveSubsystem extends SubsystemBase {
 
     // Update the odometry in the periodic block
 
-    SmartDashboard.putNumber("TurnFL", m_frontLeft.angleCorrection);
-    SmartDashboard.putNumber("TurnFR", m_frontRight.angleCorrection);
     SmartDashboard.putNumber("XPIDCmd", xPID.getSetpoint());
     SmartDashboard.putNumber("YPIDCmd", yPID.getSetpoint());
     SmartDashboard.putNumber("ThPIDCmd", thetaPID.getSetpoint());
@@ -478,7 +462,7 @@ public class DriveSubsystem extends SubsystemBase {
               m_backRight.getPosition()
           });
 
-      if (RobotBase.isReal() && !inhibitVision && numberTags > 0
+      if (RobotBase.isReal() && allowVision && numberTags > 0
 
           && (getAddVisionMeasurementByTime(visionTimeSet, visRobDiagErrLimit))
 
@@ -499,12 +483,12 @@ public class DriveSubsystem extends SubsystemBase {
    * 
    * @param on
    */
-  public void setInhibitVisionCorrection(boolean on) {
-    inhibitVision = on;
+  public void setAllowVisionCorrection(boolean on) {
+    allowVision = on;
   }
 
-  public boolean getInhibitVisionCorrection() {
-    return inhibitVision;
+  public boolean getallowVisionCorrection() {
+    return allowVision;
   }
 
   public double getDiagVisionDifference() {
