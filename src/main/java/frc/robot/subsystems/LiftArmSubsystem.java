@@ -49,7 +49,7 @@ public class LiftArmSubsystem extends SubsystemBase {
 
         PLACE_MID(86, 12.92), // 11/11
 
-        PLACE_TOP(99.6, 15.9);// 13.5
+        PLACE_TOP(99.6, 15.65);//15.9 // 13.5
 
         private double angle;
         private double inches;
